@@ -63,15 +63,15 @@ class ProfileViewModel : ViewModel() {
                     if (user.name.isNotEmpty()) {
                         updates["name"] = user.name
                     }
-                    if (user.studyField.isNotEmpty()) {
-                        updates["studyField"] = user.studyField
-                    }
-                    if (user.learningStyle.isNotEmpty()) {
-                        updates["learningStyle"] = user.learningStyle
-                    }
-                    if (user.interest.isNotEmpty()) {
-                        updates["interest"] = user.interest
-                    }
+//                    if (user.studyField.isNotEmpty()) {
+//                        updates["studyField"] = user.studyField
+//                    }
+//                    if (user.learningStyle.isNotEmpty()) {
+//                        updates["learningStyle"] = user.learningStyle
+//                    }
+//                    if (user.interest.isNotEmpty()) {
+//                        updates["interest"] = user.interest
+//                    }
                     // Update photo if available
                     if (user.photo != null) {
                         updates["photo"] = user.photo
@@ -102,14 +102,14 @@ class ProfileViewModel : ViewModel() {
         else if (user.name.length < 3) "- Name is too short (at least 3 letters).\n"
         else ""
 
-        e += if (user.studyField == "") "- Study field is required.\n"
-        else ""
-
-        e += if (user.learningStyle == "") "- Learning style is required.\n"
-        else ""
-
-        e += if (user.interest == "") "- Interest field is required.\n"
-        else ""
+//        e += if (user.studyField == "") "- Study field is required.\n"
+//        else ""
+//
+//        e += if (user.learningStyle == "") "- Learning style is required.\n"
+//        else ""
+//
+//        e += if (user.interest == "") "- Interest field is required.\n"
+//        else ""
 
         return e
     }

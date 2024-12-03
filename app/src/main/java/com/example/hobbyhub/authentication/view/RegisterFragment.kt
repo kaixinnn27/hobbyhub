@@ -137,10 +137,10 @@ class RegisterFragment : Fragment() {
             binding.editTextEmail.error = "This field is required!"
             return false
         }
-        if (!isValidTarumtEmail(email)) {
-            binding.editTextEmail.error = "Invalid email format/please use TARUMT email"
-            return false
-        }
+//        if (!isValidTarumtEmail(email)) {
+//            binding.editTextEmail.error = "Invalid email format/please use TARUMT email"
+//            return false
+//        }
         if (pwd == "") {
             binding.editTextPassword.error = "This field is required!"
             return false

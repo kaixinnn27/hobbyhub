@@ -8,8 +8,7 @@ data class User(
     var id: String = "",
     var name: String = "",
     var email: String = "",
-    var studyField: String = "",
-    var learningStyle: String = "",
-    var interest: String = "",
     var photo: Blob = Blob.fromBytes(ByteArray(0)),
+    var createdAt: String = "",
+    var updatedAt: String = ""
 )
