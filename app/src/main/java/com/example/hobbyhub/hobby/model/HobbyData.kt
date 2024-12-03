@@ -1,13 +1,14 @@
 package com.example.hobbyhub.hobby.model
 
 object HobbyData {
+    // TODO: Insert Dummy Data
     val hobbies  = listOf(
         Hobby(
             name = "Photography",
             description = "Capture beautiful moments and learn the art of photography.",
             imageUrl = listOf(
-                "https://example.com/images/photography1.jpg",
-                "https://example.com/images/photography2.jpg"
+                "https://pangolinphoto.com/wp-content/uploads/2020/05/Guest-with-camera-gear-on-safari-in-Botswana-Pangolin-Photo-Safaris-scaled.webp",
+                "https://iso.500px.com/wp-content/uploads/2016/10/stock-photo-159358357.jpg"
             ),
             category = HobbyCategory.ARTS_CRAFTS
         ),
