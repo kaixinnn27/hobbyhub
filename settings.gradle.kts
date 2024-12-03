@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "StudyPal"
+rootProject.name = "HobbyHub"
 include(":app")
  
