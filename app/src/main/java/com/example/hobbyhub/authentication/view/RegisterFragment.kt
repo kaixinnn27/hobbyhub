@@ -72,6 +72,8 @@ class RegisterFragment : Fragment() {
             email = email,
         )
 
+        // TODO: Add the UserHobby here during register a user
+
         lifecycleScope.launch {
             val success: Boolean = vm.set(userObj)
             if (success) {
