@@ -10,4 +10,5 @@ data class Hobby(
     var name: String = "",
     var description: String = "",
     var imageUrl: List<String> = emptyList(),
+    var category: HobbyCategory = HobbyCategory.MISCELLANEOUS
 )
