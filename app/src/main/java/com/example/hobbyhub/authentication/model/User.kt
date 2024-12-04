@@ -9,6 +9,6 @@ data class User(
     var name: String = "",
     var email: String = "",
     var photo: Blob = Blob.fromBytes(ByteArray(0)),
-    var createdAt: String = "",
-    var updatedAt: String = ""
+    val createdAt: Long = 0L,
+    val updatedAt: Long = 0L
 )
