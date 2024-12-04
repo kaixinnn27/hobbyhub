@@ -1,5 +1,6 @@
 package com.example.hobbyhub.hobby.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -26,7 +27,8 @@ class HobbyViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 // Perform a query to filter hobbies by categories
-                val result = col.whereIn("category", categories.toList()).get().await()
+                val result = col.whereIn("category", categories).get().await()
+                Log.d("HobbyViewModel","getHobbiesByCategories -> $result")
 
                 // Map the results to a list of hobbies
                 val hobbyList = result.documents.mapNotNull { it.toObject<Hobby>() }
