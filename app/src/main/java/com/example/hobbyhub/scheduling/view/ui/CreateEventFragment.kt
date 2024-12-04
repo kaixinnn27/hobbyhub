@@ -132,9 +132,6 @@ class CreateEventFragment : Fragment() {
             .addOnFailureListener { e ->
                 Toast.makeText(requireContext(), "Failed to save event: ${e.message}", Toast.LENGTH_SHORT).show()
             }
-
-        val documentPath = "schedule/$userId/events/$eventId"
-        println("Firestore Path: $documentPath")
     }
 
     override fun onDestroyView() {
