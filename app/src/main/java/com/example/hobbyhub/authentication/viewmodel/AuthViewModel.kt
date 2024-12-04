@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.hobbyhub.authentication.model.User
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.firestore.toObjects
@@ -22,6 +23,15 @@ class AuthViewModel : ViewModel() {
 
     suspend fun get(id: String): User? {
         return col.document(id).get().await().toObject<User>()
+    }
+
+    fun getCurrentUserId(): String? {
+        val firebaseUser = FirebaseAuth.getInstance().currentUser
+        return firebaseUser?.uid
+    }
+
+    fun signOut() {
+        FirebaseAuth.getInstance().signOut()
     }
 
     suspend fun getUserByEmail(email: String): User? {
@@ -45,21 +55,13 @@ class AuthViewModel : ViewModel() {
     }
 
     suspend fun set(user: User): Boolean {
-        return withContext(Dispatchers.IO) {
-            try {
-                col.document(user.id).set(user)
-                    .addOnSuccessListener {
-                        Log.i("FireStore", "User saved successfully: $user")
-                    }
-                    .addOnFailureListener { e ->
-                        Log.e("FireStore", "Error saving user: $e")
-                    }
-                    .await()
-                true
-            } catch (e: Exception) {
-                Log.e("FireStore", "FireStore operation failed: $e")
-                false
-            }
+        return try {
+            col.document(user.id).set(user).await()  // Directly use await() here
+            Log.i("FireStore", "User saved successfully: $user")
+            true
+        } catch (e: Exception) {
+            Log.e("FireStore", "Error saving user: $e")
+            false
         }
     }
 }
