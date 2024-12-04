@@ -41,7 +41,6 @@ class FindBuddyFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClic
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentFindBuddyBinding.inflate(inflater, container, false)
-
         return binding.root
     }
 
