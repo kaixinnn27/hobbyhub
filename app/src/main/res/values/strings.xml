@@ -20,4 +20,6 @@
     <string name="google_map_api_key">AIzaSyA_0OUex5GS9XOMk5s4k8_1kuemeE9svL0</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="select_your_hobbies">Select your hobbies</string>
+    <string name="select_hobbies_subtitle">Choose the right for you!</string>
 </resources>
