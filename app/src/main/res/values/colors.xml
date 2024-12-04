@@ -5,4 +5,6 @@
     <color name="gray">#d9d9d9</color>
     <color name="primaryColor">#0085ff</color>
     <color name="dark_gray">#666666</color>
+
+    <color name="selected_green">#9EDF9C</color>
 </resources>

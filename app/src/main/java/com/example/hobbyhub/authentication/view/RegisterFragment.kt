@@ -85,25 +85,20 @@ class RegisterFragment : Fragment() {
                 db.collection("location").document(userId)
                     .set(locationData)
                     .addOnSuccessListener {
-                        // Success handling
-                        Toast.makeText(context, "Account created successfully!", Toast.LENGTH_SHORT)
-                            .show()
                         binding.editTextName.text.clear()
                         binding.editTextEmail.text.clear()
                         binding.editTextPassword.text.clear()
-                        auth.signOut()
-                        nav.navigate(R.id.loginFragment)
+                        Toast.makeText(context, "Account created successfully!", Toast.LENGTH_SHORT)
+                            .show()
+                        nav.navigate(R.id.selectHobbyFragment)
                     }
                     .addOnFailureListener { e ->
-                        // Failure handling for location data
                         Toast.makeText(
                             context,
                             "Failed to save location data: ${e.message}",
                             Toast.LENGTH_SHORT
                         ).show()
                     }
-                Toast.makeText(context, "Account created successfully!", Toast.LENGTH_SHORT)
-                    .show()
             } else {
                 Toast.makeText(context, "Failed to create user!", Toast.LENGTH_SHORT).show()
             }

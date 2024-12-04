@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.hobbyhub.authentication.model.User
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.firestore.toObjects
@@ -22,6 +23,15 @@ class AuthViewModel : ViewModel() {
 
     suspend fun get(id: String): User? {
         return col.document(id).get().await().toObject<User>()
+    }
+
+    fun getCurrentUserId(): String? {
+        val firebaseUser = FirebaseAuth.getInstance().currentUser
+        return firebaseUser?.uid
+    }
+
+    fun signOut() {
+        FirebaseAuth.getInstance().signOut()
     }
 
     suspend fun getUserByEmail(email: String): User? {
