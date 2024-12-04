@@ -54,6 +54,7 @@ class LandingActivity : AppCompatActivity() {
         finish()
     }
 
+    // navigation
     private fun navigateToAuthenticationActivity(){
         val intent = Intent(this, AuthenticationActivity::class.java)
         startActivity(intent)
