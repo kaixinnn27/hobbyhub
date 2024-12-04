@@ -62,9 +62,9 @@ class ProfileFragment : Fragment() {
                 val user = vm.get(userId)
                 if (user != null) {
                     binding.tvUsername.text = user.name
-                    binding.tvCourse.text = user.studyField
-                    binding.tvLearningStyle.text = user.learningStyle
-                    binding.tvInterest.text = user.interest
+//                    binding.tvCourse.text = user.studyField
+//                    binding.tvLearningStyle.text = user.learningStyle
+//                    binding.tvInterest.text = user.interest
 //                    binding.imgProfile.setImageBitmap(user.photo?.toBitmap())
                     if (user.photo.toBitmap() != null) {
                         // Set the user's photo if it's not null

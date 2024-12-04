@@ -64,9 +64,6 @@ class ProfileDetailsActivity : AppCompatActivity() {
     private fun submit() {
         val user = User(
             name = binding.editTextName.text.toString().trim(),
-            studyField = binding.editTextStudyField.text.toString().trim(),
-            learningStyle = binding.tvLearningStyle.text.toString().trim(),
-            interest = binding.editTextInterest.text.toString().trim(),
             photo = binding.imgProfile.cropToBlob(300, 300),
         )
 
@@ -95,19 +92,19 @@ class ProfileDetailsActivity : AppCompatActivity() {
 
     private fun populateUserData(user: User) {
         with(binding) {
-            editTextName.setText(user.name)
-            editTextStudyField.setText(user.studyField)
-            val learningStyleOptions = arrayOf("Visual", "Auditory", "Kinesthetic")
-            val defaultLearningStyle = user.learningStyle ?: learningStyleOptions[0]
-            tvLearningStyle.setText(defaultLearningStyle, false)
-            editTextInterest.setText(user.interest)
-            if (user.photo.toBitmap() != null) {
-                // Set the user's photo if it's not null
-                binding.imgProfile.setImageBitmap(user.photo.toBitmap())
-            }
-            else{
-                binding.imgProfile.setImageResource(R.drawable.profile)
-            }
+//            editTextName.setText(user.name)
+//            editTextStudyField.setText(user.studyField)
+//            val learningStyleOptions = arrayOf("Visual", "Auditory", "Kinesthetic")
+//            val defaultLearningStyle = user.learningStyle ?: learningStyleOptions[0]
+//            tvLearningStyle.setText(defaultLearningStyle, false)
+//            editTextInterest.setText(user.interest)
+//            if (user.photo.toBitmap() != null) {
+//                // Set the user's photo if it's not null
+//                binding.imgProfile.setImageBitmap(user.photo.toBitmap())
+//            }
+//            else{
+//                binding.imgProfile.setImageResource(R.drawable.profile)
+//            }
         }
     }
 }
