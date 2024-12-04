@@ -55,21 +55,13 @@ class AuthViewModel : ViewModel() {
     }
 
     suspend fun set(user: User): Boolean {
-        return withContext(Dispatchers.IO) {
-            try {
-                col.document(user.id).set(user)
-                    .addOnSuccessListener {
-                        Log.i("FireStore", "User saved successfully: $user")
-                    }
-                    .addOnFailureListener { e ->
-                        Log.e("FireStore", "Error saving user: $e")
-                    }
-                    .await()
-                true
-            } catch (e: Exception) {
-                Log.e("FireStore", "FireStore operation failed: $e")
-                false
-            }
+        return try {
+            col.document(user.id).set(user).await()  // Directly use await() here
+            Log.i("FireStore", "User saved successfully: $user")
+            true
+        } catch (e: Exception) {
+            Log.e("FireStore", "Error saving user: $e")
+            false
         }
     }
 }
