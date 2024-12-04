@@ -12,9 +12,9 @@
         android:title="@string/chat_room_title" />
 
     <item
-        android:id="@+id/navigation_book_room"
-        android:icon="@drawable/ic_room"
-        android:title="@string/book_room_title" />
+        android:id="@+id/navigation_schedule"
+        android:icon="@drawable/ic_calendar"
+        android:title="@string/event_title" />
 
     <item
         android:id="@+id/navigation_profile"

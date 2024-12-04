@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.hobbyhub"
-        minSdk = 30
+        minSdk = 29
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -53,10 +53,12 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore:24.10.3")
     implementation(libs.firebase.auth)
     implementation("de.hdodenhof:circleimageview:3.1.0")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.4.0")
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.fragment.ktx)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation(libs.play.services.location)
     implementation("com.github.bumptech.glide:glide:4.12.0")
+    implementation("com.google.android.material:material:1.9.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
 }
