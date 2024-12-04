@@ -2,12 +2,11 @@ package com.example.hobbyhub.hobby.view
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,11 +14,9 @@ import com.example.hobbyhub.R
 import com.example.hobbyhub.authentication.viewmodel.AuthViewModel
 import com.example.hobbyhub.databinding.FragmentHomeBinding
 import com.example.hobbyhub.findbuddy.view.ui.FindBuddyFragment
-import com.example.hobbyhub.hobby.model.HobbyCategory
 import com.example.hobbyhub.hobby.model.UserHobby
 import com.example.hobbyhub.hobby.viewmodel.HobbyViewModel
 import com.example.hobbyhub.hobby.viewmodel.UserHobbyViewModel
-import com.google.android.gms.maps.MapFragment
 import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
