@@ -19,10 +19,6 @@ class ProfileViewModel : ViewModel() {
     private val users = MutableLiveData<List<User>>()
     private lateinit var auth: FirebaseAuth
 
-//    init {
-//        col.addSnapshotListener { snap, _ -> users.value = snap?.toObjects() }
-//    }
-
     suspend fun get(id: String): User? {
         return col.document(id).get().await().toObject<User>()
     }
