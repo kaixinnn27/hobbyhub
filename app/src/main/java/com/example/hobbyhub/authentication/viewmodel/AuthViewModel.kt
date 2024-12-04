@@ -17,9 +17,9 @@ class AuthViewModel : ViewModel() {
     private val col = Firebase.firestore.collection("user")
     private val users = MutableLiveData<List<User>>()
 
-    init {
-        col.addSnapshotListener { snap, _ -> users.value = snap?.toObjects() }
-    }
+//    init {
+//        col.addSnapshotListener { snap, _ -> users.value = snap?.toObjects() }
+//    }
 
     suspend fun get(id: String): User? {
         return col.document(id).get().await().toObject<User>()

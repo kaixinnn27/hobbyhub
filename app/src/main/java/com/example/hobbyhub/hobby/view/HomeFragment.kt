@@ -1,10 +1,13 @@
 package com.example.hobbyhub.hobby.view
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,9 +27,9 @@ class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
     private val nav by lazy { findNavController() }
     private lateinit var horizontalHobbyAdapter: HorizontalHobbyAdapter
-    private lateinit var authViewModel: AuthViewModel
-    private lateinit var userHobbyViewModel: UserHobbyViewModel
-    private lateinit var hobbyViewModel: HobbyViewModel
+    private val authViewModel: AuthViewModel by activityViewModels()
+    private val userHobbyViewModel: UserHobbyViewModel by activityViewModels()
+    private val hobbyViewModel: HobbyViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -60,18 +63,20 @@ class HomeFragment : Fragment() {
         binding.hobbiesRv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         binding.hobbiesRv.adapter = horizontalHobbyAdapter
 
-//        val userId = authViewModel.getCurrentUserId()
-//        if(userId!=null){
-//            lifecycleScope.launch {
-//                val userHobby: UserHobby? = userHobbyViewModel.get(userId)
-//                if(userHobby!=null && userHobby.preferredCategories.isNotEmpty()){
-//                    hobbyViewModel.getHobbiesByCategories(userHobby.preferredCategories)
-//                }
-//            }
-//        }
-//
-//        hobbyViewModel.userHobbies.observe(viewLifecycleOwner) { hobbies ->
-//            horizontalHobbyAdapter.updateData(hobbies)
-//        }
+        val userId = authViewModel.getCurrentUserId()
+        Log.d("HomeFragment","userId -> $userId")
+        if(userId!=null){
+            lifecycleScope.launch {
+                val userHobby: UserHobby? = userHobbyViewModel.get(userId)
+                Log.d("HomeFragment","userHobby -> $userHobby")
+                if(userHobby!=null && userHobby.preferredCategories.isNotEmpty()){
+                    hobbyViewModel.getHobbiesByCategories(userHobby.preferredCategories)
+                }
+            }
+        }
+
+        hobbyViewModel.userHobbies.observe(viewLifecycleOwner) { hobbies ->
+            horizontalHobbyAdapter.updateData(hobbies)
+        }
     }
 }
