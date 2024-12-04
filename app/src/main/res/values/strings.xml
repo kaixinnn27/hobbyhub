@@ -30,4 +30,8 @@
     <string name="music_performance"><![CDATA[Music & Performance]]></string>
     <string name="miscellaneous">Miscellaneous</string>
     <string name="continue_tv">Continue</string>
+    <string name="search_hobbies">Search Hobbies</string>
+    <string name="find_hobby_buddy">Find your hobby buddy</string>
+    <string name="recommended_hobbies">Recommended Hobbies</string>
+    <string name="hobby_title">Hobby Title</string>
 </resources>

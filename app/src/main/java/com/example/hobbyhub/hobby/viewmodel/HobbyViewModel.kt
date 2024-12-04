@@ -16,9 +16,28 @@ class HobbyViewModel : ViewModel() {
 
     private val col = Firebase.firestore.collection("hobbies")
     private val hobbies = MutableLiveData<List<Hobby>>()
+    val userHobbies = MutableLiveData<List<Hobby>>()
 
     suspend fun get(id: String): Hobby? {
         return col.document(id).get().await().toObject<Hobby>()
+    }
+
+    fun getHobbiesByCategories(categories: List<HobbyCategory>) {
+        viewModelScope.launch {
+            try {
+                // Perform a query to filter hobbies by categories
+                val result = col.whereIn("category", categories.toList()).get().await()
+
+                // Map the results to a list of hobbies
+                val hobbyList = result.documents.mapNotNull { it.toObject<Hobby>() }
+
+                // Update LiveData
+                userHobbies.postValue(hobbyList)
+
+            } catch (e: Exception) {
+                println("Error fetching hobbies by categories: ${e.message}")
+            }
+        }
     }
 
     fun getAllHobbies() {
