@@ -22,4 +22,12 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="select_your_hobbies">Select your hobbies</string>
     <string name="select_hobbies_subtitle">Choose the right for you!</string>
+    <string name="arts_crafts"><![CDATA[Arts & Crafts]]></string>
+    <string name="outdoor_activities">Outdoor Activities</string>
+    <string name="food_cooking"><![CDATA[Food & Cooking]]></string>
+    <string name="fitness_wellness"><![CDATA[Fitness & Wellness]]></string>
+    <string name="technology_science"><![CDATA[Technology & Science]]></string>
+    <string name="music_performance"><![CDATA[Music & Performance]]></string>
+    <string name="miscellaneous">Miscellaneous</string>
+    <string name="continue_tv">Continue</string>
 </resources>
