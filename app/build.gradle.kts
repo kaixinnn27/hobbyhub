@@ -58,6 +58,7 @@ dependencies {
     implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation("com.google.android.gms:play-services-maps:18.2.0")
+    implementation(libs.play.services.base)
     implementation(libs.play.services.location)
     implementation("com.github.bumptech.glide:glide:4.12.0")
     implementation(libs.material)

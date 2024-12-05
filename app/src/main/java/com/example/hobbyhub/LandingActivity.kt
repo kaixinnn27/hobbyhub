@@ -31,25 +31,27 @@ class LandingActivity : AppCompatActivity() {
             if (currentUser != null) {
                 getUserByUid(currentUser.uid) { user ->
                     if (user != null) {
-                        // User found in Firestore
                         Log.d("LandingActivity", "User found: ${user.email}")
-                        navigateToMainActivity()
+                        // 'admin' is guaranteed to be Boolean
+                        navigateToMainActivity(user.id, user.admin)
                     } else {
-                        // User document not found
-                        Log.d("LandingActivity", "User document not found in Firestore, navigating to AuthenticationActivity")
+                        Log.d("LandingActivity", "User document not found, navigating to AuthenticationActivity")
                         navigateToAuthenticationActivity()
                     }
                 }
             } else {
-                // No current user
                 Log.d("LandingActivity", "No current user, navigating to AuthenticationActivity")
                 navigateToAuthenticationActivity()
             }
         }, 2000)
     }
 
-    private fun navigateToMainActivity(){
-        val intent = Intent(this, MainActivity::class.java)
+
+    private fun navigateToMainActivity(userId: String, isAdmin: Boolean) {
+        val intent = Intent(this, MainActivity::class.java).apply {
+            putExtra("userId", userId)
+            putExtra("isAdmin", isAdmin)
+        }
         startActivity(intent)
         finish()
     }
@@ -67,7 +69,11 @@ class LandingActivity : AppCompatActivity() {
             .addOnSuccessListener { documentSnapshot ->
                 if (documentSnapshot.exists()) {
                     val user = documentSnapshot.toObject(User::class.java)
-                    user?.id = documentSnapshot.id
+                    if (user != null) {
+                        // Handle 'admin' field explicitly as Boolean
+                        user.admin = documentSnapshot.getBoolean("admin") ?: false
+                        user.id = documentSnapshot.id
+                    }
                     callback(user)
                 } else {
                     callback(null) // User document not found
