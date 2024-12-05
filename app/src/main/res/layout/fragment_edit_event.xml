@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Event ID Input (Read-Only) -->
+        <EditText
+            android:id="@+id/etEventId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/event_id"
+            android:inputType="text"
+            android:enabled="false" />
+
+
+        <!-- Date Picker Button -->
+        <Button
+            android:id="@+id/btnDatePicker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/select_date" />
+
+        <!-- Time Picker Button -->
+        <Button
+            android:id="@+id/btnTimePicker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/select_time" />
+
+        <!-- Location Spinner -->
+        <Spinner
+            android:id="@+id/spinnerLocation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!-- Participants MultiAutoCompleteTextView -->
+        <MultiAutoCompleteTextView
+            android:id="@+id/multiAutocompleteParticipants"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/display_participants" />
+
+        <!-- Save Changes Button -->
+        <Button
+            android:id="@+id/btnSaveChanges"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/save_changes"
+            android:backgroundTint="@color/primaryColor" />
+
+        <!-- Delete Event Button -->
+        <Button
+            android:id="@+id/btnDeleteEvent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/delete_event"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/red" />
+    </LinearLayout>
+</ScrollView>

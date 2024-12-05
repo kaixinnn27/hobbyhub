@@ -82,4 +82,42 @@
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" />
 
+    <fragment
+        android:id="@+id/navigation_schedule"
+        android:name="com.example.hobbyhub.scheduling.view.ui.ScheduleFragment"
+        android:label="@string/event_title"
+        tools:layout="@layout/fragment_schedule">
+        <action
+            android:id="@+id/action_scheduleFragment_to_editEventFragment"
+            app:destination="@id/editEventFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/createEventFragment"
+        android:name="com.example.hobbyhub.scheduling.view.ui.CreateEventFragment"
+        android:label="@string/create_event_title"
+        tools:layout="@layout/item_event" />
+
+    <fragment
+        android:id="@+id/eventDetailsFragment"
+        android:name="com.example.hobbyhub.scheduling.view.ui.EventDetailsFragment"
+        android:label="@string/event_details_title"
+        tools:layout="@layout/fragment_event_details">
+        <argument
+            android:name="event"
+            app:argType="com.example.hobbyhub.scheduling.model.Event" />
+        <action
+            android:id="@+id/action_eventDetailsFragment_to_editEventFragment"
+            app:destination="@id/editEventFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/editEventFragment"
+        android:name="com.example.hobbyhub.scheduling.view.ui.EditEventFragment"
+        android:label="Edit Event"
+        tools:layout="@layout/fragment_edit_event">
+        <argument
+            android:name="event"
+            app:argType="com.example.hobbyhub.scheduling.model.Event" />
+    </fragment>
 </navigation>
