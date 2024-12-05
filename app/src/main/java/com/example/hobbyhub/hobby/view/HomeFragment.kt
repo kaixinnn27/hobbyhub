@@ -14,9 +14,11 @@ import com.example.hobbyhub.R
 import com.example.hobbyhub.authentication.viewmodel.AuthViewModel
 import com.example.hobbyhub.databinding.FragmentHomeBinding
 import com.example.hobbyhub.findbuddy.view.ui.FindBuddyFragment
+import com.example.hobbyhub.findbuddy.view.ui.MapFragment
 import com.example.hobbyhub.hobby.model.UserHobby
 import com.example.hobbyhub.hobby.viewmodel.HobbyViewModel
 import com.example.hobbyhub.hobby.viewmodel.UserHobbyViewModel
+import com.example.hobbyhub.utility.toBitmap
 import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
@@ -36,6 +38,7 @@ class HomeFragment : Fragment() {
 
         loadMapFragment()
         setupHorizontalAdapter()
+        loadUserPhoto()
 
         binding.cardViewMap.setOnClickListener {
             nav.navigate(R.id.navigation_find_buddy)
@@ -48,9 +51,31 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
+    private fun loadUserPhoto() {
+        val userId = authViewModel.getCurrentUserId()
+
+        if (!userId.isNullOrBlank()) {
+            lifecycleScope.launch {
+                val user = authViewModel.get(userId)
+                user?.let {
+                    if (user.photo.toBitmap() != null) {
+                        binding.headerProfile.setImageBitmap(user.photo.toBitmap())
+                        binding.letterOverlayTv.visibility = View.GONE
+                    } else {
+                        binding.headerProfile.setImageResource(R.drawable.profile_bg)
+                        binding.letterOverlayTv.visibility = View.VISIBLE
+
+                        val firstLetter = user.name.firstOrNull()?.toString()?.uppercase() ?: "U"
+                        binding.letterOverlayTv.text = firstLetter
+                    }
+                }
+            }
+        }
+    }
+
     private fun loadMapFragment() {
         val transaction = activity?.supportFragmentManager?.beginTransaction()
-        transaction?.replace(R.id.cardViewMap, FindBuddyFragment())
+        transaction?.replace(R.id.cardViewMap, MapFragment())
         transaction?.disallowAddToBackStack()
         transaction?.commit()
     }

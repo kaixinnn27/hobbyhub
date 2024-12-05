@@ -126,4 +126,9 @@
             android:name="event"
             app:argType="com.example.hobbyhub.scheduling.model.Event" />
     </fragment>
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.example.hobbyhub.findbuddy.view.ui.MapFragment"
+        android:label="fragment_map"
+        tools:layout="@layout/fragment_map" />
 </navigation>

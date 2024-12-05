@@ -60,4 +60,14 @@
     <string name="find_buddy">Find Buddy</string>
     <string name="calendar">Calendar</string>
     <string name="open_calendar">Open Calendar</string>
+    <string name="hobby_details">Hobby Details</string>
+    <string name="description">Description</string>
+    <string name="comprehensive_review">Comprehensive Review:</string>
+    <string name="show_all">Show All</string>
+    <string name="excellent">Excellent</string>
+    <string name="very_good">Very Good</string>
+    <string name="average">Average</string>
+    <string name="poor">Poor</string>
+    <string name="terrible">Terrible</string>
+    <string name="category">Category</string>
 </resources>
