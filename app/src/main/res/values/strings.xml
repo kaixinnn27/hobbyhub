@@ -73,4 +73,7 @@
     <string name="write_review">Write Review</string>
     <string name="write_your_review_here">Write your review here</string>
     <string name="submit_review">Submit Review</string>
+    <string name="chats">Chats</string>
+    <string name="username">Username</string>
+    <string name="_12_00_pm">12:00 PM</string>
 </resources>
