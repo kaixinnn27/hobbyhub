@@ -10,5 +10,6 @@ data class User(
     var email: String = "",
     var photo: Blob = Blob.fromBytes(ByteArray(0)),
     val createdAt: Long = 0L,
-    val updatedAt: Long = 0L
+    val updatedAt: Long = 0L,
+    var admin: Boolean  = false
 )

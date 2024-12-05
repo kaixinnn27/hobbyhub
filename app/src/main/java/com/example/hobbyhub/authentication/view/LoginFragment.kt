@@ -66,7 +66,15 @@ class LoginFragment : Fragment() {
         user.document(userId).get().addOnSuccessListener { documentSnapshot ->
             val user = documentSnapshot.toObject<User>()
             if (user != null) {
-                val intent = Intent(context, MainActivity::class.java)
+                val isAdmin = when (val adminValue = documentSnapshot.get("admin")) {
+                    is Boolean -> adminValue // If already Boolean
+                    is String -> adminValue.toBoolean() // If stored as String
+                    else -> false // Default to false if missing or unknown type
+                }
+                val intent = Intent(context, MainActivity::class.java).apply {
+                    putExtra("userId", userId) // Pass user ID to MainActivity
+                    putExtra("isAdmin", isAdmin) // Pass admin status to MainActivity
+                }
                 startActivity(intent)
                 requireActivity().finish()
             } else {

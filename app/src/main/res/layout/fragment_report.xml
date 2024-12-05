@@ -1,0 +1,32 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <Button
+        android:id="@+id/btnUserActivityReport"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/user_activity_report" />
+
+    <Button
+        android:id="@+id/btnHobbyPopularityReport"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/hobby_popularity_report" />
+
+    <Button
+        android:id="@+id/btnUserDemographicsReport"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/user_demographics_report" />
+
+    <Button
+        android:id="@+id/btnUserFeedbackAnalysis"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/user_feedback_analysis" />
+
+</LinearLayout>

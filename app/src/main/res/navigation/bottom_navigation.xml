@@ -126,4 +126,10 @@
             android:name="event"
             app:argType="com.example.hobbyhub.scheduling.model.Event" />
     </fragment>
+
+    <fragment
+        android:id="@+id/navigation_report"
+        android:name="com.example.hobbyhub.report.view.ui.ReportModuleFragment"
+        android:label="Report"
+        tools:layout="@layout/fragment_report" />
 </navigation>

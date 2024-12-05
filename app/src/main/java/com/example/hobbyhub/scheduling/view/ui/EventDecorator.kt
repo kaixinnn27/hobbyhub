@@ -1,3 +1,5 @@
+package com.example.hobbyhub.scheduling.view.ui
+
 import android.graphics.drawable.Drawable
 import android.text.style.ForegroundColorSpan
 import com.prolificinteractive.materialcalendarview.CalendarDay

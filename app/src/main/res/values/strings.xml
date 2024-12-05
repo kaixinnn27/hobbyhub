@@ -60,4 +60,15 @@
     <string name="find_buddy">Find Buddy</string>
     <string name="calendar">Calendar</string>
     <string name="open_calendar">Open Calendar</string>
+    <string name="report_title">Reports</string>
+    <string name="admin_reports">Admin Reports</string>
+    <string name="user_activity_report">User Activity Report</string>
+    <string name="hobby_popularity_report">Hobby Popularity Report</string>
+    <string name="user_demographics_report">User Demographics Report</string>
+    <string name="user_feedback_analysis">User Feedback Analysis</string>
+    <string name="user_details">User Details</string>
+    <string name="select_user">Select User</string>
+    <string name="app_usage_time_histogram">App Usage Time Histogram</string>
+    <string name="rating_distribution">Rating Distribution</string>
+    <string name="feedback_comments">Feedback Comments</string>
 </resources>
