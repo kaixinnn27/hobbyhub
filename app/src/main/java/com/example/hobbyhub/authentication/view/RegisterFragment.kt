@@ -17,6 +17,7 @@ import com.example.hobbyhub.authentication.viewmodel.AuthViewModel
 import com.example.hobbyhub.databinding.FragmentRegisterBinding
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
@@ -45,14 +46,24 @@ class RegisterFragment : Fragment() {
             val email = binding.editTextEmail.text.toString()
             val pwd = binding.editTextPassword.text.toString()
             if (validateInputFields()) {
-                auth.createUserWithEmailAndPassword(email, pwd).addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        saveUserToFireStoreDb()
-                    } else {
-                        Toast.makeText(context, "Failed to create user!", Toast.LENGTH_SHORT).show()
-                        Log.e("Error during creating user >> ", it.exception.toString())
+                auth.createUserWithEmailAndPassword(email, pwd)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            saveUserToFireStoreDb()
+                        } else {
+                            // Handle specific Firebase errors
+                            val exception = task.exception
+                            when (exception) {
+                                is FirebaseAuthUserCollisionException -> {
+                                    Toast.makeText(context, "Email is already registered!", Toast.LENGTH_SHORT).show()
+                                }
+                                else -> {
+                                    Toast.makeText(context, "Failed to create user: ${exception?.message}", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                            Log.e("FirebaseAuth", "Error creating user", exception)
+                        }
                     }
-                }
             }
         }
         return binding.root
@@ -61,21 +72,20 @@ class RegisterFragment : Fragment() {
     private val db = FirebaseFirestore.getInstance()
 
     private fun saveUserToFireStoreDb() {
-
         val userId = FirebaseAuth.getInstance().currentUser!!.uid
         val name = binding.editTextName.text.toString().trim()
         val email = binding.editTextEmail.text.toString().trim()
 
-        val userObj = User(
+        val user = User(
             id = userId,
             name = name,
             email = email,
+            createdAt = System.currentTimeMillis(),
+            updatedAt = System.currentTimeMillis()
         )
 
-        // TODO: Add the UserHobby here during register a user
-
         lifecycleScope.launch {
-            val success: Boolean = vm.set(userObj)
+            val success: Boolean = vm.set(user)
             if (success) {
                 val (latitude, longitude) = generateRandomCoordinates()
                 val locationData = hashMapOf(
@@ -85,27 +95,17 @@ class RegisterFragment : Fragment() {
                 db.collection("location").document(userId)
                     .set(locationData)
                     .addOnSuccessListener {
-                        // Success handling
-                        Toast.makeText(context, "Account created successfully!", Toast.LENGTH_SHORT)
-                            .show()
                         binding.editTextName.text.clear()
                         binding.editTextEmail.text.clear()
                         binding.editTextPassword.text.clear()
-                        auth.signOut()
-                        nav.navigate(R.id.loginFragment)
+                        Toast.makeText(context, "Account created successfully!", Toast.LENGTH_SHORT).show()
+                        nav.navigate(R.id.selectHobbyFragment)
                     }
                     .addOnFailureListener { e ->
-                        // Failure handling for location data
-                        Toast.makeText(
-                            context,
-                            "Failed to save location data: ${e.message}",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Toast.makeText(context, "Failed to save location data: ${e.message}", Toast.LENGTH_SHORT).show()
                     }
-                Toast.makeText(context, "Account created successfully!", Toast.LENGTH_SHORT)
-                    .show()
             } else {
-                Toast.makeText(context, "Failed to create user!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Failed to save user!", Toast.LENGTH_SHORT).show()
             }
         }
     }

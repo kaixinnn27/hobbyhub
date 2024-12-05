@@ -19,10 +19,6 @@ class ProfileViewModel : ViewModel() {
     private val users = MutableLiveData<List<User>>()
     private lateinit var auth: FirebaseAuth
 
-    init {
-        col.addSnapshotListener { snap, _ -> users.value = snap?.toObjects() }
-    }
-
     suspend fun get(id: String): User? {
         return col.document(id).get().await().toObject<User>()
     }
@@ -32,7 +28,7 @@ class ProfileViewModel : ViewModel() {
             try {
                 auth = Firebase.auth
                 val currentUser = auth.currentUser
-                if (currentUser != null && user != null) {
+                if (currentUser != null) {
                     col.document(currentUser.uid).set(user)
                         .addOnSuccessListener {
                             Log.i("FireStore", "User saved successfully: $user")

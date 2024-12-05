@@ -45,4 +45,17 @@
     <string name="save_changes">Save Changes</string>
     <string name="event_id">Event ID</string>
     <string name="enter_event_id">Enter Event ID</string>
+    <string name="arts_crafts"><![CDATA[Arts & Crafts]]></string>
+    <string name="outdoor_activities">Outdoor Activities</string>
+    <string name="food_cooking"><![CDATA[Food & Cooking]]></string>
+    <string name="fitness_wellness"><![CDATA[Fitness & Wellness]]></string>
+    <string name="technology_science"><![CDATA[Technology & Science]]></string>
+    <string name="music_performance"><![CDATA[Music & Performance]]></string>
+    <string name="miscellaneous">Miscellaneous</string>
+    <string name="continue_tv">Continue</string>
+    <string name="search_hobbies">Search Hobbies</string>
+    <string name="find_hobby_buddy">Find your hobby buddy</string>
+    <string name="recommended_hobbies">Recommended Hobbies</string>
+    <string name="hobby_title">Hobby Title</string>
+    <string name="find_buddy">Find Buddy</string>
 </resources>

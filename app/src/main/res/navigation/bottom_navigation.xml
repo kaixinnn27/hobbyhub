@@ -3,13 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/bottom_navigation"
-    app:startDestination="@+id/navigation_find_buddy">
+    app:startDestination="@+id/homeFragment">
 
     <fragment
         android:id="@+id/navigation_find_buddy"
         android:name="com.example.hobbyhub.findbuddy.view.ui.FindBuddyFragment"
         android:label="@string/find_buddy_title"
-        tools:layout="@layout/fragment_find_buddy" />
+        tools:layout="@layout/fragment_find_buddy">
+        <argument
+            android:name="isShowTopBar"
+            app:argType="boolean" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_chat_room"
@@ -72,6 +76,11 @@
             android:id="@+id/action_paymentDetailsFragment_to_paymentFragment"
             app:destination="@id/paymentFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.hobbyhub.hobby.view.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/navigation_schedule"

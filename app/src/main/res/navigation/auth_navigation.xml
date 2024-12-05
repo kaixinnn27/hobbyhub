@@ -20,4 +20,9 @@
         android:name="com.example.hobbyhub.authentication.view.ForgotPasswordFragment"
         android:label="fragment_forgot_password"
         tools:layout="@layout/fragment_register" />
+    <fragment
+        android:id="@+id/selectHobbyFragment"
+        android:name="com.example.hobbyhub.authentication.view.SelectHobbyFragment"
+        android:label="SelectHobbyFragment"
+        tools:layout="@layout/fragment_select_hobby"/>
 </navigation>
