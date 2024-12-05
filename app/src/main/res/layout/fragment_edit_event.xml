@@ -13,11 +13,11 @@
         <EditText
             android:id="@+id/etEventId"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
+            android:textStyle="bold"
             android:hint="@string/event_id"
             android:inputType="text"
             android:enabled="false" />
-
 
         <!-- Date Picker Button -->
         <Button
@@ -37,13 +37,13 @@
         <Spinner
             android:id="@+id/spinnerLocation"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="40dp" />
 
         <!-- Participants MultiAutoCompleteTextView -->
         <MultiAutoCompleteTextView
             android:id="@+id/multiAutocompleteParticipants"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:hint="@string/display_participants" />
 
         <!-- Save Changes Button -->
@@ -51,6 +51,7 @@
             android:id="@+id/btnSaveChanges"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
             android:text="@string/save_changes"
             android:backgroundTint="@color/primaryColor" />
 
@@ -59,6 +60,7 @@
             android:id="@+id/btnDeleteEvent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
             android:text="@string/delete_event"
             android:textColor="@android:color/white"
             android:backgroundTint="@color/red" />

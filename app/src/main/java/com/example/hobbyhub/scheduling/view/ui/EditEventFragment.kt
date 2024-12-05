@@ -11,6 +11,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.hobbyhub.databinding.FragmentEditEventBinding
 import com.example.hobbyhub.scheduling.model.Event
+import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.TimeFormat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
@@ -23,6 +26,8 @@ class EditEventFragment : Fragment() {
     private val args: EditEventFragmentArgs by navArgs()
     private val auth by lazy { FirebaseAuth.getInstance() }
     private val db by lazy { FirebaseFirestore.getInstance() }
+    private var selectedDate: String = ""
+    private var selectedTime: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,7 +60,6 @@ class EditEventFragment : Fragment() {
         }
 
         val userId = auth.currentUser?.uid ?: return
-
         db.collection("schedule").document(userId).collection("events").document(eventId)
             .get()
             .addOnSuccessListener { document ->
@@ -77,8 +81,36 @@ class EditEventFragment : Fragment() {
 
     private fun populateFields(event: Event) {
         binding.etEventId.setText(event.eventId)
+        selectedDate = event.date
+        selectedTime = event.time
         binding.btnDatePicker.text = event.date
         binding.btnTimePicker.text = event.time
+
+        binding.btnDatePicker.setOnClickListener {
+            val datePicker = MaterialDatePicker.Builder.datePicker()
+                .setTitleText("Select Date")
+                .setSelection(SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(event.date)?.time)
+                .build()
+            datePicker.show(parentFragmentManager, "DATE_PICKER")
+            datePicker.addOnPositiveButtonClickListener { selection ->
+                selectedDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(selection)
+                binding.btnDatePicker.text = selectedDate
+            }
+        }
+        binding.btnTimePicker.setOnClickListener {
+            val timeParts = event.time.split(":").map { it.toInt() }
+            val timePicker = MaterialTimePicker.Builder()
+                .setTimeFormat(TimeFormat.CLOCK_24H)
+                .setHour(timeParts[0])
+                .setMinute(timeParts[1])
+                .setTitleText("Select Time")
+                .build()
+            timePicker.show(parentFragmentManager, "TIME_PICKER")
+            timePicker.addOnPositiveButtonClickListener {
+                selectedTime = String.format("%02d:%02d", timePicker.hour, timePicker.minute)
+                binding.btnTimePicker.text = selectedTime
+            }
+        }
 
         val locations = listOf("Room A", "Room B", "Room C")
         val locationAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, locations)

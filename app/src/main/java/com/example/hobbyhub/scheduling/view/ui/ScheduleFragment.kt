@@ -54,9 +54,13 @@ class ScheduleFragment : Fragment() {
         fetchUserSchedule()
 
         // Add new event button
-        binding.btnAddEvent.setOnClickListener {
+        binding.fabAddEvent.setOnClickListener {
             // Navigate to CreateEventFragment
             findNavController().navigate(R.id.createEventFragment)
+        }
+
+        binding.fabCalendar.setOnClickListener {
+            findNavController().navigate(R.id.calendarFragment)
         }
     }
 

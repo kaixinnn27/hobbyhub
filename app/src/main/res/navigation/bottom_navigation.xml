@@ -93,6 +93,12 @@
     </fragment>
 
     <fragment
+        android:id="@+id/calendarFragment"
+        android:name="com.example.hobbyhub.scheduling.view.ui.CalendarFragment"
+        android:label="CalendarFragment"
+        tools:layout="@layout/item_calendar" />
+
+    <fragment
         android:id="@+id/createEventFragment"
         android:name="com.example.hobbyhub.scheduling.view.ui.CreateEventFragment"
         android:label="@string/create_event_title"

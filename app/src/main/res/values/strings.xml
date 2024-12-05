@@ -58,4 +58,6 @@
     <string name="recommended_hobbies">Recommended Hobbies</string>
     <string name="hobby_title">Hobby Title</string>
     <string name="find_buddy">Find Buddy</string>
+    <string name="calendar">Calendar</string>
+    <string name="open_calendar">Open Calendar</string>
 </resources>

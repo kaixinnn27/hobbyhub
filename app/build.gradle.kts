@@ -55,10 +55,12 @@ dependencies {
     implementation("de.hdodenhof:circleimageview:3.1.0")
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.fragment.ktx)
+    implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation(libs.play.services.location)
     implementation("com.github.bumptech.glide:glide:4.12.0")
-    implementation("com.google.android.material:material:1.9.0")
+    implementation(libs.material)
+    implementation("com.github.prolificinteractive:material-calendarview:2.0.1")
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
 }
