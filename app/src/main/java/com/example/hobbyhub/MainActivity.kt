@@ -1,6 +1,8 @@
 package com.example.hobbyhub
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.os.SystemClock
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -15,16 +17,20 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val db = FirebaseFirestore.getInstance()
     private val userId = FirebaseAuth.getInstance().currentUser?.uid
-    private var sessionStartTime: Long = 0L
+    private var lastUpdateTime: Long = 0L
+    private val handler = Handler(Looper.getMainLooper())
+    private lateinit var updateRunnable: Runnable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        sessionStartTime = SystemClock.elapsedRealtime()
+        lastUpdateTime = SystemClock.elapsedRealtime()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         val isAdmin = intent.getBooleanExtra("isAdmin", false)
         setupBottomNavigation(isAdmin)
+
+        startRealtimeUsageUpdater()
     }
 
     private fun setupBottomNavigation(isAdmin: Boolean) {
@@ -54,12 +60,24 @@ class MainActivity : AppCompatActivity() {
         menu.removeItem(R.id.navigation_report) // Ensure report module is not shown
     }
 
-    override fun onStop() {
-        super.onStop()
-        // Track session end
-        val sessionEndTime = SystemClock.elapsedRealtime()
-        val sessionDuration = (sessionEndTime - sessionStartTime) / 1000 // Convert ms to seconds
-        updateUsageTime(sessionDuration)
+    private fun startRealtimeUsageUpdater() {
+        updateRunnable = object : Runnable {
+            override fun run() {
+                val currentTime = SystemClock.elapsedRealtime()
+                val elapsedSinceLastUpdate = (currentTime - lastUpdateTime) / 1000 // Convert ms to seconds
+                lastUpdateTime = currentTime
+
+                updateUsageTime(elapsedSinceLastUpdate)
+
+                // Schedule the next update after 5 seconds
+                handler.postDelayed(this, 5000L)
+            }
+        }
+        handler.post(updateRunnable)
+    }
+
+    private fun stopRealtimeUsageUpdater() {
+        handler.removeCallbacks(updateRunnable)
     }
 
     private fun updateUsageTime(duration: Long) {
@@ -70,10 +88,20 @@ class MainActivity : AppCompatActivity() {
                 val currentUsageTime = snapshot.getLong("app_usage_time") ?: 0
                 transaction.update(userRef, "app_usage_time", currentUsageTime + duration)
             }.addOnSuccessListener {
-                android.util.Log.d("MainActivity", "App usage time updated successfully.")
+                android.util.Log.d("MainActivity", "App usage time updated successfully by $duration seconds.")
             }.addOnFailureListener { e ->
                 android.util.Log.e("MainActivity", "Failed to update app usage time", e)
             }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        stopRealtimeUsageUpdater()
+
+        // Track session end
+        val currentTime = SystemClock.elapsedRealtime()
+        val elapsedSinceLastUpdate = (currentTime - lastUpdateTime) / 1000 // Convert ms to seconds
+        updateUsageTime(elapsedSinceLastUpdate)
     }
 }

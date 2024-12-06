@@ -10,9 +10,18 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.hobbyhub.R
 import com.example.hobbyhub.report.view.adapter.UserActivityAdapter
+import com.example.hobbyhub.report.model.UserActivityData
+import com.github.mikephil.charting.charts.BarChart
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.BarData
+import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.formatter.ValueFormatter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 class UserActivityReportFragment : Fragment() {
 
@@ -20,6 +29,7 @@ class UserActivityReportFragment : Fragment() {
     private val userCollection = db.collection("user")
     private lateinit var adapter: UserActivityAdapter
     private lateinit var recyclerView: RecyclerView
+    private lateinit var barChart: BarChart
     private var featureStartTime: Long = 0L
 
     override fun onCreateView(
@@ -29,6 +39,9 @@ class UserActivityReportFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_user_activity, container, false)
         recyclerView = view.findViewById(R.id.rvUserActivity)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        barChart = view.findViewById(R.id.barChartTotalUsers)
+        barChart = view.findViewById(R.id.barChartTotalUsageTime)
+
         fetchUserData()
         return view
     }
@@ -36,40 +49,30 @@ class UserActivityReportFragment : Fragment() {
     private fun fetchUserData() {
         userCollection.get().addOnSuccessListener { documents ->
             val userData = documents.mapNotNull { doc ->
-                val createdAt = doc.getTimestamp("createdAt")?.toDate()
+                val username = doc.getString("name")
+                val createdAtMillis = doc.getLong("createdAt")
+                val createdAt = createdAtMillis?.let { millis ->
+                    val date = Date(millis)
+                    val formatter = SimpleDateFormat(
+                        "yyyy-MM-dd HH:mm:ss",
+                        Locale.getDefault()
+                    ) // Format as date and time
+                    formatter.format(date)
+                }
                 val usageTime = doc.getLong("app_usage_time")
-                if (createdAt != null && usageTime != null) {
-                    val userActivityData = UserActivityData(doc.id, createdAt, usageTime)
-                    android.util.Log.d("UserActivityReport", "Fetched Data: $userActivityData")
-                    android.util.Log.w(
-                        "UserActivityReport",
-                        "Document ID ${doc.id} is missing required fields. created_at: $createdAt, app_usage_time: $usageTime"
-                    )
-                    UserActivityData(doc.id, createdAt, usageTime)
+                if (username != null && createdAt != null && usageTime != null) {
+                    UserActivityData(username, createdAt, usageTime)
                 } else {
-                    android.util.Log.w(
-                        "UserActivityReport",
-                        "Document ID ${doc.id} is missing required fields. created_at: $createdAt, app_usage_time: $usageTime"
-                    )
-                    android.util.Log.w("UserActivityReport", "Incomplete Data for document ID: ${doc.id}")
                     null
                 }
             }
 
-            android.util.Log.d("UserActivityReport", "Total Users Fetched: ${userData.size}")
-
-            // Pass the data to the UI
             displayUserActivity(userData)
+            displayHistogram(userData)
         }.addOnFailureListener { e ->
             android.util.Log.e("UserActivityReport", "Error fetching user data", e)
         }
     }
-
-    data class UserActivityData(
-        val userId: String,
-        val createdAt: Date,
-        val appUsageTime: Long // in seconds
-    )
 
     private fun displayUserActivity(data: List<UserActivityData>) {
         adapter = UserActivityAdapter(data)
@@ -102,5 +105,60 @@ class UserActivityReportFragment : Fragment() {
                 android.util.Log.e("UserActivityReportFragment", "Failed to update feature usage time", e)
             }
         }
+    }
+
+    private fun displayHistogram(data: List<UserActivityData>) {
+        // Total Users
+        val totalUsers = data.size
+        val totalUsersEntries = listOf(BarEntry(0f, totalUsers.toFloat()))
+        val totalUsersLabels = listOf("Total Users")
+        setupBarChart(
+            barChart = view?.findViewById(R.id.barChartTotalUsers),
+            entries = totalUsersEntries,
+            labels = totalUsersLabels,
+            chartTitle = "Total Users"
+        )
+
+        // Total App Usage Time
+        val totalUsageTime = data.mapNotNull { it.appUsageTime?.toFloat() }.sum()
+        val totalUsageTimeEntries = listOf(BarEntry(0f, totalUsageTime))
+        val totalUsageTimeLabels = listOf("Total App Usage Time")
+        setupBarChart(
+            barChart = view?.findViewById(R.id.barChartTotalUsageTime),
+            entries = totalUsageTimeEntries,
+            labels = totalUsageTimeLabels,
+            chartTitle = "Total App Usage Time (seconds)"
+        )
+    }
+
+    private fun setupBarChart(
+        barChart: BarChart?,
+        entries: List<BarEntry>,
+        labels: List<String>,
+        chartTitle: String
+    ) {
+        if (barChart == null) return
+
+        val barDataSet = BarDataSet(entries, chartTitle).apply {
+            valueTextSize = 12f
+            color = resources.getColor(R.color.selected_green, null)
+        }
+
+        val xAxis = barChart.xAxis
+        xAxis.valueFormatter = object : ValueFormatter() {
+            override fun getFormattedValue(value: Float): String {
+                return if (value.toInt() in labels.indices) {
+                    labels[value.toInt()]
+                } else ""
+            }
+        }
+        xAxis.position = XAxis.XAxisPosition.BOTTOM
+        xAxis.granularity = 1f
+        xAxis.setDrawGridLines(false)
+
+        barChart.data = BarData(barDataSet)
+        barChart.description.isEnabled = false
+        barChart.animateY(1000)
+        barChart.invalidate() // Refresh chart
     }
 }

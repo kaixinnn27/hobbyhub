@@ -20,8 +20,8 @@ class UserActivityAdapter(
         private val tvAppUsageTime: TextView = itemView.findViewById(R.id.tvAppUsageTime)
 
         fun bind(item: UserActivityReportFragment.UserActivityData) {
-            tvUserId.text = "User ID: ${item.userId}"
-            tvCreatedAt.text = "Created At: ${SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(item.createdAt)}"
+            tvUserId.text = "User ID: ${item.username}"
+            tvCreatedAt.text = "Created At: ${(item.createdAt)}"
             tvAppUsageTime.text = "App Usage Time: ${item.appUsageTime / 60} minutes"
         }
     }
