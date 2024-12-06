@@ -7,6 +7,7 @@
         android:layout_height="match_parent"
         android:padding="16dp">
 
+        <!-- Wrap all children in a single container -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -39,39 +40,36 @@
                 android:layout_height="wrap_content"
                 android:text="@string/select_date" />
 
-            <!-- Time Picker -->
-            <TextView
-                android:id="@+id/tvTimeLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/time"
-                android:textSize="16sp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="8dp" />
-
             <Button
-                android:id="@+id/btnTimePicker"
+                android:id="@+id/btnStartTimePicker"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/select_time" />
 
-            <HorizontalScrollView
-                android:id="@+id/timeSlotScrollView"
+            <Button
+                android:id="@+id/btnEndTimePicker"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/select_time" />
+
+            <TextView
+                android:id="@+id/tvSelectedTimeRange"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:text="Selected Time: Not Set"
+                android:textSize="16sp" />
+
+            <!-- Timeframe container -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerTimeSlots"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:visibility="gone"
-                android:scrollbars="none">
+                android:padding="8dp"
+                android:visibility="visible" />
 
-                <LinearLayout
-                    android:id="@+id/llTimeSlotsContainer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="8dp" />
-            </HorizontalScrollView>
-
-            <!-- Location Spinner -->
             <TextView
                 android:id="@+id/tvLocationLabel"
                 android:layout_width="wrap_content"
@@ -86,7 +84,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <!-- Participants Input -->
             <TextView
                 android:id="@+id/tvParticipantsLabel"
                 android:layout_width="wrap_content"
@@ -106,7 +103,6 @@
                 android:padding="8dp"
                 android:background="@android:drawable/edit_text" />
 
-            <!-- Save Button -->
             <Button
                 android:id="@+id/btnSaveEvent"
                 android:layout_width="match_parent"
@@ -116,5 +112,6 @@
                 android:backgroundTint="?attr/colorPrimary"
                 android:textColor="@android:color/white" />
         </LinearLayout>
+
     </ScrollView>
 </FrameLayout>

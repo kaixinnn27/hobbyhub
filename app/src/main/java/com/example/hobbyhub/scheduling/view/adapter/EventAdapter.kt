@@ -21,7 +21,7 @@ class EventAdapter(private val events: List<Event>,
 
         fun bind(event: Event) {
             tvDate.text = event.date
-            tvTime.text = event.time
+            tvTime.text = event.startTime
             tvLocation.text = event.location
             tvParticipants.text = event.participants.joinToString(", ")
             Log.d("EventAdapter", "Binding Event: $event")

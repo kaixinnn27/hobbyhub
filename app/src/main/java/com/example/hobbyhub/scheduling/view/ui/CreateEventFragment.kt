@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,10 +20,13 @@ import com.example.hobbyhub.databinding.FragmentCreateEventBinding
 import com.example.hobbyhub.scheduling.model.Event
 import com.example.hobbyhub.utility.EventReminderReceiver
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.TimeFormat
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Locale
 
 class CreateEventFragment : Fragment() {
@@ -34,8 +38,10 @@ class CreateEventFragment : Fragment() {
     private val db by lazy { FirebaseFirestore.getInstance() }
 
     private var selectedDate: String = ""
-    private var selectedTime: String = ""
+    private var selectedStartTime: String = ""
+    private var selectedEndTime: String = ""
     private val busyTimes = mutableListOf<String>()
+    private val friendsMap = mutableMapOf<String, String>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,23 +53,29 @@ class CreateEventFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        // Setup UI components
         setupUI()
+        fetchFriends()
     }
 
     private fun setupUI() {
         val locations = listOf("Room A", "Room B", "Room C")
-        val participants = listOf("user1@example.com", "user2@example.com", "user3@example.com")
+        binding.btnStartTimePicker.setOnClickListener {
+            showTimePicker { selectedTime ->
+                selectedStartTime = selectedTime
+                updateSelectedTimeDisplay()
+            }
+        }
+
+        binding.btnEndTimePicker.setOnClickListener {
+            showTimePicker { selectedTime ->
+                selectedEndTime = selectedTime
+                updateSelectedTimeDisplay()
+            }
+        }
 
         // Location Spinner
         binding.spinnerLocation.adapter =
             ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, locations)
-
-        // Participants Input
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, participants)
-        binding.multiAutocompleteParticipants.setAdapter(adapter)
-        binding.multiAutocompleteParticipants.setTokenizer(android.widget.MultiAutoCompleteTextView.CommaTokenizer())
 
         // Date Picker
         binding.btnDatePicker.setOnClickListener {
@@ -74,16 +86,35 @@ class CreateEventFragment : Fragment() {
             datePicker.addOnPositiveButtonClickListener { selection ->
                 selectedDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(selection)
                 binding.btnDatePicker.text = selectedDate
-                Log.d("CreateEventFragment", "Selected date: $selectedDate")
-                fetchParticipantsAvailability()
+                fetchParticipantsAvailability() // Fetch availability after date is selected
             }
         }
 
-        // Save Button
         binding.btnSaveEvent.setOnClickListener {
             if (validateInputs()) {
                 saveEventToFirestore()
             }
+        }
+    }
+
+    private fun showTimePicker(onTimeSelected: (String) -> Unit) {
+        val timePicker = MaterialTimePicker.Builder()
+            .setTimeFormat(TimeFormat.CLOCK_24H)
+            .setTitleText("Select Time")
+            .build()
+        timePicker.show(parentFragmentManager, "TIME_PICKER")
+        timePicker.addOnPositiveButtonClickListener {
+            val time = String.format("%02d:%02d", timePicker.hour, timePicker.minute)
+            onTimeSelected(time)
+        }
+    }
+
+    private fun updateSelectedTimeDisplay() {
+        binding.tvSelectedTimeRange.text = when {
+            selectedStartTime.isNotEmpty() && selectedEndTime.isNotEmpty() -> "Selected Time: $selectedStartTime to $selectedEndTime"
+            selectedStartTime.isNotEmpty() -> "Start Time: $selectedStartTime"
+            selectedEndTime.isNotEmpty() -> "End Time: $selectedEndTime"
+            else -> "Selected Time: Not Set"
         }
     }
 
@@ -96,7 +127,7 @@ class CreateEventFragment : Fragment() {
             Toast.makeText(requireContext(), "Please select a date.", Toast.LENGTH_SHORT).show()
             return false
         }
-        if (selectedTime.isEmpty()) {
+        if (selectedStartTime.isEmpty() || selectedEndTime.isEmpty()) {
             Toast.makeText(requireContext(), "Please select a time.", Toast.LENGTH_SHORT).show()
             return false
         }
@@ -125,25 +156,27 @@ class CreateEventFragment : Fragment() {
         busyTimes.clear()
 
         // Fetch participant busy times for the selected date
-        val tasks = participants.map { participant ->
-            Log.d("CreateEventFragment", "Fetching schedule for participant: $participant")
+        val tasks = participants.map { participantUsername ->
+            val participantId = friendsMap[participantUsername] ?: return@map null
+            Log.d("CreateEventFragment", "Fetching schedule for participant: $participantUsername ($participantId)")
             db.collection("schedule")
-                .document(participant) // Check participant ID validity
+                .document(participantId) // Check participant ID validity
                 .collection("events")
                 .whereEqualTo("date", selectedDate)
                 .get()
-        }
+        }.filterNotNull()
 
         com.google.android.gms.tasks.Tasks.whenAllSuccess<QuerySnapshot>(tasks)
             .addOnSuccessListener { snapshots ->
                 for (snapshot in snapshots) {
                     for (doc in snapshot.documents) {
-                        val time = doc.getString("time")
-                        if (time != null) {
-                            busyTimes.add(time)
-                            Log.d("CreateEventFragment", "Added busy time: $time")
+                        val startTime = doc.getString("startTime")
+                        val endTime = doc.getString("endTime")
+                        if (startTime != null && endTime != null) {
+                            // Add all busy times between start and end time
+                            addBusyTimesToRange(startTime, endTime)
                         } else {
-                            Log.w("CreateEventFragment", "Document missing 'time' field: ${doc.id}")
+                            Log.w("CreateEventFragment", "Document missing 'startTime' or 'endTime' field: ${doc.id}")
                         }
                     }
                 }
@@ -155,88 +188,224 @@ class CreateEventFragment : Fragment() {
             }
     }
 
+    private fun addBusyTimesToRange(startTime: String, endTime: String) {
+        val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+        try {
+            val start = timeFormat.parse(startTime)
+            val end = timeFormat.parse(endTime)
+            val calendar = Calendar.getInstance()
+
+            calendar.time = start
+            while (calendar.time <= end) {
+                val busyTime = timeFormat.format(calendar.time)
+                if (!busyTimes.contains(busyTime)) {
+                    busyTimes.add(busyTime)
+                }
+                calendar.add(Calendar.MINUTE, 30) // Increment by 30 minutes
+            }
+        } catch (e: Exception) {
+            Log.e("CreateEventFragment", "Error parsing time range: ${e.message}")
+        }
+    }
+
     private fun generateFreeSlots() {
-        val workingHours = listOf(
-            "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "17:29"
-        )
+        val workingHours = generateTimeSlots()
         val freeSlots = workingHours.filter { it !in busyTimes }
 
         Log.d("CreateEventFragment", "Busy times: $busyTimes")
-        Log.d("CreateEventFragment", "Working hours: $workingHours")
         Log.d("CreateEventFragment", "Free slots: $freeSlots")
 
         if (freeSlots.isEmpty()) {
-            binding.timeSlotScrollView.visibility = View.GONE
+            binding.gridTimeSlots.visibility = View.GONE
             Toast.makeText(requireContext(), "No free slots available.", Toast.LENGTH_SHORT).show()
         } else {
-            binding.timeSlotScrollView.visibility = View.VISIBLE
-            populateTimeSlots(workingHours, freeSlots)
+            binding.gridTimeSlots.visibility = View.VISIBLE
+            populateTimeframe() // Populate the timeframe with visual blocks
         }
     }
 
-    private fun populateTimeSlots(workingHours: List<String>, freeSlots: List<String>) {
-        binding.llTimeSlotsContainer.removeAllViews()
+    private fun generateTimeSlots(): List<String> {
+        val timeSlots = mutableListOf<String>()
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.HOUR_OF_DAY, 8) // Start time (e.g., 8 AM)
+        calendar.set(Calendar.MINUTE, 0)
 
-        workingHours.forEach { time ->
-            val timeSlotView = layoutInflater.inflate(R.layout.item_time_slot, binding.llTimeSlotsContainer, false)
+        val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
 
-            val timeText = timeSlotView.findViewById<TextView>(R.id.tvTimeSlot)
-            timeText.text = time
+        while (calendar.get(Calendar.HOUR_OF_DAY) < 20) { // End time (e.g., 8 PM)
+            timeSlots.add(timeFormat.format(calendar.time))
+            calendar.add(Calendar.MINUTE, 30) // Increment by 30 minutes
+        }
 
-            // Highlight busy times
-            if (time in freeSlots) {
-                timeSlotView.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.light_green))
-            } else {
-                timeSlotView.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.dark_gray))
-            }
+        return timeSlots
+    }
 
-            // Handle user selection
-            timeSlotView.setOnClickListener {
-                if (time in freeSlots) {
-                    selectedTime = time
-                    Toast.makeText(requireContext(), "Selected time: $selectedTime", Toast.LENGTH_SHORT).show()
+    private fun populateTimeframe() {
+        binding.gridTimeSlots.removeAllViews() // Clear previous slots
+        val timeSlots = generate15MinuteIntervals() // Generate 15-minute intervals
+
+        timeSlots.forEach { time ->
+            val timeSlotView = TextView(requireContext()).apply {
+                text = time
+                textSize = 14f
+                setPadding(8, 16, 8, 16)
+                layoutParams = ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+                gravity = Gravity.CENTER
+
+                // Set background color based on availability
+                if (time in busyTimes) {
+                    setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.dark_gray))
+                    setTextColor(ContextCompat.getColor(requireContext(), android.R.color.white))
                 } else {
-                    Toast.makeText(requireContext(), "This time is busy.", Toast.LENGTH_SHORT).show()
+                    setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.light_green))
+                    setTextColor(ContextCompat.getColor(requireContext(), android.R.color.black))
+                }
+
+                setOnClickListener {
+                    if (time !in busyTimes) {
+                        selectedStartTime = time
+                        Toast.makeText(requireContext(), "Selected time: $time", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(requireContext(), "This time is busy.", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
-            binding.llTimeSlotsContainer.addView(timeSlotView)
+            // Add the time slot view to the grid
+            binding.gridTimeSlots.addView(timeSlotView)
         }
     }
 
+    private fun generate15MinuteIntervals(): List<String> {
+        val intervals = mutableListOf<String>()
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+
+        val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+
+        while (calendar.get(Calendar.HOUR_OF_DAY) < 24) {
+            intervals.add(timeFormat.format(calendar.time))
+            calendar.add(Calendar.MINUTE, 15) // Increment by 15 minutes
+        }
+
+        return intervals
+    }
+
+    private fun fetchFriends() {
+        val currentUser = auth.currentUser?.uid ?: return
+        Log.d("CreateEventFragment", "Current user ID: $currentUser")
+        db.collection("user").document(currentUser).get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val friendIds = document["friends"] as? List<String>
+                    if (friendIds != null) {
+                        Log.e("CreateEventFragment", "Friends: $friendIds")
+                        fetchFriendDetails(friendIds)
+                    } else {
+                        Log.e("CreateEventFragment", "No 'friends' field in user document.")
+                    }
+                } else {
+                    Log.e("CreateEventFragment", "User document does not exist.")
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e("CreateEventFragment", "Error fetching friends: ${e.message}")
+            }
+    }
+
+    private fun fetchFriendDetails(friendIds: List<String>) {
+        val usernames = mutableListOf<String>()
+        friendIds.forEach { userId ->
+            db.collection("user").document(userId).get()
+                .addOnSuccessListener { document ->
+                    val username = document["name"] as? String ?: return@addOnSuccessListener
+                    usernames.add(username)
+                    friendsMap[username] = userId
+                    Log.d("CreateEventFragment", "Friend fetched: $username -> $userId")
+                    updateParticipantAutoComplete(usernames)
+                }
+                .addOnFailureListener { e ->
+                    Log.e("CreateEventFragment", "Error fetching friend details: ${e.message}")
+                }
+        }
+    }
+
+    private fun updateParticipantAutoComplete(usernames: List<String>) {
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, usernames)
+        binding.multiAutocompleteParticipants.setAdapter(adapter)
+        binding.multiAutocompleteParticipants.setTokenizer(android.widget.MultiAutoCompleteTextView.CommaTokenizer())
+    }
 
     private fun saveEventToFirestore() {
         val userId = auth.currentUser?.uid ?: return
         val eventId = binding.etEventId.text.toString().trim()
 
+        val participantUsernames = binding.multiAutocompleteParticipants.text.toString()
+            .split(",").map { it.trim() }
+        val participantIds = participantUsernames.mapNotNull { friendsMap[it] }
+        Log.d("CreateEventFragment", "Saving Event for Participants: $participantIds")
+
         val event = Event(
             date = selectedDate,
             eventId = eventId,
-            time = selectedTime,
+            startTime = selectedStartTime,
+            endTime = selectedEndTime,
             location = binding.spinnerLocation.selectedItem.toString(),
-            participants = binding.multiAutocompleteParticipants.text.toString()
-                .split(",").map { it.trim() },
-            reminderTime = selectedTime
+            participants = participantUsernames,
+            reminderTime = selectedStartTime
         )
 
-        Log.d("CreateEventFragment", "Saving event: $event")
         db.collection("schedule").document(userId).collection("events").document(eventId)
             .set(event)
             .addOnSuccessListener {
                 Log.d("CreateEventFragment", "Event saved successfully.")
+                sendInvitations(event, participantIds)
                 setEventReminder(event)
                 Toast.makeText(requireContext(), "Event created successfully!", Toast.LENGTH_SHORT).show()
             }
             .addOnFailureListener { e ->
-                Log.e("CreateEventFragment", "Failed to save event: ${e.message}", e)
+                Log.e("CreateEventFragment", "Failed to save event: ${e.message}")
                 Toast.makeText(requireContext(), "Failed to save event.", Toast.LENGTH_SHORT).show()
             }
+    }
+
+    private fun sendInvitations(event: Event, participantIds: List<String>) {
+        val currentUser = auth.currentUser ?: return
+        participantIds.forEach { participantId ->
+            val chatRoomId = if (currentUser.uid < participantId) {
+                "${currentUser.uid}_$participantId"
+            } else {
+                "${participantId}_${currentUser.uid}"
+            }
+
+            val invitationMessage = mapOf(
+                "type" to "event_invitation",
+                "eventId" to event.eventId,
+                "eventDate" to event.date,
+                "eventStartTime" to event.startTime,
+                "eventEndTime" to event.endTime,
+                "senderId" to currentUser.uid,
+                "timestamp" to System.currentTimeMillis()
+            )
+
+            db.collection("chats").document(chatRoomId).collection("messages")
+                .add(invitationMessage)
+                .addOnSuccessListener {
+                    Log.d("CreateEventFragment", "Invitation sent to $participantId")
+                }
+                .addOnFailureListener { e ->
+                    Log.e("CreateEventFragment", "Failed to send invitation: ${e.message}")
+                }
+        }
     }
 
     private fun setEventReminder(event: Event) {
         val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-        // Check if exact alarms can be scheduled
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S &&
             !alarmManager.canScheduleExactAlarms()
         ) {
@@ -255,7 +424,7 @@ class CreateEventFragment : Fragment() {
             val eventDateTime = dateFormat.parse("${event.date} ${event.reminderTime}")
             val intent = Intent(requireContext(), EventReminderReceiver::class.java).apply {
                 putExtra("eventTitle", "Event Reminder: ${event.eventId}")
-                putExtra("eventTime", event.time)
+                putExtra("eventTime", event.startTime)
             }
 
             val pendingIntent = PendingIntent.getBroadcast(
@@ -280,6 +449,6 @@ class CreateEventFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        this._binding = null
+        _binding = null
     }
 }
