@@ -11,4 +11,8 @@
     <color name="blue">#2196F3</color>
     <color name="selected_green">#9EDF9C</color>
     <color name="customSelectedBackground">#03A9F4</color>
+    <color name="unselected_date">#CBCED2</color>
+    <color name="selected_date">#95B6E3</color>
+    <color name="text_color_date">#595959</color>
+    <color name="btn_bg_color">#DEE7F3</color>
 </resources>

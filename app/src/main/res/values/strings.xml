@@ -20,7 +20,6 @@
     <string name="login_label">HAVE ACCOUNT? SIGN IN HERE</string>
     <string name="back_to_login">BACK TO LOGIN</string>
     <string name="google_map_api_key">AIzaSyA_0OUex5GS9XOMk5s4k8_1kuemeE9svL0</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="select_your_hobbies">Select your hobbies</string>
     <string name="select_hobbies_subtitle">Choose the right for you!</string>
@@ -71,6 +70,20 @@
     <string name="app_usage_time_histogram">App Usage Time Histogram</string>
     <string name="rating_distribution">Rating Distribution</string>
     <string name="feedback_comments">Feedback Comments</string>
-    <string name="zoom_instruction">Zoom Instruction</string>
-    <string name="marker_text">Marker Text</string>
+    <string name="hobby_details">Hobby Details</string>
+    <string name="description">Description</string>
+    <string name="comprehensive_review">Comprehensive Review:</string>
+    <string name="show_all">Show All</string>
+    <string name="excellent">Excellent</string>
+    <string name="very_good">Very Good</string>
+    <string name="average">Average</string>
+    <string name="poor">Poor</string>
+    <string name="terrible">Terrible</string>
+    <string name="category">Category</string>
+    <string name="write_review">Write Review</string>
+    <string name="write_your_review_here">Write your review here</string>
+    <string name="submit_review">Submit Review</string>
+    <string name="chats">Chats</string>
+    <string name="username">Username</string>
+    <string name="_12_00_pm">12:00 PM</string>
 </resources>

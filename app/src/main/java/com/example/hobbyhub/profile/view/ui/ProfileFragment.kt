@@ -65,13 +65,16 @@ class ProfileFragment : Fragment() {
 //                    binding.tvCourse.text = user.studyField
 //                    binding.tvLearningStyle.text = user.learningStyle
 //                    binding.tvInterest.text = user.interest
-//                    binding.imgProfile.setImageBitmap(user.photo?.toBitmap())
+
                     if (user.photo.toBitmap() != null) {
-                        // Set the user's photo if it's not null
-                        binding.imgProfile.setImageBitmap(user.photo.toBitmap())
-                    }
-                    else{
-                        binding.imgProfile.setImageResource(R.drawable.profile)
+                        binding.headerProfile.setImageBitmap(user.photo.toBitmap())
+                        binding.letterOverlayTv.visibility = View.GONE
+                    } else {
+                        binding.headerProfile.setImageResource(R.drawable.profile_bg)
+                        binding.letterOverlayTv.visibility = View.VISIBLE
+
+                        val firstLetter = user.name.firstOrNull()?.toString()?.uppercase() ?: "U"
+                        binding.letterOverlayTv.text = firstLetter
                     }
                 }
             }
