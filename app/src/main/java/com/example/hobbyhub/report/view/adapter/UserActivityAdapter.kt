@@ -6,12 +6,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.hobbyhub.R
-import com.example.hobbyhub.report.view.ui.UserActivityReportFragment
-import java.text.SimpleDateFormat
-import java.util.Locale
+import com.example.hobbyhub.report.model.UserActivityData
 
 class UserActivityAdapter(
-    private val data: List<UserActivityReportFragment.UserActivityData>
+    private val data: List<UserActivityData>
 ) : RecyclerView.Adapter<UserActivityAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -19,7 +17,7 @@ class UserActivityAdapter(
         private val tvCreatedAt: TextView = itemView.findViewById(R.id.tvCreatedAt)
         private val tvAppUsageTime: TextView = itemView.findViewById(R.id.tvAppUsageTime)
 
-        fun bind(item: UserActivityReportFragment.UserActivityData) {
+        fun bind(item: UserActivityData) {
             tvUserId.text = "User ID: ${item.username}"
             tvCreatedAt.text = "Created At: ${(item.createdAt)}"
             tvAppUsageTime.text = "App Usage Time: ${item.appUsageTime / 60} minutes"
