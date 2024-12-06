@@ -5,9 +5,10 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Event(
-    var eventId: String = "",  // Add eventId as a unique identifier
     val date: String = "",
+    var eventId: String = "",
     val time: String = "",
     val location: String = "",
-    val participants: List<String> = listOf()
+    val participants: List<String> = emptyList(),
+    val reminderTime: String = ""
 ) : Parcelable

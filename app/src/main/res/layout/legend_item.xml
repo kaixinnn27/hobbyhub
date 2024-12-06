@@ -1,0 +1,22 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:layout_margin="4dp"
+    android:gravity="center_vertical">
+
+    <View
+        android:id="@+id/legendColor"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginEnd="8dp"
+        android:background="#FF0000" /> <!-- Default Color -->
+
+    <TextView
+        android:id="@+id/legendText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hobby Name"
+        android:textSize="14sp"
+        android:textColor="#000000" />
+</LinearLayout>

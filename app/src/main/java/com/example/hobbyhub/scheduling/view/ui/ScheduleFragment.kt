@@ -72,7 +72,7 @@ class ScheduleFragment : Fragment() {
                 val events = documents.mapNotNull { doc ->
                     val event = doc.toObject(Event::class.java)
                     event.apply {
-                        eventId = doc.id // Assign the document ID to the eventId field
+                        eventId = doc.id
                     }
                 }
                 scheduleViewModel.setEvents(events)
