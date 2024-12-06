@@ -111,7 +111,7 @@ class CalendarFragment : Fragment() {
         binding.tvEventDetails.text = """
             Event ID: ${event.eventId}
             Date: ${event.date}
-            Time: ${event.time}
+            Time: ${event.startTime}
             Location: ${event.location}
             Participants: ${event.participants.joinToString(", ")}
         """.trimIndent()

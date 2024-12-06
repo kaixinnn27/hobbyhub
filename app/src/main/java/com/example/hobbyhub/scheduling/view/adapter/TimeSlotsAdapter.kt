@@ -1,55 +1,34 @@
-package com.example.hobbyhub.scheduling.view.adapter
+package com.example.hobbyhub.scheduling.view.ui
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.hobbyhub.R
 
-class TimeSlotsAdapter(
-    private val onSlotSelected: (String) -> Unit
-) : RecyclerView.Adapter<TimeSlotsAdapter.TimeSlotViewHolder>() {
+class TimeSlotAdapter(
+    private val context: Context,
+    private val busySlots: List<String>
+) : RecyclerView.Adapter<TimeSlotAdapter.TimeSlotViewHolder>() {
 
-    private val timeSlots = mutableListOf<String>()
-    private var selectedPosition = RecyclerView.NO_POSITION
-
-    fun submitList(slots: List<String>) {
-        timeSlots.clear()
-        timeSlots.addAll(slots)
-        notifyDataSetChanged()
+    inner class TimeSlotViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val timeTextView: TextView = itemView.findViewById(R.id.tvTimeSlot)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimeSlotViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_time_slot, parent, false)
+        val view = LayoutInflater.from(context).inflate(R.layout.item_time_slot, parent, false)
         return TimeSlotViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: TimeSlotViewHolder, position: Int) {
-        val slot = timeSlots[position]
-        holder.bind(slot, position == selectedPosition)
-
-        holder.itemView.setOnClickListener {
-            val previousPosition = selectedPosition
-            selectedPosition = holder.adapterPosition
-            notifyItemChanged(previousPosition) // Refresh previous selection
-            notifyItemChanged(selectedPosition) // Refresh current selection
-            onSlotSelected(slot)
-        }
+        val timeSlot = busySlots[position]
+        holder.timeTextView.text = timeSlot
+        holder.timeTextView.setBackgroundColor(ContextCompat.getColor(context, R.color.dark_gray))
+        holder.timeTextView.setTextColor(ContextCompat.getColor(context, android.R.color.white))
     }
 
-    override fun getItemCount(): Int = timeSlots.size
-
-    class TimeSlotViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val textView: TextView = itemView.findViewById(R.id.tvTimeSlot)
-
-        fun bind(slot: String, isSelected: Boolean) {
-            textView.text = slot
-            textView.isSelected = isSelected
-            textView.setBackgroundResource(
-                if (isSelected) R.drawable.bg_time_slot_selected else R.drawable.bg_time_slot_unselected
-            )
-        }
-    }
+    override fun getItemCount(): Int = busySlots.size
 }

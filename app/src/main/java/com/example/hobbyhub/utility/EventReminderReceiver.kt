@@ -22,7 +22,7 @@ class EventReminderReceiver : BroadcastReceiver() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val notification = NotificationCompat.Builder(context, "EVENT_REMINDERS")
+        val notification = NotificationCompat.Builder(context, "event_reminders")
             .setSmallIcon(R.drawable.ic_logo) // Replace with your icon
             .setContentTitle(eventTitle)
             .setContentText("Scheduled at $eventTime")

@@ -86,4 +86,10 @@
     <string name="chats">Chats</string>
     <string name="username">Username</string>
     <string name="_12_00_pm">12:00 PM</string>
+    <string name="marker_text">Marker Text</string>
+    <string name="start_time">Start Time</string>
+    <string name="end_time">End Time</string>
+    <string name="select_start_time">Select Start Time</string>
+    <string name="selected_time_not_set">Selected Time: Not Set</string>
+    <string name="select_end_time">Select End Time</string>
 </resources>

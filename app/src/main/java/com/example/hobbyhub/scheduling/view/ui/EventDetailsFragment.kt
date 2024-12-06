@@ -40,7 +40,7 @@ class EventDetailsFragment : Fragment() {
 
         // Display Event Details
         binding.tvDate.text = "Date: ${event.date}"
-        binding.tvTime.text = "Time: ${event.time}"
+        binding.tvTime.text = "Time: ${event.startTime}"
         binding.tvLocation.text = "Location: ${event.location}"
         binding.tvParticipants.text = "Participants: ${event.participants.joinToString(", ")}"
 
@@ -59,7 +59,7 @@ class EventDetailsFragment : Fragment() {
     private fun deleteEvent(event: Event) {
         val userId = auth.currentUser?.uid ?: return
         db.collection("schedule").document(userId)
-            .collection("events").whereEqualTo("date", event.date).whereEqualTo("time", event.time)
+            .collection("events").whereEqualTo("date", event.date).whereEqualTo("time", event.startTime)
             .get()
             .addOnSuccessListener { documents ->
                 for (document in documents) {

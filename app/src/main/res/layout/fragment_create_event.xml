@@ -7,6 +7,7 @@
         android:layout_height="match_parent"
         android:padding="16dp">
 
+        <!-- Wrap all children in a single container -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -39,39 +40,50 @@
                 android:layout_height="wrap_content"
                 android:text="@string/select_date" />
 
-            <!-- Time Picker -->
-            <TextView
-                android:id="@+id/tvTimeLabel"
-                android:layout_width="wrap_content"
+            <Button
+                android:id="@+id/btnStartTimePicker"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/time"
-                android:textSize="16sp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="8dp" />
+                android:text="@string/select_start_time" />
 
             <Button
-                android:id="@+id/btnTimePicker"
+                android:id="@+id/btnEndTimePicker"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/select_time" />
+                android:text="@string/select_end_time" />
 
-            <HorizontalScrollView
-                android:id="@+id/timeSlotScrollView"
+            <TextView
+                android:id="@+id/tvSelectedTimeRange"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:visibility="gone"
-                android:scrollbars="none">
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:text="@string/selected_time_not_set"
+                android:textSize="16sp" />
 
-                <LinearLayout
-                    android:id="@+id/llTimeSlotsContainer"
-                    android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvUnavailableTimes"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="8dp" />
-            </HorizontalScrollView>
+                    android:text="Unavailable Times for Participants"
+                    android:textSize="16sp"
+                    android:visibility="gone"
+                    android:gravity="center"
+                    android:layout_marginBottom="4dp" />
 
-            <!-- Location Spinner -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerTimeSlots"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/tvLocationLabel"
                 android:layout_width="wrap_content"
@@ -86,7 +98,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <!-- Participants Input -->
             <TextView
                 android:id="@+id/tvParticipantsLabel"
                 android:layout_width="wrap_content"
@@ -106,7 +117,6 @@
                 android:padding="8dp"
                 android:background="@android:drawable/edit_text" />
 
-            <!-- Save Button -->
             <Button
                 android:id="@+id/btnSaveEvent"
                 android:layout_width="match_parent"
@@ -116,5 +126,6 @@
                 android:backgroundTint="?attr/colorPrimary"
                 android:textColor="@android:color/white" />
         </LinearLayout>
+
     </ScrollView>
 </FrameLayout>

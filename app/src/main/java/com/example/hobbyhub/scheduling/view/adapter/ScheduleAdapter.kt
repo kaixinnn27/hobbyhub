@@ -25,7 +25,7 @@ class ScheduleAdapter(
             // Bind the event details, including eventId
             tvEventId.text = "Event ID: ${event.eventId}" // Display the eventId
             tvDate.text = event.date
-            tvTime.text = event.time
+            tvTime.text = event.startTime
             tvLocation.text = event.location
             tvParticipants.text = event.participants.joinToString(", ")
 

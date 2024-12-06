@@ -82,9 +82,9 @@ class EditEventFragment : Fragment() {
     private fun populateFields(event: Event) {
         binding.etEventId.setText(event.eventId)
         selectedDate = event.date
-        selectedTime = event.time
+        selectedTime = event.startTime
         binding.btnDatePicker.text = event.date
-        binding.btnTimePicker.text = event.time
+        binding.btnTimePicker.text = event.startTime
 
         binding.btnDatePicker.setOnClickListener {
             val datePicker = MaterialDatePicker.Builder.datePicker()
@@ -98,7 +98,7 @@ class EditEventFragment : Fragment() {
             }
         }
         binding.btnTimePicker.setOnClickListener {
-            val timeParts = event.time.split(":").map { it.toInt() }
+            val timeParts = event.startTime.split(":").map { it.toInt() }
             val timePicker = MaterialTimePicker.Builder()
                 .setTimeFormat(TimeFormat.CLOCK_24H)
                 .setHour(timeParts[0])
@@ -145,7 +145,7 @@ class EditEventFragment : Fragment() {
         val updatedEvent = Event(
             eventId = eventId,
             date = date,
-            time = time,
+            startTime = time,
             location = location,
             participants = participants
         )
