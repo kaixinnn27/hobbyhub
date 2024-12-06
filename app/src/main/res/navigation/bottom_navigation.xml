@@ -172,4 +172,11 @@
         android:name="com.example.hobbyhub.report.view.ui.UserFeedbackAnalysisFragment"
         android:label="User Activity Report"
         tools:layout="@layout/fragment_user_feedback" />
+
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.example.hobbyhub.findbuddy.view.ui.MapFragment"
+        android:label="fragment_map"
+        tools:layout="@layout/fragment_map" />
+
 </navigation>

@@ -6,6 +6,7 @@
     android:clickable="true"
     android:focusable="true"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
     app:cardCornerRadius="20dp">
 
     <RelativeLayout
@@ -17,8 +18,8 @@
             android:id="@+id/imgProfile"
             android:layout_width="60dp"
             android:layout_height="60dp"
+            android:layout_marginStart="4dp"
             android:layout_centerVertical="true"
-            android:layout_marginStart="20dp"
             android:background="@drawable/avatar_shape"
             android:padding="3dp"
             android:src="@drawable/profile" />
@@ -30,8 +31,7 @@
             android:layout_toEndOf="@id/imgProfile"
             android:layout_marginStart="16dp"
             android:layout_centerVertical="true"
-            android:fontFamily="@font/bungee"
-            android:text="Username"
+            android:text="@string/username"
             android:textColor="@color/black"
             android:textSize="24sp"/>
 
@@ -41,9 +41,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:layout_marginEnd="16dp"
-            android:fontFamily="@font/bungee"
-            android:text="12:00 PM"
+            android:layout_marginEnd="4dp"
+            android:text="@string/_12_00_pm"
             android:textColor="@color/dark_gray"
             android:textSize="12sp"/>
     </RelativeLayout>

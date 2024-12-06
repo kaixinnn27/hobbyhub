@@ -45,11 +45,11 @@ class HorizontalHobbyAdapter(private var hobbies: List<Hobby>) :
                 // navigate to PlacesDetailsActivity
                 val context = binding.root.context
                 // TODO: navigate to hobby details
-//                val intent = Intent(context, PlacesDetailsActivity::class.java).apply {
-//                    // Pass the selected TouristPlace to the details activity
-//                    putExtra("hobby", hobby)
-//                }
-//                context.startActivity(intent)
+                val intent = Intent(context, HobbyDetailsActivity::class.java).apply {
+                    // Pass the selected TouristPlace to the details activity
+                    putExtra("hobby", hobby)
+                }
+                context.startActivity(intent)
             }
         }
     }
