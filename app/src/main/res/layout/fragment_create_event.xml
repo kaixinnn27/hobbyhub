@@ -55,6 +55,22 @@
                 android:layout_height="wrap_content"
                 android:text="@string/select_time" />
 
+            <HorizontalScrollView
+                android:id="@+id/timeSlotScrollView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:visibility="gone"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:id="@+id/llTimeSlotsContainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="8dp" />
+            </HorizontalScrollView>
+
             <!-- Location Spinner -->
             <TextView
                 android:id="@+id/tvLocationLabel"
