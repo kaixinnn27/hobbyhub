@@ -1,6 +1,5 @@
 package com.example.hobbyhub.scheduling.view.ui
 
-import EventDecorator
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle

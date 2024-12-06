@@ -81,7 +81,8 @@ class RegisterFragment : Fragment() {
             name = name,
             email = email,
             createdAt = System.currentTimeMillis(),
-            updatedAt = System.currentTimeMillis()
+            updatedAt = System.currentTimeMillis(),
+            admin = false
         )
 
         lifecycleScope.launch {

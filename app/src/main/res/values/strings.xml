@@ -20,7 +20,6 @@
     <string name="login_label">HAVE ACCOUNT? SIGN IN HERE</string>
     <string name="back_to_login">BACK TO LOGIN</string>
     <string name="google_map_api_key">AIzaSyA_0OUex5GS9XOMk5s4k8_1kuemeE9svL0</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="select_your_hobbies">Select your hobbies</string>
     <string name="select_hobbies_subtitle">Choose the right for you!</string>
@@ -60,6 +59,17 @@
     <string name="find_buddy">Find Buddy</string>
     <string name="calendar">Calendar</string>
     <string name="open_calendar">Open Calendar</string>
+    <string name="report_title">Reports</string>
+    <string name="admin_reports">Admin Reports</string>
+    <string name="user_activity_report">User Activity Report</string>
+    <string name="hobby_popularity_report">Hobby Popularity Report</string>
+    <string name="user_demographics_report">User Demographics Report</string>
+    <string name="user_feedback_analysis">User Feedback Analysis</string>
+    <string name="user_details">User Details</string>
+    <string name="select_user">Select User</string>
+    <string name="app_usage_time_histogram">App Usage Time Histogram</string>
+    <string name="rating_distribution">Rating Distribution</string>
+    <string name="feedback_comments">Feedback Comments</string>
     <string name="hobby_details">Hobby Details</string>
     <string name="description">Description</string>
     <string name="comprehensive_review">Comprehensive Review:</string>

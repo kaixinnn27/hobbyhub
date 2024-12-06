@@ -126,9 +126,57 @@
             android:name="event"
             app:argType="com.example.hobbyhub.scheduling.model.Event" />
     </fragment>
+
+    <fragment
+        android:id="@+id/navigation_report"
+        android:name="com.example.hobbyhub.report.view.ui.ReportModuleFragment"
+        android:label="Report"
+        tools:layout="@layout/fragment_report" />
+
+    <action
+        android:id="@+id/action_reportMainFragment_to_userActivityReportFragment"
+        app:destination="@id/userActivityReportFragment" />
+
+    <fragment
+        android:id="@+id/userActivityReportFragment"
+        android:name="com.example.hobbyhub.report.view.ui.UserActivityReportFragment"
+        android:label="User Activity Report"
+        tools:layout="@layout/fragment_user_activity" />
+
+    <action
+        android:id="@+id/action_reportMainFragment_to_hobbyPopularityReportFragment"
+        app:destination="@id/hobbyPopularityReportFragment" />
+
+    <fragment
+        android:id="@+id/hobbyPopularityReportFragment"
+        android:name="com.example.hobbyhub.report.view.ui.HobbyPopularityReportFragment"
+        android:label="User Activity Report"
+        tools:layout="@layout/fragment_hobby_popularity" />
+
+    <action
+        android:id="@+id/action_reportMainFragment_to_userDemographicsReportFragment"
+        app:destination="@id/userDemographicsReportFragment" />
+
+    <fragment
+        android:id="@+id/userDemographicsReportFragment"
+        android:name="com.example.hobbyhub.report.view.ui.UserDemographicsReportFragment"
+        android:label="User Activity Report"
+        tools:layout="@layout/fragment_user_demographics" />
+
+    <action
+        android:id="@+id/action_reportMainFragment_to_userFeedbackAnalysisFragment"
+        app:destination="@id/userFeedbackAnalysisFragment" />
+
+    <fragment
+        android:id="@+id/userFeedbackAnalysisFragment"
+        android:name="com.example.hobbyhub.report.view.ui.UserFeedbackAnalysisFragment"
+        android:label="User Activity Report"
+        tools:layout="@layout/fragment_user_feedback" />
+
     <fragment
         android:id="@+id/mapFragment"
         android:name="com.example.hobbyhub.findbuddy.view.ui.MapFragment"
         android:label="fragment_map"
         tools:layout="@layout/fragment_map" />
+
 </navigation>
