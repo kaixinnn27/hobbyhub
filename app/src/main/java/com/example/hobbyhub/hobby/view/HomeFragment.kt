@@ -1,6 +1,7 @@
 package com.example.hobbyhub.hobby.view
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -10,10 +11,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hobbyhub.R
+import com.example.hobbyhub.achievement.viewmodel.AchievementViewModel
+import com.example.hobbyhub.authentication.view.AuthenticationActivity
 import com.example.hobbyhub.authentication.viewmodel.AuthViewModel
 import com.example.hobbyhub.databinding.FragmentHomeBinding
 import com.example.hobbyhub.findbuddy.view.ui.FindBuddyFragment
@@ -33,6 +37,7 @@ class HomeFragment : Fragment() {
     private val authViewModel: AuthViewModel by activityViewModels()
     private val userHobbyViewModel: UserHobbyViewModel by activityViewModels()
     private val hobbyViewModel: HobbyViewModel by activityViewModels()
+    private val achievementViewModel: AchievementViewModel by activityViewModels()
     private var searchQuery: String = ""
     private val filteredHobbyList = mutableListOf<Hobby>()
     private lateinit var filteredAdapter: FilteredAdapter
@@ -47,6 +52,7 @@ class HomeFragment : Fragment() {
         setupHorizontalAdapter()
         loadUserPhoto()
         setupVerticalAdapter()
+        setupStreaks()
 
         binding.cardViewMap.setOnClickListener {
             nav.navigate(R.id.navigation_find_buddy)
@@ -55,6 +61,16 @@ class HomeFragment : Fragment() {
         binding.findBuddyBtn.setOnClickListener {
             nav.navigate(R.id.navigation_find_buddy)
         }
+
+//        binding.checkInButton.setOnClickListener {
+//            val userId = authViewModel.getCurrentUserId()
+//            if (userId != null) {
+//                achievementViewModel.updateDailyStreak(userId)
+//            } else {
+//                val intent = Intent(context, AuthenticationActivity::class.java)
+//                context?.startActivity(intent)
+//            }
+//        }
 
         binding.searchBar.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
@@ -80,7 +96,21 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
-    private fun setupVerticalAdapter(){
+    @SuppressLint("SetTextI18n")
+    private fun setupStreaks() {
+        achievementViewModel.streaks.observe(viewLifecycleOwner) { streakData ->
+            Log.d("setupStreaks", "$streakData")
+            // Update the UI with streak data (current streak and best streak)
+            val currentStreak = streakData["currentValue"] as? Int ?: 0
+            val bestStreak = streakData["bestStreak"] as? Int ?: 0
+
+            // Display current streak and best streak in your TextViews
+            binding.streakTextView.text = "$currentStreak days"
+            binding.bestStreaksTv.text = "$bestStreak days"
+        }
+    }
+
+    private fun setupVerticalAdapter() {
         filteredAdapter = FilteredAdapter(filteredHobbyList)
         binding.filteredRecyclerView.layoutManager = LinearLayoutManager(context)
         binding.filteredRecyclerView.adapter = filteredAdapter
@@ -145,16 +175,17 @@ class HomeFragment : Fragment() {
 
     private fun setupHorizontalAdapter() {
         horizontalHobbyAdapter = HorizontalHobbyAdapter(emptyList())
-        binding.hobbiesRv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        binding.hobbiesRv.layoutManager =
+            LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         binding.hobbiesRv.adapter = horizontalHobbyAdapter
 
         val userId = authViewModel.getCurrentUserId()
-        Log.d("HomeFragment","userId -> $userId")
-        if(userId!=null){
+        Log.d("HomeFragment", "userId -> $userId")
+        if (userId != null) {
             lifecycleScope.launch {
                 val userHobby: UserHobby? = userHobbyViewModel.get(userId)
-                Log.d("HomeFragment","userHobby -> $userHobby")
-                if(userHobby!=null && userHobby.preferredCategories.isNotEmpty()){
+                Log.d("HomeFragment", "userHobby -> $userHobby")
+                if (userHobby != null && userHobby.preferredCategories.isNotEmpty()) {
                     hobbyViewModel.getHobbiesByCategories(userHobby.preferredCategories)
                 }
             }
