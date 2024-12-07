@@ -21,7 +21,35 @@
             android:layout_width="match_parent"
             android:layout_height="300dp" />
 
-        <!-- Feedback Comments -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/common_feedback_themes"
+            android:textStyle="bold"
+            android:paddingTop="16dp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvFeedbackComments"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/pieChartFeedbackThemes"
+            android:layout_width="match_parent"
+            android:layout_height="300dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/sentiment_analysis"
+            android:textStyle="bold"
+            android:paddingTop="16dp" />
+
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/barChartSentiment"
+            android:layout_width="match_parent"
+            android:layout_height="300dp" />
+
         <TextView
             android:id="@+id/tvFeedbackTitle"
             android:layout_width="match_parent"
@@ -30,9 +58,5 @@
             android:textStyle="bold"
             android:paddingTop="16dp" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvFeedbackComments"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
     </LinearLayout>
 </ScrollView>
