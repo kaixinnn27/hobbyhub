@@ -8,7 +8,12 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
+    <permission
+        android:name="com.example.hobbyhub.permission.EVENT_REMINDER"
+        android:protectionLevel="normal" />
+
     <application
+        android:name=".HobbyHubApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -39,6 +44,11 @@
         <activity
             android:name=".MainActivity"
             android:exported="false" />
+
+        <receiver
+            android:name=".utility.EventReminderReceiver"
+            android:exported="true"
+            android:permission="com.example.hobbyhub.permission.EVENT_REMINDER" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

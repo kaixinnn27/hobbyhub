@@ -36,5 +36,65 @@
         android:textSize="14sp"
         android:visibility="visible"/>
 
+    <LinearLayout
+        android:id="@+id/invitation_section"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="4dp"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:background="@drawable/receive_round_box"
+        android:backgroundTint="#e4e6eb"
+        android:padding="12dp">
+
+        <!-- Event Details -->
+        <TextView
+            android:id="@+id/tv_invitation_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="You're invited to an event"
+            android:textSize="14sp"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/tv_event_details"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Event: Meeting\nDate: 2024-12-12\nTime: 10:00 - 11:00"
+            android:textSize="12sp"
+            android:textColor="@android:color/darker_gray"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Buttons -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_accept"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Accept"
+                android:textSize="12sp"
+                android:layout_marginEnd="8dp"
+                android:backgroundTint="@color/primaryColor"
+                android:textColor="@android:color/white" />
+
+            <Button
+                android:id="@+id/btn_decline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Decline"
+                android:textSize="12sp"
+                android:backgroundTint="@color/dark_gray"
+                android:textColor="@android:color/white" />
+        </LinearLayout>
+    </LinearLayout>
 
 </RelativeLayout>

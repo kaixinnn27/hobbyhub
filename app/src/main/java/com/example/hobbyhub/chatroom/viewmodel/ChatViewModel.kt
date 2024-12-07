@@ -148,15 +148,30 @@ class ChatViewModel : ViewModel() {
                     val senderId = document.getString("senderId") ?: ""
                     val content = document.getString("content") ?: ""
                     val timestamp = document.getLong("timestamp") ?: 0
-                    val message = Message(senderId, content, timestamp)
+                    val type = document.getString("type") ?: "text" // Defaulting to "text"
+                    val eventId = document.getString("eventId")
+                    val eventDate = document.getString("eventDate")
+                    val eventStartTime = document.getString("eventStartTime")
+                    val eventEndTime = document.getString("eventEndTime")
+
+                    Log.d("ChatViewModel", "Loaded message: senderId=$senderId, type=$type, content=$content, eventId=$eventId")
+
+                    val message = Message(senderId, content, timestamp, type, eventId, eventDate, eventStartTime, eventEndTime)
                     messageList.add(message)
                 }
                 messages.value = messageList
             }
     }
 
-    fun sendMessage(friendId: String, content: String) {
-        // Construct the chat room ID based on both users' IDs
+    fun sendMessage(
+        friendId: String,
+        content: String,
+        type: String = "text",
+        eventId: String? = null,
+        eventDate: String? = null,
+        eventStartTime: String? = null,
+        eventEndTime: String? = null
+    ) {
         val chatRoomId = if (currentUser != null) {
             if (currentUser.uid < friendId) {
                 "${currentUser.uid}_$friendId"
@@ -168,12 +183,19 @@ class ChatViewModel : ViewModel() {
         }
 
         currentUser?.uid?.let { uid ->
-            // Create a new message document within the specified chat room
             val messageMap = hashMapOf(
                 "senderId" to uid,
                 "content" to content,
-                "timestamp" to System.currentTimeMillis()
+                "timestamp" to System.currentTimeMillis(),
+                "type" to type
             )
+
+            if (type == "event_invitation") {
+                eventId?.let { messageMap["eventId"] = it }
+                eventDate?.let { messageMap["eventDate"] = it }
+                eventStartTime?.let { messageMap["eventStartTime"] = it }
+                eventEndTime?.let { messageMap["eventEndTime"] = it }
+            }
 
             firestore.collection("chats")
                 .document(chatRoomId)

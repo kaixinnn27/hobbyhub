@@ -1,15 +1,10 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="80dp"
-    android:layout_height="40dp"
-    android:layout_marginEnd="8dp"
-    android:background="@drawable/time_slot_background"
-    android:gravity="center">
-
-    <TextView
-        android:id="@+id/tvTimeSlot"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textColor="@android:color/white"
-        android:textSize="14sp" />
-</FrameLayout>
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tvTimeSlot"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    android:textSize="14sp"
+    android:gravity="center"
+    android:background="@color/dark_gray"
+    android:textColor="@android:color/white" />

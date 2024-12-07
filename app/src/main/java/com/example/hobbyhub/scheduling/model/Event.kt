@@ -7,7 +7,8 @@ import kotlinx.parcelize.Parcelize
 data class Event(
     val date: String = "",
     var eventId: String = "",
-    val time: String = "",
+    val startTime: String = "",
+    val endTime: String = "",
     val location: String = "",
     val participants: List<String> = emptyList(),
     val reminderTime: String = ""
