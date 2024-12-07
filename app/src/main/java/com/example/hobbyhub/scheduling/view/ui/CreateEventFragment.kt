@@ -6,17 +6,13 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.TextView
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.hobbyhub.R
 import com.example.hobbyhub.databinding.FragmentCreateEventBinding
 import com.example.hobbyhub.scheduling.model.Event
 import com.example.hobbyhub.utility.EventReminderReceiver
@@ -27,7 +23,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import java.text.SimpleDateFormat
-import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
 class CreateEventFragment : Fragment() {
@@ -342,29 +338,42 @@ class CreateEventFragment : Fragment() {
 
         try {
             val eventDateTime = dateFormat.parse("${event.date} ${event.reminderTime}")
-            val intent = Intent(requireContext(), EventReminderReceiver::class.java).apply {
-                putExtra("eventTitle", "Event Reminder: ${event.eventId}")
-                putExtra("eventTime", event.startTime)
-            }
-
-            val pendingIntent = PendingIntent.getBroadcast(
-                requireContext(),
-                event.eventId.hashCode(),
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
-
             if (eventDateTime != null) {
-                alarmManager.setExactAndAllowWhileIdle(
-                    AlarmManager.RTC_WAKEUP,
-                    eventDateTime.time,
-                    pendingIntent
+                // Schedule first reminder 1 hour before event start time
+                scheduleReminder(
+                    alarmManager,
+                    eventDateTime.time - (60 * 60 * 1000), // 1 hour in milliseconds
+                    "Reminder: ${event.eventId} starts in 1 hour!",
+                    event.eventId.hashCode() + 1 // Unique request code
+                )
+
+                // Schedule second reminder 30 minutes before event start time
+                scheduleReminder(
+                    alarmManager,
+                    eventDateTime.time - (30 * 60 * 1000), // 30 minutes in milliseconds
+                    "Reminder: ${event.eventId} starts in 30 minutes!",
+                    event.eventId.hashCode() + 2 // Unique request code
                 )
             }
-            Log.d("CreateEventFragment", "Reminder set for: ${event.date} ${event.reminderTime}")
         } catch (e: Exception) {
             Log.e("CreateEventFragment", "Failed to parse reminder time: ${e.message}")
         }
+    }
+
+    private fun scheduleReminder(alarmManager: AlarmManager, triggerAtMillis: Long, message: String, requestCode: Int) {
+        val intent = Intent(requireContext(), EventReminderReceiver::class.java).apply {
+            putExtra("eventTitle", message)
+        }
+
+        val pendingIntent = PendingIntent.getBroadcast(
+            requireContext(),
+            requestCode,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntent)
+        Log.d("CreateEventFragment", "Scheduled reminder: $message at ${Date(triggerAtMillis)}")
     }
 
     override fun onDestroyView() {

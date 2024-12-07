@@ -70,7 +70,7 @@
                     android:id="@+id/tvUnavailableTimes"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Unavailable Times for Participants"
+                    android:text="@string/unavailable_times_for_participants"
                     android:textSize="16sp"
                     android:visibility="gone"
                     android:gravity="center"

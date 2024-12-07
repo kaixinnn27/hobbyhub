@@ -1,68 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="16dp">
+    android:layout_height="match_parent">
 
-    <LinearLayout
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:padding="16dp">
 
-        <!-- Event ID Input (Read-Only) -->
-        <EditText
-            android:id="@+id/etEventId"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:textStyle="bold"
-            android:hint="@string/event_id"
-            android:inputType="text"
-            android:enabled="false" />
-
-        <!-- Date Picker Button -->
-        <Button
-            android:id="@+id/btnDatePicker"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/select_date" />
+            android:orientation="vertical">
 
-        <!-- Time Picker Button -->
-        <Button
-            android:id="@+id/btnTimePicker"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/select_time" />
+            <!-- Event ID Input (Read-Only) -->
+            <EditText
+                android:id="@+id/etEventId"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:textStyle="bold"
+                android:hint="@string/event_id"
+                android:inputType="text"
+                android:enabled="false" />
 
-        <!-- Location Spinner -->
-        <Spinner
-            android:id="@+id/spinnerLocation"
-            android:layout_width="match_parent"
-            android:layout_height="40dp" />
+            <!-- Date Picker Button -->
+            <Button
+                android:id="@+id/btnDatePicker"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/select_date" />
 
-        <!-- Participants MultiAutoCompleteTextView -->
-        <MultiAutoCompleteTextView
-            android:id="@+id/multiAutocompleteParticipants"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:hint="@string/display_participants" />
+            <!-- Time Picker Button -->
+            <Button
+                android:id="@+id/btnStartTimePicker"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/select_start_time" />
 
-        <!-- Save Changes Button -->
-        <Button
-            android:id="@+id/btnSaveChanges"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
-            android:text="@string/save_changes"
-            android:backgroundTint="@color/primaryColor" />
+            <Button
+                android:id="@+id/btnEndTimePicker"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/select_end_time" />
 
-        <!-- Delete Event Button -->
-        <Button
-            android:id="@+id/btnDeleteEvent"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            android:text="@string/delete_event"
-            android:textColor="@android:color/white"
-            android:backgroundTint="@color/red" />
-    </LinearLayout>
-</ScrollView>
+            <TextView
+                android:id="@+id/tvSelectedTimeRange"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:text="@string/selected_time_not_set"
+                android:textSize="16sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvUnavailableTimes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/unavailable_times_for_participants"
+                    android:textSize="16sp"
+                    android:visibility="gone"
+                    android:gravity="center"
+                    android:layout_marginBottom="4dp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerTimeSlots"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvLocationLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/location"
+                android:textSize="16sp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp" />
+
+            <Spinner
+                android:id="@+id/spinnerLocation"
+                android:layout_width="match_parent"
+                android:layout_height="40dp" />
+
+            <TextView
+                android:id="@+id/tvParticipantsLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/participants"
+                android:textSize="16sp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp" />
+
+            <MultiAutoCompleteTextView
+                android:id="@+id/multiAutocompleteParticipants"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/enter_participants"
+                android:inputType="textEmailAddress|textMultiLine"
+                android:lines="2"
+                android:padding="8dp"
+                android:background="@android:drawable/edit_text" />
+
+            <Button
+                android:id="@+id/btnSaveChanges"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="50dp"
+                android:text="@string/save_changes"
+                android:backgroundTint="@color/primaryColor" />
+
+            <Button
+                android:id="@+id/btnDeleteEvent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:text="@string/delete_event"
+                android:textColor="@android:color/white"
+                android:backgroundTint="@color/red" />
+        </LinearLayout>
+    </ScrollView>
+</FrameLayout>
