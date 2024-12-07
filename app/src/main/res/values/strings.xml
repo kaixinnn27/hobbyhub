@@ -93,4 +93,8 @@
     <string name="selected_time_not_set">Selected Time: Not Set</string>
     <string name="select_end_time">Select End Time</string>
     <string name="unavailable_times_for_participants">Unavailable Times for Participants</string>
+    <string name="reward_achievement"><![CDATA[Reward & Achievement]]></string>
+    <string name="current_streak_0">Current Streak: 0</string>
+    <string name="_366_days">366 days</string>
+    <string name="check_in">Check In</string>
 </resources>
