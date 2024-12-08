@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.hobbyhub.R
 import com.example.hobbyhub.authentication.model.User
+import com.example.hobbyhub.authentication.viewmodel.AuthViewModel
 import com.example.hobbyhub.databinding.ActivityProfileDetailsBinding
 import com.example.hobbyhub.profile.viewmodel.ProfileViewModel
 import com.example.hobbyhub.utility.cropToBlob
@@ -22,17 +23,20 @@ class ProfileDetailsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityProfileDetailsBinding
     private val vm: ProfileViewModel by viewModels()
+    private val authVm: AuthViewModel by viewModels()
 
-    private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
-        if(it.resultCode == Activity.RESULT_OK){
-            binding.imgProfile.setImageURI(it.data?.data)
+    private val launcher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                binding.imgProfile.setImageURI(it.data?.data)
+            }
         }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityProfileDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setupToolbar()
 
         binding.cancelBtn.setOnClickListener {
             onBackPressed()
@@ -48,17 +52,21 @@ class ProfileDetailsActivity : AppCompatActivity() {
             submit()
         }
 
-        val userId = intent.getStringExtra("userId")
-        if (!userId.isNullOrBlank()) {
+        val userId = authVm.getCurrentUserId()
+        if (userId != null) {
             lifecycleScope.launch {
                 val user = vm.get(userId)
                 user?.let { populateUserData(it) }
             }
         }
+    }
 
-        val options = arrayOf("Visual", "Auditory", "Kinesthetic")
-        val adapter = ArrayAdapter(this, R.layout.dropdown_item, options)
-        binding.tvLearningStyle.setAdapter(adapter)
+    private fun setupToolbar() {
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        binding.toolbar.setNavigationOnClickListener { onBackPressed() }
     }
 
     private fun submit() {
@@ -82,29 +90,33 @@ class ProfileDetailsActivity : AppCompatActivity() {
             // Update user fields in Firestore
             val updated = vm.update(user)
             if (updated) {
-                Toast.makeText(this@ProfileDetailsActivity, "Profile updated successfully", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this@ProfileDetailsActivity,
+                    "Profile updated successfully",
+                    Toast.LENGTH_SHORT
+                ).show()
                 onBackPressed() // Navigate back
             } else {
-                Toast.makeText(this@ProfileDetailsActivity, "Failed to update profile", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this@ProfileDetailsActivity,
+                    "Failed to update profile",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
 
     private fun populateUserData(user: User) {
         with(binding) {
-//            editTextName.setText(user.name)
-//            editTextStudyField.setText(user.studyField)
-//            val learningStyleOptions = arrayOf("Visual", "Auditory", "Kinesthetic")
-//            val defaultLearningStyle = user.learningStyle ?: learningStyleOptions[0]
-//            tvLearningStyle.setText(defaultLearningStyle, false)
-//            editTextInterest.setText(user.interest)
-//            if (user.photo.toBitmap() != null) {
-//                // Set the user's photo if it's not null
-//                binding.imgProfile.setImageBitmap(user.photo.toBitmap())
-//            }
-//            else{
-//                binding.imgProfile.setImageResource(R.drawable.profile)
-//            }
+            editTextName.setText(user.name)
+            editTextEmail.setText(user.email)
+            if (user.photo.toBitmap() != null) {
+                // Set the user's photo if it's not null
+                binding.imgProfile.setImageBitmap(user.photo.toBitmap())
+            }
+            else{
+                binding.imgProfile.setImageResource(R.drawable.profile)
+            }
         }
     }
 }

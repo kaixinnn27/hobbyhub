@@ -15,5 +15,6 @@
     <color name="selected_date">#95B6E3</color>
     <color name="text_color_date">#595959</color>
     <color name="btn_bg_color">#DEE7F3</color>
+    <color name="gray_button">#DBDDDE</color>
     <color name="teal_200">#FF80CBC4</color>
 </resources>

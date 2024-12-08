@@ -69,11 +69,17 @@ class ProfileFragment : Fragment() {
                     if (user.photo.toBitmap() != null) {
                         binding.headerProfile.setImageBitmap(user.photo.toBitmap())
                         binding.letterOverlayTv.visibility = View.GONE
+
+                        binding.imageViewProfile.setImageBitmap(user.photo.toBitmap())
+                        binding.letterOverlay.visibility = View.GONE
                     } else {
+                        binding.imageViewProfile.setImageResource(R.drawable.profile_bg)
                         binding.headerProfile.setImageResource(R.drawable.profile_bg)
+                        binding.letterOverlay.visibility = View.VISIBLE
                         binding.letterOverlayTv.visibility = View.VISIBLE
 
                         val firstLetter = user.name.firstOrNull()?.toString()?.uppercase() ?: "U"
+                        binding.letterOverlay.text = firstLetter
                         binding.letterOverlayTv.text = firstLetter
                     }
                 }
@@ -85,17 +91,22 @@ class ProfileFragment : Fragment() {
 
             if(friend1 == null && friend2 == null){
                 binding.tvBuddyLabel.visibility = View.GONE
+                binding.firstDivider.visibility = View.GONE
             }
 
             if (friend1 != null) {
                 binding.friend1.visibility = View.VISIBLE
-                binding.avatar1.setImageBitmap(friend1.photo?.toBitmap())
+                if(friend1.photo.toBitmap()!=null){
+                    binding.avatar1.setImageBitmap(friend1.photo.toBitmap())
+                }
                 binding.tvFriendName1.text = friend1.name
             }
 
             if (friend2 != null) {
                 binding.friend2.visibility = View.VISIBLE
-                binding.avatar2.setImageBitmap(friend2.photo?.toBitmap())
+                if(friend2.photo.toBitmap()!=null){
+                    binding.avatar2.setImageBitmap(friend2.photo.toBitmap())
+                }
                 binding.tvFriendName2.text = friend2.name
             }
         }

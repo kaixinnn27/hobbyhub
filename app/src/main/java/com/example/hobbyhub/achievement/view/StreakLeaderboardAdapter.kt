@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.hobbyhub.R
 import com.example.hobbyhub.authentication.model.User
 import com.example.hobbyhub.databinding.ItemLeaderboardBinding
+import com.example.hobbyhub.utility.toBitmap
 
 class StreakLeaderboardAdapter(private val leaderboard: List<Pair<User, Int>>) :
     RecyclerView.Adapter<StreakLeaderboardAdapter.ViewHolder>() {
@@ -28,6 +29,10 @@ class StreakLeaderboardAdapter(private val leaderboard: List<Pair<User, Int>>) :
         // Optionally, you can display badges or other indicators depending on the streak
         val badgeResource = getBadgeForStreak(position)
         holder.binding.userBadges.setImageResource(badgeResource)
+
+        if(user.photo.toBitmap()!= null){
+            holder.binding.userAvatar.setImageBitmap(user.photo.toBitmap())
+        }
     }
 
     override fun getItemCount(): Int = leaderboard.size
