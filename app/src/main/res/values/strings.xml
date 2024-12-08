@@ -98,5 +98,8 @@
     <string name="most_popular_hobby_text">
     Most Popular by Rating: \n%1$s (%2$s stars)\n\n\nMost Popular by Picks: \n%3$s (%4$d picks)
 </string>
-
+    <string name="reward_achievement"><![CDATA[Reward & Achievement]]></string>
+    <string name="current_streak_0">Current Streak: 0</string>
+    <string name="_366_days">366 days</string>
+    <string name="check_in">Check In</string>
 </resources>
