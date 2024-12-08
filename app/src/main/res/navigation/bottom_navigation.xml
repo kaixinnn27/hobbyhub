@@ -102,7 +102,11 @@
         android:id="@+id/createEventFragment"
         android:name="com.example.hobbyhub.scheduling.view.ui.CreateEventFragment"
         android:label="@string/create_event_title"
-        tools:layout="@layout/item_event" />
+        tools:layout="@layout/item_event" >
+    <action
+        android:id="@+id/action_createEventFragment_to_navigation_schedule"
+        app:destination="@id/navigation_schedule" />
+    </fragment>
 
     <fragment
         android:id="@+id/eventDetailsFragment"

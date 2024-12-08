@@ -95,4 +95,8 @@
     <string name="unavailable_times_for_participants">Unavailable Times for Participants</string>
     <string name="common_feedback_themes">Common Feedback Themes</string>
     <string name="sentiment_analysis">Sentiment Analysis</string>
+    <string name="most_popular_hobby_text">
+    Most Popular by Rating: \n%1$s (%2$s stars)\n\n\nMost Popular by Picks: \n%3$s (%4$d picks)
+</string>
+
 </resources>
