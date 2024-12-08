@@ -5,10 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.hobbyhub.authentication.model.User
 import com.example.hobbyhub.hobby.model.Hobby
-import com.example.hobbyhub.hobby.model.HobbyCategory
-import com.example.hobbyhub.hobby.model.HobbyData
 import com.example.hobbyhub.hobby.model.UserHobby
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
@@ -21,10 +18,13 @@ import kotlinx.coroutines.withContext
 class UserHobbyViewModel : ViewModel() {
 
     private val col = Firebase.firestore.collection("userHobbies")
+    private val hobbiesCol = Firebase.firestore.collection("hobbies")
     private val userHobbies = MutableLiveData<List<UserHobby>>()
     private val savedHobbies = MutableLiveData<List<UserHobby>>()
     private val _isFavorite = MutableLiveData<Boolean>()
     val isFavorite: LiveData<Boolean> get() = _isFavorite
+    private val _favoriteHobbies = MutableLiveData<List<Hobby>>()
+    val favoriteHobbies: LiveData<List<Hobby>> get() = _favoriteHobbies
 
     // get UserHobby by userId
     suspend fun get(id: String): UserHobby? {
@@ -130,6 +130,44 @@ class UserHobbyViewModel : ViewModel() {
                 }
             }
             _isFavorite.postValue(result)
+        }
+    }
+
+    suspend fun getAllFavoriteHobbies(userId: String): Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                // Fetch user hobby document
+                val userHobbyDoc = col.document(userId).get().await()
+
+                if (userHobbyDoc.exists()) {
+                    // Get the list of saved hobbies (hobby IDs)
+                    val savedHobbies = userHobbyDoc.get("savedHobbies") as? List<String> ?: emptyList()
+
+                    // Fetch the hobby details for each hobbyId
+                    val hobbiesList = mutableListOf<Hobby>()
+                    for (hobbyId in savedHobbies) {
+                        val hobbyDoc = hobbiesCol.document(hobbyId).get().await()
+                        if (hobbyDoc.exists()) {
+                            val hobby = hobbyDoc.toObject(Hobby::class.java)
+                            hobby?.let { hobbiesList.add(it) }
+                        }
+                    }
+
+                    // Post the fetched hobby list to LiveData
+                    _favoriteHobbies.postValue(hobbiesList)
+
+                    // Return true to indicate success
+                    return@withContext true
+                } else {
+                    Log.e("UserHobbyViewModel", "User hobby document not found for userId: $userId")
+                    // Return false if userHobby document doesn't exist
+                    return@withContext false
+                }
+            } catch (e: Exception) {
+                Log.e("UserHobbyViewModel", "Error fetching favorite hobbies: $e")
+                // Return false in case of an error
+                return@withContext false
+            }
         }
     }
 }

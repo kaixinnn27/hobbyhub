@@ -1,0 +1,14 @@
+package com.example.hobbyhub.activityfeed.model
+
+import com.google.firebase.firestore.Blob
+import com.google.firebase.firestore.DocumentId
+
+data class Post(
+    @DocumentId
+    val id: String = "",
+    val userId: String = "",
+    val username: String = "",
+    val photo: Blob = Blob.fromBytes(ByteArray(0)),
+    val description: String = "",
+    val timestamp: Long = System.currentTimeMillis()
+)

@@ -23,9 +23,7 @@ class ChatRoomFragment : Fragment() {
     ): View? {
         binding = FragmentChatRoomBinding.inflate(inflater, container, false)
 
-        friendAdapter = UserFriendAdapter(requireContext()) { holder, friend ->
-            // No need to navigate here, handled inside the adapter
-        }
+        friendAdapter = UserFriendAdapter(requireContext())
 
         binding.rvFriendList.adapter = friendAdapter
         binding.rvFriendList.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))

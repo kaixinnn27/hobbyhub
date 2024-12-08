@@ -182,5 +182,10 @@
         android:name="com.example.hobbyhub.findbuddy.view.ui.MapFragment"
         android:label="fragment_map"
         tools:layout="@layout/fragment_map" />
+    <fragment
+        android:id="@+id/socialFragment"
+        android:name="com.example.hobbyhub.social.SocialFragment"
+        android:label="SocialFragment"
+        tools:layout="@layout/fragment_social"/>
 
 </navigation>

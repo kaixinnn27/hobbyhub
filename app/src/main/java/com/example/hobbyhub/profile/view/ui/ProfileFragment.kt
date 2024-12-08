@@ -13,6 +13,7 @@ import com.example.hobbyhub.R
 import com.example.hobbyhub.authentication.view.AuthenticationActivity
 import com.example.hobbyhub.chatroom.viewmodel.ChatViewModel
 import com.example.hobbyhub.databinding.FragmentProfileBinding
+import com.example.hobbyhub.hobby.view.FavouriteHobbyActivity
 import com.example.hobbyhub.profile.viewmodel.ProfileViewModel
 import com.example.hobbyhub.utility.toBitmap
 import com.google.firebase.Firebase
@@ -42,6 +43,11 @@ class ProfileFragment : Fragment() {
             requireActivity().finish()
         }
 
+        binding.savedHobbyBtn.setOnClickListener {
+            val intent = Intent(context, FavouriteHobbyActivity::class.java)
+            startActivity(intent)
+        }
+
         binding.editBtn.setOnClickListener {
             if (currentUser != null) {
                 val intent = Intent(context, ProfileDetailsActivity::class.java)
@@ -62,9 +68,6 @@ class ProfileFragment : Fragment() {
                 val user = vm.get(userId)
                 if (user != null) {
                     binding.tvUsername.text = user.name
-//                    binding.tvCourse.text = user.studyField
-//                    binding.tvLearningStyle.text = user.learningStyle
-//                    binding.tvInterest.text = user.interest
 
                     if (user.photo.toBitmap() != null) {
                         binding.headerProfile.setImageBitmap(user.photo.toBitmap())

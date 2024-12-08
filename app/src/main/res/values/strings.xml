@@ -116,4 +116,10 @@
     <string name="logout">Logout</string>
     <string name="your_recent_buddy">Your Recent Buddy</string>
     <string name="edit_profile">Edit Profile</string>
+    <string name="social">Social</string>
+    <string name="post_description">Post description</string>
+    <string name="_12">12</string>
+    <string name="write_a_description">Write a description...</string>
+    <string name="post">Post</string>
+    <string name="create_post">Create Post</string>
 </resources>
