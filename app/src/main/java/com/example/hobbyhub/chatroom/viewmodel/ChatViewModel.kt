@@ -31,6 +31,10 @@ class ChatViewModel : ViewModel() {
         return friends
     }
 
+    fun getFriendSize(): Number {
+        return friends.value?.size ?: 0
+    }
+
     fun getMessagesWithFriend(friendId: String): LiveData<List<Message>> {
         loadMessages(friendId)
         return messages

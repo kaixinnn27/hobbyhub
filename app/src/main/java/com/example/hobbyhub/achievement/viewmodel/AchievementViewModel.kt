@@ -1,19 +1,25 @@
 package com.example.hobbyhub.achievement.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.hobbyhub.authentication.model.User
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import java.time.ZoneId
 
 class AchievementViewModel : ViewModel() {
     private val col = Firebase.firestore.collection("achievements")
+    private val usersCol= Firebase.firestore.collection("user")
 
     private val _streaks = MutableLiveData<Map<String, Any>>()
     val streaks: LiveData<Map<String, Any>> get() = _streaks
@@ -21,6 +27,52 @@ class AchievementViewModel : ViewModel() {
     init {
         val firebaseUser = FirebaseAuth.getInstance().currentUser
         firebaseUser?.uid?.let { updateDailyStreak(it) }
+    }
+
+    suspend fun getStreakLeaderboard(): List<Pair<User, Int>> {
+        return withContext(Dispatchers.IO) {
+            try {
+                // 1. Fetch all achievements
+                val achievementsSnapshot = col.get().await()
+
+                // 2. Create a list to hold user IDs and their best streaks
+                val userStreaks = mutableListOf<Pair<String, Int>>()
+
+                // Loop through achievements to extract user IDs and best streaks
+                for (achievementDoc in achievementsSnapshot.documents) {
+                    val userId = achievementDoc.id
+                    val streakData = achievementDoc["streaks"] as? Map<String, Any>
+                    Log.d("getStreakLeaderboard", "streakData -> $streakData")
+                    val bestStreak = streakData?.get("bestStreak") as? Long ?: 0
+                    Log.d("getStreakLeaderboard", "userId -> $userId bestStreak -> $bestStreak")
+                    userStreaks.add(Pair(userId, bestStreak.toInt()))
+                }
+
+                // 3. Fetch user data for each user in the userStreaks list
+                val userList = mutableListOf<User>()
+                for ((userId, _) in userStreaks) {
+                    val userDoc = usersCol.document(userId).get().await()
+                    val user = userDoc.toObject(User::class.java)
+                    if (user != null) {
+                        userList.add(user)
+                    }
+                }
+
+                // 4. Combine users and their best streaks into a list
+                val userWithStreaks = userStreaks.mapNotNull { (userId, bestStreak) ->
+                    val user = userList.find { it.id == userId }
+                    user?.let { Pair(user, bestStreak) }
+                }
+
+                // Sort users by best streak in descending order and return top 3
+                return@withContext userWithStreaks
+                    .sortedByDescending { it.second } // Sort by streaks in descending order
+                    .take(3) // Get top 3
+            } catch (e: Exception) {
+                Log.e("AuthViewModel", "Error fetching streak leaderboard: $e")
+                return@withContext emptyList<Pair<User, Int>>() // Return empty list if error occurs
+            }
+        }
     }
 
     fun updateDailyStreak(userId: String) {

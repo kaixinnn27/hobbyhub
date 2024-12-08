@@ -99,4 +99,9 @@
     <string name="current_streak_0">Current Streak: 0</string>
     <string name="_366_days">366 days</string>
     <string name="check_in">Check In</string>
+    <string name="best_streak_rewards">Best Streak Rewards</string>
+    <string name="best_streak">Best Streak</string>
+    <string name="social_rewards">Social Rewards</string>
+    <string name="social_leaderboard">Social Leaderboard</string>
+    <string name="streak_leaderboard">Streak Leaderboard</string>
 </resources>
