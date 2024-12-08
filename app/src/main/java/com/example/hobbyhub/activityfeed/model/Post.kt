@@ -10,5 +10,8 @@ data class Post(
     val username: String = "",
     val photo: Blob = Blob.fromBytes(ByteArray(0)),
     val description: String = "",
-    val timestamp: Long = System.currentTimeMillis()
+    val timestamp: Long = System.currentTimeMillis(),
+    var likeCount: Int = 0,
+    var commentCount: Int = 0,
+    val likedBy: MutableList<String> = mutableListOf(),
 )

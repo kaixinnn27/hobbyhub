@@ -38,9 +38,13 @@ class ActivityFeedFragment : Fragment() {
     private fun setupRecyclerView() {
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         postViewModel.fetchPosts()
-        postViewModel.posts.observe(viewLifecycleOwner) { posts ->
-            val adapter = PostAdapter(posts)
-            binding.recyclerView.adapter = adapter
+        val userId = authViewModel.getCurrentUserId()
+        if (userId != null) {
+            postViewModel.posts.observe(viewLifecycleOwner) { posts ->
+                val adapter =
+                    PostAdapter(posts, postViewModel, userId, viewLifecycleOwner.lifecycleScope)
+                binding.recyclerView.adapter = adapter
+            }
         }
     }
 

@@ -122,4 +122,6 @@
     <string name="write_a_description">Write a description...</string>
     <string name="post">Post</string>
     <string name="create_post">Create Post</string>
+    <string name="add_a_comment">Add a comment...</string>
+    <string name="this_is_a_sample_comment">This is a sample comment</string>
 </resources>
