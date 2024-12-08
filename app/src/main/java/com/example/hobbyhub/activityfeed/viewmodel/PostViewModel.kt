@@ -4,14 +4,12 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.hobbyhub.activityfeed.model.Comment
 import com.example.hobbyhub.activityfeed.model.Post
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
@@ -21,13 +19,15 @@ class PostViewModel : ViewModel() {
     val posts: LiveData<List<Post>> get() = _posts
 
     fun fetchPosts() {
-        viewModelScope.launch {
-            try {
-                val snapshot = col.get().await()
+        col.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                Log.e("PostViewModel", "Error fetching posts: $error")
+                return@addSnapshotListener
+            }
+
+            if (snapshot != null) {
                 val postsList = snapshot.documents.mapNotNull { it.toObject(Post::class.java) }
                 _posts.postValue(postsList)
-            } catch (e: Exception) {
-                Log.e("PostViewModel", "Error fetching posts: $e")
             }
         }
     }
