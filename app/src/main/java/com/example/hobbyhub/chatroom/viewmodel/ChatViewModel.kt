@@ -16,7 +16,8 @@ import com.google.firebase.firestore.firestore
 
 class ChatViewModel : ViewModel() {
 
-    private val firestore = Firebase.firestore
+    private val col = Firebase.firestore.collection("chats")
+    private val userCol = Firebase.firestore.collection("user")
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
     private val currentUser: FirebaseUser? = auth.currentUser
 
@@ -90,8 +91,7 @@ class ChatViewModel : ViewModel() {
             return
         }
 
-        firestore.collection("chats")
-            .document(chatRoomId)
+        col.document(chatRoomId)
             .collection("messages")
             .orderBy("timestamp", Query.Direction.DESCENDING)
             .limit(1)
@@ -119,11 +119,16 @@ class ChatViewModel : ViewModel() {
         } else {
             friendList.add(updatedFriend)
         }
-        friends.value = friendList.sortedByDescending { it.lastMessageTimestamp }
+
+        // Only update LiveData if the friend list has changed
+        val newFriendList = friendList.sortedByDescending { it.lastMessageTimestamp }
+        if (friends.value != newFriendList) {
+            friends.value = newFriendList
+        }
     }
 
     private fun getUserDocumentReference(userDocumentId: String): DocumentReference {
-        return firestore.collection("user").document(userDocumentId)
+        return userCol.document(userDocumentId)
     }
 
     private fun loadMessages(friendId: String) {
@@ -137,8 +142,7 @@ class ChatViewModel : ViewModel() {
             return
         }
 
-        firestore.collection("chats")
-            .document(chatRoomId)
+        col.document(chatRoomId)
             .collection("messages")
             .orderBy("timestamp", Query.Direction.ASCENDING)
             .addSnapshotListener { querySnapshot, error ->
@@ -201,8 +205,7 @@ class ChatViewModel : ViewModel() {
                 eventEndTime?.let { messageMap["eventEndTime"] = it }
             }
 
-            firestore.collection("chats")
-                .document(chatRoomId)
+            col.document(chatRoomId)
                 .collection("messages")
                 .add(messageMap)
                 .addOnSuccessListener {

@@ -20,7 +20,7 @@ class ChatRoomFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentChatRoomBinding.inflate(inflater, container, false)
 
         friendAdapter = UserFriendAdapter(requireContext())

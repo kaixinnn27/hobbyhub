@@ -5,6 +5,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.hobbyhub.authentication.viewmodel.AuthViewModel
 import com.example.hobbyhub.chatroom.view.adapter.MessageAdapter
 import com.example.hobbyhub.chatroom.viewmodel.ChatViewModel
 import com.example.hobbyhub.databinding.ActivityChatBinding
@@ -15,21 +16,21 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var binding: ActivityChatBinding
     private lateinit var messageAdapter: MessageAdapter
     private val chatViewModel: ChatViewModel by viewModels()
+    private val authViewModel: AuthViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityChatBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val currentUser = FirebaseAuth.getInstance().currentUser
+        setupToolbar()
+        val userId = authViewModel.getCurrentUserId()
 
-        // Set up RecyclerView with MessageAdapter
-        messageAdapter = currentUser?.let { MessageAdapter(it.uid) }!!
+        messageAdapter = userId?.let { MessageAdapter(userId) }!!
         binding.rvMessages.apply {
             adapter = messageAdapter
             layoutManager = LinearLayoutManager(this@ChatActivity)
         }
 
-        // Get friendId from intent
         val friendId = intent.getStringExtra("friendId") ?: ""
         val friendName = intent.getStringExtra("friendName") ?: ""
 
@@ -52,10 +53,13 @@ class ChatActivity : AppCompatActivity() {
                 binding.etMessage.text.clear()
             }
         }
+    }
 
-        // Back button click listener
-        binding.backBtn.setOnClickListener {
-            onBackPressed()
-        }
+    private fun setupToolbar() {
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        binding.toolbar.setNavigationOnClickListener { onBackPressed() }
     }
 }

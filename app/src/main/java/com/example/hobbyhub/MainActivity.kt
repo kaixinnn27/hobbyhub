@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity() {
                 updateUsageTime(elapsedSinceLastUpdate)
 
                 // Schedule the next update after 5 seconds
-                handler.postDelayed(this, 5000L)
+                handler.postDelayed(this, 20000L)
             }
         }
         handler.post(updateRunnable)
