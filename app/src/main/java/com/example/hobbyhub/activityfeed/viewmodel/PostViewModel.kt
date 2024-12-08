@@ -49,14 +49,11 @@ class PostViewModel : ViewModel() {
     suspend fun addComment(postId: String, comment: Comment): Boolean {
         return withContext(Dispatchers.IO) {
             try {
-                val commentRef = col.document(postId)
-                    .collection("comments").document()
+                val commentRef = col.document(postId).collection("comments").document()
                 commentRef.set(comment).await()
 
                 val postRef = col.document(postId)
-
                 postRef.update("commentCount", FieldValue.increment(1)).await()
-
                 true
             } catch (e: Exception) {
                 Log.e("PostViewModel", "Error adding comment: $e")
@@ -64,7 +61,6 @@ class PostViewModel : ViewModel() {
             }
         }
     }
-
 
     // Fetch the like count for a post
     suspend fun getLikeCount(postId: String): Int {

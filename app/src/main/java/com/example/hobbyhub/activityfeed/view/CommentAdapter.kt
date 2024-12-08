@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.example.hobbyhub.activityfeed.model.Comment
 import com.example.hobbyhub.databinding.ItemCommentBinding
+import com.example.hobbyhub.utility.toBitmap
 
 class CommentAdapter : ListAdapter<Comment, CommentAdapter.CommentViewHolder>(CommentDiffCallback()) {
 
@@ -14,6 +15,10 @@ class CommentAdapter : ListAdapter<Comment, CommentAdapter.CommentViewHolder>(Co
             // Bind the comment data to the views
             binding.usernameTv.text = comment.username
             binding.commentTextTv.text = comment.text
+
+            comment.userProfile.let {
+                binding.profileImage.setImageBitmap(it.toBitmap())
+            }
         }
     }
 

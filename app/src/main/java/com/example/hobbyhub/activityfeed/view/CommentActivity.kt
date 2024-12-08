@@ -1,15 +1,19 @@
 package com.example.hobbyhub.activityfeed.view
 
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.hobbyhub.R
 import com.example.hobbyhub.activityfeed.model.Comment
 import com.example.hobbyhub.activityfeed.viewmodel.PostViewModel
 import com.example.hobbyhub.authentication.viewmodel.AuthViewModel
 import com.example.hobbyhub.databinding.ActivityCommentBinding
+import com.example.hobbyhub.utility.cropToBlob
+import com.example.hobbyhub.utility.toBitmap
 import kotlinx.coroutines.launch
 
 class CommentActivity : AppCompatActivity() {
@@ -70,7 +74,8 @@ class CommentActivity : AppCompatActivity() {
                 postId = postId,
                 userId = userId,
                 username = user.name,
-                text = commentText
+                text = commentText,
+                userProfile = user.photo
             )
 
             val success = postViewModel.addComment(postId, newComment)

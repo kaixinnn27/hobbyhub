@@ -1,5 +1,6 @@
 package com.example.hobbyhub.activityfeed.model
 
+import com.google.firebase.firestore.Blob
 import com.google.firebase.firestore.DocumentId
 
 data class Comment(
@@ -9,5 +10,6 @@ data class Comment(
     val userId: String = "",
     val username: String = "",
     val text: String = "",
-    val timestamp: Long = System.currentTimeMillis()
+    val timestamp: Long = System.currentTimeMillis(),
+    val userProfile: Blob = Blob.fromBytes(ByteArray(0)),
 )
