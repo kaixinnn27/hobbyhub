@@ -1,5 +1,6 @@
 package com.example.hobbyhub.report.view.ui
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.hobbyhub.R
 import com.github.mikephil.charting.charts.BarChart
@@ -27,6 +29,7 @@ class HobbyPopularityReportFragment : Fragment() {
     private val db = FirebaseFirestore.getInstance()
     private lateinit var barChart: BarChart
     private lateinit var legendLayout: LinearLayout
+    private lateinit var mostPopularHobbyTextView: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,6 +38,7 @@ class HobbyPopularityReportFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_hobby_popularity, container, false)
         barChart = view.findViewById(R.id.barChartHobbyPopularity)
         legendLayout = view.findViewById(R.id.legendLayout)
+        mostPopularHobbyTextView = view.findViewById(R.id.tvMostPopularHobby)
 
         fetchHobbyPopularityData()
         return view
@@ -46,6 +50,7 @@ class HobbyPopularityReportFragment : Fragment() {
                 val hobbyMap = hobbyDocuments.associate {
                     it.id to (it.getString("name") ?: "Unknown")
                 }
+                android.util.Log.d("HobbyPopularityFragment", "hobbyMap: $hobbyMap")
                 calculateUserHobbyPopularity(hobbyMap)
             }
             .addOnFailureListener { e ->
@@ -66,13 +71,81 @@ class HobbyPopularityReportFragment : Fragment() {
                 }
 
                 val hobbyPopularity = hobbyCounts.mapKeys { hobbyMap[it.key] ?: "Unknown" }
-                displayHobbyChart(hobbyPopularity)
-                populateLegend(hobbyPopularity)
+                fetchHobbyRatings(hobbyPopularity, hobbyMap)
             }
             .addOnFailureListener { e ->
                 android.util.Log.e("HobbyPopularityFragment", "Error fetching user hobbies", e)
             }
     }
+
+    private fun fetchHobbyRatings(hobbyPopularity: Map<String, Int>, hobbyMap: Map<String, String>) {
+        db.collection("reviews").get()
+            .addOnSuccessListener { reviewDocuments ->
+                val hobbyRatings = mutableMapOf<String, MutableList<Float>>()
+
+                for (document in reviewDocuments) {
+                    val hobbyId = document.getString("hobbyId") ?: continue
+                    val rating = document.getDouble("rating")?.toFloat() ?: continue
+
+                    android.util.Log.d("HobbyPopularityFragment", "hobbyId: $hobbyId, rating: $rating")
+                    hobbyRatings.getOrPut(hobbyId) { mutableListOf() }.add(rating)
+                }
+
+                val hobbyRatingsWithPopularity = hobbyRatings.mapKeys { (hobbyId, _) ->
+                    hobbyMap[hobbyId] ?: "Unknown"
+                }.mapValues { (hobbyName, ratings) ->
+                    val popularity = hobbyPopularity[hobbyName] ?: 0
+                    ratings.average().toFloat() to popularity
+                }
+
+                android.util.Log.d("HobbyPopularityFragment", "hobbyRatingsWithPopularity: $hobbyRatingsWithPopularity")
+
+                val mostPopularByRating = hobbyRatingsWithPopularity.maxByOrNull { it.value.first }
+                val mostPopularByPicks = hobbyRatingsWithPopularity.maxByOrNull { it.value.second }
+
+                android.util.Log.d("HobbyPopularityFragment", "Most popular by rating: $mostPopularByRating")
+                android.util.Log.d("HobbyPopularityFragment", "Most popular by picks: $mostPopularByPicks")
+
+                displayMostPopularHobby(mostPopularByRating, mostPopularByPicks)
+                displayHobbyChart(hobbyPopularity)
+                populateLegend(hobbyPopularity)
+            }
+            .addOnFailureListener { e ->
+                android.util.Log.e("HobbyPopularityFragment", "Error fetching reviews", e)
+            }
+    }
+
+
+    private fun displayMostPopularHobby(
+        mostPopularByRating: Map.Entry<String, Pair<Float, Int>>?,
+        mostPopularByPicks: Map.Entry<String, Pair<Float, Int>>?
+    ) {
+        val ratingHobby = mostPopularByRating?.key ?: "N/A"
+        val ratingValue = mostPopularByRating?.value?.first ?: 0
+
+        val picksHobby = mostPopularByPicks?.key ?: "N/A"
+        val picksCount = mostPopularByPicks?.value?.second ?: 0
+
+        // Log values for debugging
+        android.util.Log.d("HobbyPopularityFragment", "ratingHobby: $ratingHobby")
+        android.util.Log.d("HobbyPopularityFragment", "ratingValue: $ratingValue")
+        android.util.Log.d("HobbyPopularityFragment", "picksHobby: $picksHobby")
+        android.util.Log.d("HobbyPopularityFragment", "picksCount: $picksCount")
+
+        // Proceed with setting the text
+        mostPopularHobbyTextView.text = getString(
+            R.string.most_popular_hobby_text,
+            ratingHobby,
+            ratingValue,
+            picksHobby,
+            picksCount
+        )
+
+        mostPopularHobbyTextView.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.teal_200))
+        mostPopularHobbyTextView.setPadding(16, 16, 16, 16)
+        mostPopularHobbyTextView.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+    }
+
 
     private fun displayHobbyChart(hobbyPopularity: Map<String, Int>) {
         val barEntries = hobbyPopularity.entries.mapIndexed { index, entry ->
@@ -113,14 +186,13 @@ class HobbyPopularityReportFragment : Fragment() {
     }
 
     private fun populateLegend(hobbyPopularity: Map<String, Int>) {
-        legendLayout.removeAllViews() // Clear any existing views
+        legendLayout.removeAllViews()
 
         val colors = generateUniqueColors(hobbyPopularity.size)
 
         hobbyPopularity.keys.forEachIndexed { index, hobbyName ->
             val color = colors[index]
 
-            // Dynamically create legend items
             val legendItem = LinearLayout(requireContext()).apply {
                 orientation = LinearLayout.HORIZONTAL
                 setPadding(8, 8, 8, 8)
@@ -136,7 +208,7 @@ class HobbyPopularityReportFragment : Fragment() {
             val legendText = TextView(requireContext()).apply {
                 text = hobbyName
                 textSize = 14f
-                setTextColor(resources.getColor(R.color.black, null))
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
             }
 
             legendItem.addView(legendColorBox)
@@ -144,7 +216,6 @@ class HobbyPopularityReportFragment : Fragment() {
             legendLayout.addView(legendItem)
         }
     }
-
 
     private fun generateUniqueColors(size: Int): List<Int> {
         val colors = mutableListOf<Int>()

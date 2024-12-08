@@ -1,32 +1,38 @@
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:background="@color/gray">
+    android:layout_height="match_parent">
 
-    <!-- BarChart Section -->
-    <com.github.mikephil.charting.charts.BarChart
-        android:id="@+id/barChartHobbyPopularity"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
-        android:background="@color/white" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-    <!-- ScrollView for Legends -->
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@color/white"
-        android:padding="8dp">
+        <!-- Most Popular Hobby Section -->
+        <TextView
+            android:id="@+id/tvMostPopularHobby"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="16dp"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:background="@color/teal_200"
+            android:layout_marginBottom="16dp" />
 
+        <!-- Bar Chart -->
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/barChartHobbyPopularity"
+            android:layout_width="match_parent"
+            android:layout_height="300dp" />
+
+        <!-- Legend Layout -->
         <LinearLayout
             android:id="@+id/legendLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="8dp" />
-    </ScrollView>
-</LinearLayout>
+            android:paddingTop="16dp" />
+    </LinearLayout>
+</ScrollView>

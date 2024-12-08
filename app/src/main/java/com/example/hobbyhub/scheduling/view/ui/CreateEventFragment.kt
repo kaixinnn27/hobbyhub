@@ -12,7 +12,9 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.hobbyhub.R
 import com.example.hobbyhub.databinding.FragmentCreateEventBinding
 import com.example.hobbyhub.scheduling.model.Event
 import com.example.hobbyhub.utility.EventReminderReceiver
@@ -282,6 +284,7 @@ class CreateEventFragment : Fragment() {
                 sendInvitations(event, participantIds)
                 setEventReminder(event)
                 Toast.makeText(requireContext(), "Event created successfully!", Toast.LENGTH_SHORT).show()
+                findNavController().navigate(R.id.action_createEventFragment_to_navigation_schedule)
             }
             .addOnFailureListener { e ->
                 Log.e("CreateEventFragment", "Failed to save event: ${e.message}")

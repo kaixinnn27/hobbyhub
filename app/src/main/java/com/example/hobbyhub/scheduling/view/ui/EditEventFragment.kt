@@ -15,6 +15,8 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.hobbyhub.R
+import com.example.hobbyhub.R.*
 import com.example.hobbyhub.databinding.FragmentEditEventBinding
 import com.example.hobbyhub.scheduling.model.Event
 import com.example.hobbyhub.utility.EventReminderReceiver
@@ -331,6 +333,7 @@ class EditEventFragment : Fragment() {
                 sendInvitations(event, participantIds)
                 setEventReminders(event)
                 Toast.makeText(requireContext(), "Event created successfully!", Toast.LENGTH_SHORT).show()
+                findNavController().navigate(R.id.action_createEventFragment_to_navigation_schedule)
             }
             .addOnFailureListener { e ->
                 Log.e("CreateEventFragment", "Failed to save event: ${e.message}")
