@@ -124,4 +124,6 @@
     <string name="create_post">Create Post</string>
     <string name="add_a_comment">Add a comment...</string>
     <string name="this_is_a_sample_comment">This is a sample comment</string>
+    <string name="create_group_chat">Create Group Chat</string>
+    <string name="create_group">Create Group</string>
 </resources>
