@@ -42,7 +42,8 @@ class ActivityFeedFragment : Fragment() {
             postViewModel.posts.observe(viewLifecycleOwner) { posts ->
                 val adapter = PostAdapter(posts, postViewModel, userId, viewLifecycleOwner.lifecycleScope, authViewModel)
                 binding.recyclerView.adapter = adapter
-                adapter.submitList(posts)
+                val sortedPosts = posts.sortedByDescending { it.timestamp }
+                adapter.submitList(sortedPosts)
             }
         }
     }

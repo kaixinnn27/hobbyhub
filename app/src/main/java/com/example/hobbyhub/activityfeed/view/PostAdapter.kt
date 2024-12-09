@@ -36,14 +36,14 @@ class PostAdapter(
             binding.commentCountTextView.text = post.commentCount.toString()
 
             coroutineScope.launch {
-                val user = authViewModel.get(userId)
+                val user = authViewModel.get(post.userId)
                 if (user != null && user.photo.toBitmap() != null) {
                     binding.headerProfile.setImageBitmap(user.photo.toBitmap())
                     binding.letterOverlayTv.visibility = View.GONE
                 }
 
                 if (user != null && user.photo.toBitmap() == null) {
-                    binding.headerProfile.setImageBitmap(user.photo.toBitmap())
+                    binding.headerProfile.setImageResource(R.drawable.profile_bg)
                     binding.letterOverlayTv.visibility = View.VISIBLE
 
                     val firstLetter = user.name.firstOrNull()?.toString()?.uppercase() ?: "U"
