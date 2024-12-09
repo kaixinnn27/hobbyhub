@@ -1,4 +1,4 @@
-package com.example.hobbyhub.findbuddy.view.ui
+package com.example.hobbyhub.findbuddy.view
 
 import android.Manifest
 import android.app.AlertDialog
@@ -13,7 +13,6 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.example.hobbyhub.R
-import com.example.hobbyhub.databinding.FragmentFindBuddyBinding
 import com.example.hobbyhub.databinding.FragmentMapBinding
 import com.example.hobbyhub.utility.toBitmap
 import com.google.android.gms.location.FusedLocationProviderClient

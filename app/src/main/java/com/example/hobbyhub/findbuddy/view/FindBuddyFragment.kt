@@ -1,4 +1,4 @@
-package com.example.hobbyhub.findbuddy.view.ui
+package com.example.hobbyhub.findbuddy.view
 
 import android.Manifest
 import android.app.AlertDialog

@@ -31,25 +31,36 @@ class ChatActivity : AppCompatActivity() {
             layoutManager = LinearLayoutManager(this@ChatActivity)
         }
 
-        val friendId = intent.getStringExtra("friendId") ?: ""
-        val friendName = intent.getStringExtra("friendName") ?: ""
+        val chatType = intent.getStringExtra("chatType") ?: ""
+        val chatId = intent.getStringExtra("chatId") ?: ""
+        val chatName = intent.getStringExtra("chatName") ?: ""
 
-        binding.tvUsername.text = friendName
+        binding.tvUsername.text = chatName
 
-        // Observe messages LiveData from ViewModel
-        chatViewModel.getMessagesWithFriend(friendId).observe(this, Observer { messages ->
-            messageAdapter.setMessages(messages)
-            // Scroll to the bottom of the RecyclerView when new messages are added
-            binding.rvMessages.scrollToPosition(messageAdapter.itemCount - 1)
-        })
+        // Handle both friend and group chats
+        if (chatType == "friend") {
+            // Friend chat
+            chatViewModel.getMessagesWithFriend(chatId).observe(this, Observer { messages ->
+                messageAdapter.setMessages(messages)
+                binding.rvMessages.scrollToPosition(messageAdapter.itemCount - 1)
+            })
+        } else if (chatType == "group") {
+            // Group chat
+            chatViewModel.getGroupMessages(chatId).observe(this, Observer { messages ->
+                messageAdapter.setMessages(messages)
+                binding.rvMessages.scrollToPosition(messageAdapter.itemCount - 1)
+            })
+        }
 
         // Send button click listener
         binding.btnSend.setOnClickListener {
             val messageContent = binding.etMessage.text.toString().trim()
             if (messageContent.isNotEmpty()) {
-                // Send message using ViewModel
-                chatViewModel.sendMessage(friendId, messageContent)
-                // Clear message input field after sending
+                if (chatType == "friend") {
+                    chatViewModel.sendMessage(chatId, messageContent)
+                } else if (chatType == "group") {
+                    chatViewModel.sendGroupMessage(chatId, messageContent)
+                }
                 binding.etMessage.text.clear()
             }
         }

@@ -19,7 +19,7 @@ import com.example.hobbyhub.achievement.view.AchievementActivity
 import com.example.hobbyhub.achievement.viewmodel.AchievementViewModel
 import com.example.hobbyhub.authentication.viewmodel.AuthViewModel
 import com.example.hobbyhub.databinding.FragmentHomeBinding
-import com.example.hobbyhub.findbuddy.view.ui.MapFragment
+import com.example.hobbyhub.findbuddy.view.MapFragment
 import com.example.hobbyhub.hobby.model.Hobby
 import com.example.hobbyhub.hobby.model.UserHobby
 import com.example.hobbyhub.hobby.viewmodel.HobbyViewModel
