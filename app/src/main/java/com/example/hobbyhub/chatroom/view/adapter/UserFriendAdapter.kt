@@ -37,7 +37,9 @@ class UserFriendAdapter(
         val friend = getItem(position)
 
         holder.binding.tvUsername.text = friend.name ?: ""
-        holder.binding.imgProfile.setImageBitmap(friend.photo?.toBitmap())
+        if(friend.photo.toBitmap()!= null){
+            holder.binding.imgProfile.setImageBitmap(friend.photo.toBitmap())
+        }
         val formattedTime = formatTimestamp(friend.lastMessageTimestamp)
         holder.binding.tvLastMsgTime.text = formattedTime
 

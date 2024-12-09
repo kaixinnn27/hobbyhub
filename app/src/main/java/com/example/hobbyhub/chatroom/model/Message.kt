@@ -8,5 +8,6 @@ data class Message(
     val eventId: String? = null, // For event invitations
     val eventDate: String? = null,
     val eventStartTime: String? = null,
-    val eventEndTime: String? = null
+    val eventEndTime: String? = null,
+    val name: String? = null
 )

@@ -10,7 +10,9 @@ import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.example.hobbyhub.R
 import com.example.hobbyhub.databinding.FragmentForgotPasswordBinding
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 
 class ForgotPasswordFragment : Fragment() {
 
@@ -23,6 +25,7 @@ class ForgotPasswordFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentForgotPasswordBinding.inflate(inflater, container, false)
+        auth = Firebase.auth
 
         binding.toLoginBtn.setOnClickListener {
             nav.navigate(R.id.loginFragment)

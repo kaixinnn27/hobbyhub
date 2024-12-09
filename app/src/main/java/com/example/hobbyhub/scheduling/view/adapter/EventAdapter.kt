@@ -18,8 +18,10 @@ class EventAdapter(private val events: List<Event>,
         private val tvTime: TextView = itemView.findViewById(R.id.tvTime)
         private val tvLocation: TextView = itemView.findViewById(R.id.tvLocation)
         private val tvParticipants: TextView = itemView.findViewById(R.id.tvParticipants)
+        private val tvEventName: TextView = itemView.findViewById(R.id.tvEventName)
 
         fun bind(event: Event) {
+            tvEventName.text = event.name
             tvDate.text = event.date
             tvTime.text = event.startTime
             tvLocation.text = event.location

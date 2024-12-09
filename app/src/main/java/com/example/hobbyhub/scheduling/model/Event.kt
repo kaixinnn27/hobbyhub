@@ -5,8 +5,9 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Event(
+    var id: String = "",
+    var name: String = "",
     val date: String = "",
-    var eventId: String = "",
     val startTime: String = "",
     val endTime: String = "",
     val location: String = "",

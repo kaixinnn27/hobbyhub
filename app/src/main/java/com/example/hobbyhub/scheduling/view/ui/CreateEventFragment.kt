@@ -262,14 +262,17 @@ class CreateEventFragment : Fragment() {
         val userId = auth.currentUser?.uid ?: return
         val eventId = binding.etEventId.text.toString().trim()
 
+        Log.d("CreateEventFragment","multiAutocompleteParticipants -> ${binding.multiAutocompleteParticipants.text}")
+
         val participantUsernames = binding.multiAutocompleteParticipants.text.toString()
             .split(",").map { it.trim() }
+        Log.d("CreateEventFragment","participantUsernames -> $participantUsernames")
         val participantIds = participantUsernames.mapNotNull { friendsMap[it] }
         Log.d("CreateEventFragment", "Saving Event for Participants: $participantIds")
 
         val event = Event(
             date = selectedDate,
-            eventId = eventId,
+            name = eventId,
             startTime = selectedStartTime,
             endTime = selectedEndTime,
             location = binding.spinnerLocation.selectedItem.toString(),
@@ -277,7 +280,7 @@ class CreateEventFragment : Fragment() {
             reminderTime = selectedStartTime
         )
 
-        db.collection("schedule").document(userId).collection("events").document(eventId)
+        db.collection("schedule").document(userId).collection("events").document()
             .set(event)
             .addOnSuccessListener {
                 Log.d("CreateEventFragment", "Event saved successfully.")
@@ -303,7 +306,8 @@ class CreateEventFragment : Fragment() {
 
             val invitationMessage = mapOf(
                 "type" to "event_invitation",
-                "eventId" to event.eventId,
+                "eventId" to event.id,
+                "name" to event.name,
                 "eventDate" to event.date,
                 "eventStartTime" to event.startTime,
                 "eventEndTime" to event.endTime,
@@ -346,16 +350,16 @@ class CreateEventFragment : Fragment() {
                 scheduleReminder(
                     alarmManager,
                     eventDateTime.time - (60 * 60 * 1000), // 1 hour in milliseconds
-                    "Reminder: ${event.eventId} starts in 1 hour!",
-                    event.eventId.hashCode() + 1 // Unique request code
+                    "Reminder: ${event.name} starts in 1 hour!",
+                    event.id.hashCode() + 1 // Unique request code
                 )
 
                 // Schedule second reminder 30 minutes before event start time
                 scheduleReminder(
                     alarmManager,
                     eventDateTime.time - (30 * 60 * 1000), // 30 minutes in milliseconds
-                    "Reminder: ${event.eventId} starts in 30 minutes!",
-                    event.eventId.hashCode() + 2 // Unique request code
+                    "Reminder: ${event.name} starts in 30 minutes!",
+                    event.id.hashCode() + 2 // Unique request code
                 )
             }
         } catch (e: Exception) {

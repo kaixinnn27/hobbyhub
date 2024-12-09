@@ -1,14 +1,15 @@
 package com.example.hobbyhub.chatroom.view.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.recyclerview.widget.DividerItemDecoration
-import com.example.hobbyhub.chatroom.view.adapter.UserFriendAdapter
+import com.example.hobbyhub.chatroom.view.adapter.ChatAdapter
+import com.example.hobbyhub.chatroom.model.ChatItem
 import com.example.hobbyhub.chatroom.viewmodel.ChatViewModel
 import com.example.hobbyhub.databinding.FragmentChatRoomBinding
 
@@ -16,25 +17,60 @@ class ChatRoomFragment : Fragment() {
 
     private lateinit var binding: FragmentChatRoomBinding
     private val chatViewModel: ChatViewModel by activityViewModels()
-    private lateinit var friendAdapter: UserFriendAdapter
+    private lateinit var chatAdapter: ChatAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentChatRoomBinding.inflate(inflater, container, false)
 
-        friendAdapter = UserFriendAdapter(requireContext()) { holder, friend ->
-            // No need to navigate here, handled inside the adapter
+        chatAdapter = ChatAdapter(requireContext()) { chatItem ->
+            when (chatItem) {
+                is ChatItem.FriendItem -> {
+                    // Extract friend details from chatItem
+                    val friend = chatItem.friend
+                    val intent = Intent(context, ChatActivity::class.java)
+                    intent.putExtra("chatType", "friend")
+                    intent.putExtra("chatId", friend.id) // friend ID
+                    intent.putExtra("chatName", friend.name) // friend's name
+                    startActivity(intent)
+                }
+
+                is ChatItem.GroupItem -> {
+                    // Extract group details from chatItem
+                    val group = chatItem.group
+                    val intent = Intent(context, ChatActivity::class.java)
+                    intent.putExtra("chatType", "group")
+                    intent.putExtra("chatId", group.id) // group ID
+                    intent.putExtra("chatName", group.name) // group name
+                    startActivity(intent)
+                }
+            }
         }
+        binding.rvFriendList.adapter = chatAdapter
 
-        binding.rvFriendList.adapter = friendAdapter
-        binding.rvFriendList.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
-
+        // Fetch and observe both friends and groups
         chatViewModel.getFriends().observe(viewLifecycleOwner) { friends ->
-            Log.d("ChatRoomFragment", "Friends list updated: ${friends.size} items")
-            friendAdapter.submitList(friends)
+            chatViewModel.getGroups().observe(viewLifecycleOwner) { groups ->
+                Log.d("ChatAdapter", "Friend items: $friends")
+                Log.d("ChatAdapter", "Group items: $groups")
+                val chatItems = mutableListOf<ChatItem>()
+                chatItems.addAll(friends.map { ChatItem.FriendItem(it) })
+                chatItems.addAll(groups.map { ChatItem.GroupItem(it) })
+                chatAdapter.submitList(chatItems)
+            }
         }
+
+        setupFab()
 
         return binding.root
+    }
+
+    private fun setupFab() {
+        binding.fabAddGroup.setOnClickListener {
+            val intent = Intent(requireContext(), CreateGroupActivity::class.java)
+            startActivity(intent)
+        }
     }
 }

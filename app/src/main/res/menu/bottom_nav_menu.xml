@@ -7,9 +7,9 @@
         android:title="@string/find_buddy_title" />
 
     <item
-        android:id="@+id/navigation_chat_room"
+        android:id="@+id/socialFragment"
         android:icon="@drawable/ic_chat"
-        android:title="@string/chat_room_title" />
+        android:title="@string/social" />
 
     <item
         android:id="@+id/navigation_schedule"

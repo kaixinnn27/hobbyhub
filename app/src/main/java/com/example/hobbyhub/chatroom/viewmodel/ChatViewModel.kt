@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.hobbyhub.chatroom.model.Friend
 import com.example.hobbyhub.chatroom.model.Message
+import com.example.hobbyhub.chatroom.model.Group
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -16,12 +17,15 @@ import com.google.firebase.firestore.firestore
 
 class ChatViewModel : ViewModel() {
 
-    private val firestore = Firebase.firestore
+    private val col = Firebase.firestore.collection("chats")
+    private val userCol = Firebase.firestore.collection("user")
+    private val groupCol = Firebase.firestore.collection("groups")
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
     private val currentUser: FirebaseUser? = auth.currentUser
 
     private val friends = MutableLiveData<List<Friend>>()
     private val messages = MutableLiveData<List<Message>>()
+    private val groupMessages = MutableLiveData<List<Message>>()
 
     init {
         fetchFriends()
@@ -29,6 +33,10 @@ class ChatViewModel : ViewModel() {
 
     fun getFriends(): LiveData<List<Friend>> {
         return friends
+    }
+
+    fun getFriendSize(): Number {
+        return friends.value?.size ?: 0
     }
 
     fun getMessagesWithFriend(friendId: String): LiveData<List<Message>> {
@@ -62,7 +70,8 @@ class ChatViewModel : ViewModel() {
                 .addOnSuccessListener { documentSnapshot ->
                     if (documentSnapshot.exists()) {
                         val name = documentSnapshot["name"] as? String ?: ""
-                        val photo = documentSnapshot["photo"] as? Blob ?: Blob.fromBytes(ByteArray(0))
+                        val photo =
+                            documentSnapshot["photo"] as? Blob ?: Blob.fromBytes(ByteArray(0))
                         fetchLastMessageTimestamp(friendUserId) { timestamp ->
                             val friend = Friend(friendUserId, name, photo, timestamp)
                             updateFriendList(friendList, friend)
@@ -86,8 +95,7 @@ class ChatViewModel : ViewModel() {
             return
         }
 
-        firestore.collection("chats")
-            .document(chatRoomId)
+        col.document(chatRoomId)
             .collection("messages")
             .orderBy("timestamp", Query.Direction.DESCENDING)
             .limit(1)
@@ -115,11 +123,16 @@ class ChatViewModel : ViewModel() {
         } else {
             friendList.add(updatedFriend)
         }
-        friends.value = friendList.sortedByDescending { it.lastMessageTimestamp }
+
+        // Only update LiveData if the friend list has changed
+        val newFriendList = friendList.sortedByDescending { it.lastMessageTimestamp }
+        if (friends.value != newFriendList) {
+            friends.value = newFriendList
+        }
     }
 
     private fun getUserDocumentReference(userDocumentId: String): DocumentReference {
-        return firestore.collection("user").document(userDocumentId)
+        return userCol.document(userDocumentId)
     }
 
     private fun loadMessages(friendId: String) {
@@ -133,8 +146,7 @@ class ChatViewModel : ViewModel() {
             return
         }
 
-        firestore.collection("chats")
-            .document(chatRoomId)
+        col.document(chatRoomId)
             .collection("messages")
             .orderBy("timestamp", Query.Direction.ASCENDING)
             .addSnapshotListener { querySnapshot, error ->
@@ -149,14 +161,28 @@ class ChatViewModel : ViewModel() {
                     val content = document.getString("content") ?: ""
                     val timestamp = document.getLong("timestamp") ?: 0
                     val type = document.getString("type") ?: "text" // Defaulting to "text"
-                    val eventId = document.getString("eventId")
+                    val id = document.id
+                    val name = document.getString("name")
                     val eventDate = document.getString("eventDate")
                     val eventStartTime = document.getString("eventStartTime")
                     val eventEndTime = document.getString("eventEndTime")
 
-                    Log.d("ChatViewModel", "Loaded message: senderId=$senderId, type=$type, content=$content, eventId=$eventId")
+                    Log.d(
+                        "ChatViewModel",
+                        "Loaded message: senderId=$senderId, type=$type, content=$content, eventId=$id"
+                    )
 
-                    val message = Message(senderId, content, timestamp, type, eventId, eventDate, eventStartTime, eventEndTime)
+                    val message = Message(
+                        senderId,
+                        content,
+                        timestamp,
+                        type,
+                        id,
+                        eventDate,
+                        eventStartTime,
+                        eventEndTime,
+                        name
+                    )
                     messageList.add(message)
                 }
                 messages.value = messageList
@@ -182,7 +208,7 @@ class ChatViewModel : ViewModel() {
             return
         }
 
-        currentUser?.uid?.let { uid ->
+        currentUser.uid.let { uid ->
             val messageMap = hashMapOf(
                 "senderId" to uid,
                 "content" to content,
@@ -197,8 +223,7 @@ class ChatViewModel : ViewModel() {
                 eventEndTime?.let { messageMap["eventEndTime"] = it }
             }
 
-            firestore.collection("chats")
-                .document(chatRoomId)
+            col.document(chatRoomId)
                 .collection("messages")
                 .add(messageMap)
                 .addOnSuccessListener {
@@ -221,4 +246,113 @@ class ChatViewModel : ViewModel() {
             Pair(friendList.getOrNull(0), null)
         }
     }
+
+    fun getGroupMessages(groupId: String): LiveData<List<Message>> {
+        loadGroupMessages(groupId)
+        return groupMessages
+    }
+
+    private fun loadGroupMessages(groupId: String) {
+        groupCol.document(groupId)
+            .collection("messages")
+            .orderBy("timestamp", Query.Direction.ASCENDING)
+            .addSnapshotListener { querySnapshot, error ->
+                if (error != null) {
+                    Log.e("ChatViewModel", "Error fetching group messages: $error")
+                    return@addSnapshotListener
+                }
+
+                val messageList = mutableListOf<Message>()
+                querySnapshot?.documents?.forEach { document ->
+                    val senderId = document.getString("senderId") ?: ""
+                    val content = document.getString("content") ?: ""
+                    val timestamp = document.getLong("timestamp") ?: 0
+                    val type = document.getString("type") ?: "text" // Defaulting to "text"
+
+                    Log.d(
+                        "ChatViewModel",
+                        "Loaded group message: senderId=$senderId, type=$type, content=$content"
+                    )
+
+                    val message = Message(senderId, content, timestamp, type)
+                    messageList.add(message)
+                }
+                groupMessages.value = messageList
+            }
+    }
+
+    // Send a message to a group
+    fun sendGroupMessage(groupId: String, content: String, type: String = "text") {
+        currentUser?.uid?.let { uid ->
+            val messageMap = hashMapOf(
+                "senderId" to uid,
+                "content" to content,
+                "timestamp" to System.currentTimeMillis(),
+                "type" to type
+            )
+
+            groupCol.document(groupId)
+                .collection("messages")
+                .add(messageMap)
+                .addOnSuccessListener {
+                    Log.d("ChatViewModel", "Group message sent successfully")
+                }
+                .addOnFailureListener { e ->
+                    Log.e("ChatViewModel", "Error sending group message: $e")
+                }
+        }
+    }
+
+    // Create a new group
+    fun createGroup(name: String, members: List<String>) {
+        val groupId = groupCol.document().id // Automatically generate a new unique group ID
+        val groupData = hashMapOf(
+            "name" to name,
+            "members" to members,
+            "adminId" to currentUser?.uid, // Set the current user as the admin
+            "createdAt" to System.currentTimeMillis()
+        )
+
+        groupCol.document(groupId)
+            .set(groupData)
+            .addOnSuccessListener {
+                Log.d("ChatViewModel", "Group created successfully")
+            }
+            .addOnFailureListener { e ->
+                Log.e("ChatViewModel", "Error creating group: $e")
+            }
+    }
+
+    fun getGroups(): LiveData<List<Group>> {
+        val groupsLiveData = MutableLiveData<List<Group>>()
+
+        currentUser?.uid?.let { uid ->
+            groupCol
+                .whereArrayContains(
+                    "members",
+                    uid
+                )  // Check if the current user is a member of the group
+                .addSnapshotListener { querySnapshot, error ->
+                    if (error != null) {
+                        Log.e("ChatViewModel", "Error fetching groups: $error")
+                        return@addSnapshotListener
+                    }
+
+                    val groupsList = mutableListOf<Group>()
+                    querySnapshot?.documents?.forEach { document ->
+                        val groupId = document.id
+                        val groupName = document.getString("name") ?: ""
+                        val members = document["members"] as? List<String> ?: emptyList()
+                        val adminId = document.getString("adminId") ?: ""
+                        val createdAt = document.getLong("createdAt") ?: 0L
+
+                        val group = Group(groupId, groupName, members, adminId, createdAt)
+                        groupsList.add(group)
+                    }
+                    groupsLiveData.value = groupsList
+                }
+        }
+        return groupsLiveData
+    }
+
 }

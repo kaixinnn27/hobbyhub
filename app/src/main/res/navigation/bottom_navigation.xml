@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/navigation_find_buddy"
-        android:name="com.example.hobbyhub.findbuddy.view.ui.FindBuddyFragment"
+        android:name="com.example.hobbyhub.findbuddy.view.FindBuddyFragment"
         android:label="@string/find_buddy_title"
         tools:layout="@layout/fragment_find_buddy">
         <argument
@@ -179,9 +179,14 @@
 
     <fragment
         android:id="@+id/mapFragment"
-        android:name="com.example.hobbyhub.findbuddy.view.ui.MapFragment"
+        android:name="com.example.hobbyhub.findbuddy.view.MapFragment"
         android:label="fragment_map"
         tools:layout="@layout/fragment_map" />
+    <fragment
+        android:id="@+id/socialFragment"
+        android:name="com.example.hobbyhub.social.SocialFragment"
+        android:label="SocialFragment"
+        tools:layout="@layout/fragment_social"/>
 
     <fragment
         android:id="@+id/registerFragment"

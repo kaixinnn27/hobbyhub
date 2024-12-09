@@ -11,17 +11,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hobbyhub.R
+import com.example.hobbyhub.achievement.view.AchievementActivity
 import com.example.hobbyhub.achievement.viewmodel.AchievementViewModel
-import com.example.hobbyhub.authentication.view.AuthenticationActivity
 import com.example.hobbyhub.authentication.viewmodel.AuthViewModel
 import com.example.hobbyhub.databinding.FragmentHomeBinding
-import com.example.hobbyhub.findbuddy.view.ui.FindBuddyFragment
-import com.example.hobbyhub.findbuddy.view.ui.MapFragment
+import com.example.hobbyhub.findbuddy.view.MapFragment
 import com.example.hobbyhub.hobby.model.Hobby
 import com.example.hobbyhub.hobby.model.UserHobby
 import com.example.hobbyhub.hobby.viewmodel.HobbyViewModel
@@ -62,15 +60,10 @@ class HomeFragment : Fragment() {
             nav.navigate(R.id.navigation_find_buddy)
         }
 
-//        binding.checkInButton.setOnClickListener {
-//            val userId = authViewModel.getCurrentUserId()
-//            if (userId != null) {
-//                achievementViewModel.updateDailyStreak(userId)
-//            } else {
-//                val intent = Intent(context, AuthenticationActivity::class.java)
-//                context?.startActivity(intent)
-//            }
-//        }
+        binding.achievementBtn.setOnClickListener {
+            val intent = Intent(context, AchievementActivity::class.java)
+            context?.startActivity(intent)
+        }
 
         binding.searchBar.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {

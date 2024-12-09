@@ -1,46 +1,67 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="8dp">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="16dp"
+    app:cardCornerRadius="16dp">
 
-    <!-- Event ID -->
-    <TextView
-        android:id="@+id/tvEventId"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/event_id"
-        android:textStyle="bold"
-        android:textSize="16sp"
-        android:paddingBottom="4dp" />
+        android:orientation="vertical"
+        android:padding="16dp">
 
-    <!-- Date -->
-    <TextView
-        android:id="@+id/tvDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/date" />
+        <!-- Event ID -->
+        <TextView
+            android:id="@+id/tvEventName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Event Name"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:drawablePadding="8dp"
+            android:paddingBottom="8dp" />
 
-    <!-- Time -->
-    <TextView
-        android:id="@+id/tvTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/time" />
+        <!-- Date -->
+        <TextView
+            android:id="@+id/tvDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/date"
+            android:textSize="16sp"
+            android:drawablePadding="8dp"
+            android:paddingBottom="4dp" />
 
-    <!-- Location -->
-    <TextView
-        android:id="@+id/tvLocation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/location" />
+        <!-- Time -->
+        <TextView
+            android:id="@+id/tvTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/time"
+            android:textSize="16sp"
+            android:drawablePadding="8dp"
+            android:paddingBottom="4dp" />
 
-    <!-- Participants -->
-    <TextView
-        android:id="@+id/tvParticipants"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/participants" />
+        <!-- Location -->
+        <TextView
+            android:id="@+id/tvLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/location"
+            android:textSize="16sp"
+            android:drawablePadding="8dp"
+            android:paddingBottom="4dp" />
 
-</LinearLayout>
+        <!-- Participants -->
+        <TextView
+            android:id="@+id/tvParticipants"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/participants"
+            android:textSize="16sp"
+            android:drawablePadding="8dp"
+            android:paddingBottom="4dp" />
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

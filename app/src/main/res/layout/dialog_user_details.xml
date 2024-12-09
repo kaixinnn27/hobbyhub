@@ -39,6 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:adjustViewBounds="true"
+        android:src="@drawable/result_not_found"
         android:scaleType="centerCrop"/>
 
 </LinearLayout>

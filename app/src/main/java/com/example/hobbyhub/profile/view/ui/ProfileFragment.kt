@@ -13,6 +13,7 @@ import com.example.hobbyhub.R
 import com.example.hobbyhub.authentication.view.AuthenticationActivity
 import com.example.hobbyhub.chatroom.viewmodel.ChatViewModel
 import com.example.hobbyhub.databinding.FragmentProfileBinding
+import com.example.hobbyhub.hobby.view.FavouriteHobbyActivity
 import com.example.hobbyhub.profile.viewmodel.ProfileViewModel
 import com.example.hobbyhub.utility.toBitmap
 import com.google.firebase.Firebase
@@ -30,7 +31,7 @@ class ProfileFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentProfileBinding.inflate(inflater, container, false)
 
         auth = Firebase.auth
@@ -40,6 +41,11 @@ class ProfileFragment : Fragment() {
             val intent = Intent(context, AuthenticationActivity::class.java)
             startActivity(intent)
             requireActivity().finish()
+        }
+
+        binding.savedHobbyBtn.setOnClickListener {
+            val intent = Intent(context, FavouriteHobbyActivity::class.java)
+            startActivity(intent)
         }
 
         binding.editBtn.setOnClickListener {
@@ -62,18 +68,22 @@ class ProfileFragment : Fragment() {
                 val user = vm.get(userId)
                 if (user != null) {
                     binding.tvUsername.text = user.name
-//                    binding.tvCourse.text = user.studyField
-//                    binding.tvLearningStyle.text = user.learningStyle
-//                    binding.tvInterest.text = user.interest
+                    binding.userEmail.text = user.email
 
                     if (user.photo.toBitmap() != null) {
                         binding.headerProfile.setImageBitmap(user.photo.toBitmap())
                         binding.letterOverlayTv.visibility = View.GONE
+
+                        binding.imageViewProfile.setImageBitmap(user.photo.toBitmap())
+                        binding.letterOverlay.visibility = View.GONE
                     } else {
+                        binding.imageViewProfile.setImageResource(R.drawable.profile_bg)
                         binding.headerProfile.setImageResource(R.drawable.profile_bg)
+                        binding.letterOverlay.visibility = View.VISIBLE
                         binding.letterOverlayTv.visibility = View.VISIBLE
 
                         val firstLetter = user.name.firstOrNull()?.toString()?.uppercase() ?: "U"
+                        binding.letterOverlay.text = firstLetter
                         binding.letterOverlayTv.text = firstLetter
                     }
                 }
@@ -85,17 +95,22 @@ class ProfileFragment : Fragment() {
 
             if(friend1 == null && friend2 == null){
                 binding.tvBuddyLabel.visibility = View.GONE
+                binding.firstDivider.visibility = View.GONE
             }
 
             if (friend1 != null) {
                 binding.friend1.visibility = View.VISIBLE
-                binding.avatar1.setImageBitmap(friend1.photo?.toBitmap())
+                if(friend1.photo.toBitmap()!=null){
+                    binding.avatar1.setImageBitmap(friend1.photo.toBitmap())
+                }
                 binding.tvFriendName1.text = friend1.name
             }
 
             if (friend2 != null) {
                 binding.friend2.visibility = View.VISIBLE
-                binding.avatar2.setImageBitmap(friend2.photo?.toBitmap())
+                if(friend2.photo.toBitmap()!=null){
+                    binding.avatar2.setImageBitmap(friend2.photo.toBitmap())
+                }
                 binding.tvFriendName2.text = friend2.name
             }
         }

@@ -109,7 +109,7 @@ class CalendarFragment : Fragment() {
     private fun displayEventDetails(event: Event) {
         Log.d("CalendarFragment", "Displaying Event Details: $event")
         binding.tvEventDetails.text = """
-            Event ID: ${event.eventId}
+            Name: ${event.name}
             Date: ${event.date}
             Time: ${event.startTime}
             Location: ${event.location}

@@ -1,5 +1,6 @@
 package com.example.hobbyhub.scheduling.view.ui
 
+import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
@@ -42,6 +43,7 @@ class EditEventFragment : Fragment() {
     private var selectedEndTime: String = ""
     private val busyTimes = mutableListOf<String>()
     private val friendsMap = mutableMapOf<String, String>()
+    private val nav by lazy { findNavController() }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,7 +55,7 @@ class EditEventFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val eventId = args.event.eventId
+        val eventId = args.event.id
         fetchEventData(eventId)
         fetchFriends()
     }
@@ -84,8 +86,10 @@ class EditEventFragment : Fragment() {
             }
     }
 
+    @SuppressLint("DefaultLocale")
     private fun populateFields(event: Event) {
-        binding.etEventId.setText(event.eventId)
+        binding.etEventId.setText(event.id)
+        binding.etEventName.setText(event.name)
         selectedDate = event.date
         binding.btnDatePicker.text = event.date
         binding.btnStartTimePicker.text = event.startTime
@@ -310,6 +314,7 @@ class EditEventFragment : Fragment() {
     private fun saveUpdatedEvent() {
         val userId = auth.currentUser?.uid ?: return
         val eventId = binding.etEventId.text.toString().trim()
+        val eventName = binding.etEventName.text.toString().trim()
 
         val participantUsernames = binding.multiAutocompleteParticipants.text.toString()
             .split(",").map { it.trim() }
@@ -318,7 +323,7 @@ class EditEventFragment : Fragment() {
 
         val event = Event(
             date = selectedDate,
-            eventId = eventId,
+            name = eventName,
             startTime = selectedStartTime,
             endTime = selectedEndTime,
             location = binding.spinnerLocation.selectedItem.toString(),
@@ -333,7 +338,7 @@ class EditEventFragment : Fragment() {
                 sendInvitations(event, participantIds)
                 setEventReminders(event)
                 Toast.makeText(requireContext(), "Event created successfully!", Toast.LENGTH_SHORT).show()
-                findNavController().navigate(R.id.action_createEventFragment_to_navigation_schedule)
+                nav.navigate(R.id.navigation_schedule)
             }
             .addOnFailureListener { e ->
                 Log.e("CreateEventFragment", "Failed to save event: ${e.message}")
@@ -352,7 +357,8 @@ class EditEventFragment : Fragment() {
 
             val invitationMessage = mapOf(
                 "type" to "event_invitation",
-                "eventId" to event.eventId,
+                "eventId" to event.id,
+                "name" to event.name,
                 "eventDate" to event.date,
                 "eventStartTime" to event.startTime,
                 "eventEndTime" to event.endTime,
@@ -393,14 +399,14 @@ class EditEventFragment : Fragment() {
                 scheduleReminder(
                     alarmManager,
                     eventDateTime.time - (60 * 60 * 1000),
-                    "Reminder: ${event.eventId} starts in 1 hour!",
-                    event.eventId.hashCode() + 1
+                    "Reminder: ${event.name} starts in 1 hour!",
+                    event.id.hashCode() + 1
                 )
                 scheduleReminder(
                     alarmManager,
                     eventDateTime.time - (30 * 60 * 1000),
-                    "Reminder: ${event.eventId} starts in 30 minutes!",
-                    event.eventId.hashCode() + 2
+                    "Reminder: ${event.name} starts in 30 minutes!",
+                    event.id.hashCode() + 2
                 )
             }
         } catch (e: Exception) {
