@@ -1,9 +1,11 @@
 package com.example.hobbyhub.findbuddy.view
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,8 +14,15 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import com.example.hobbyhub.R
+import com.example.hobbyhub.authentication.viewmodel.AuthViewModel
 import com.example.hobbyhub.databinding.FragmentFindBuddyBinding
+import com.example.hobbyhub.findbuddy.viewmodel.MapViewModel
+import com.example.hobbyhub.hobby.viewmodel.HobbyViewModel
+import com.example.hobbyhub.hobby.viewmodel.UserHobbyViewModel
 import com.example.hobbyhub.utility.toBitmap
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -25,8 +34,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.launch
 
 class FindBuddyFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
@@ -34,7 +43,11 @@ class FindBuddyFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClic
     private lateinit var mapFragment: SupportMapFragment
     private var googleMap: GoogleMap? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+
     private val db = FirebaseFirestore.getInstance()
+    private val authViewModel: AuthViewModel by viewModels()
+    private val mapViewModel: MapViewModel by viewModels()
+    private val userHobbyViewModel: UserHobbyViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -116,7 +129,7 @@ class FindBuddyFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClic
             .get()
             .addOnSuccessListener { querySnapshot ->
                 // Retrieve current user's UID
-                val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid
+                val currentUserUid = authViewModel.getCurrentUserId()
 
                 // Iterate through each document (user location) in the collection
                 for (document in querySnapshot.documents) {
@@ -177,6 +190,7 @@ class FindBuddyFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClic
         return true
     }
 
+    @SuppressLint("SetTextI18n")
     private fun showUserDetailsDialog(userId: String) {
         // Inflate the dialog layout
         val dialogView = layoutInflater.inflate(R.layout.dialog_user_details, null)
@@ -189,7 +203,7 @@ class FindBuddyFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClic
                 addFriend(userId)
                 dialog.dismiss()
             }
-            .setNegativeButton("Cancel"){ dialog, _ ->
+            .setNegativeButton("Cancel") { dialog, _ ->
                 dialog.dismiss()
             }
 
@@ -199,19 +213,47 @@ class FindBuddyFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClic
                 if (userDocument.exists()) {
                     // User document exists, retrieve user details
                     val userName = userDocument.getString("name") ?: "Unknown"
-                    val userInterests = userDocument.getString("interest") ?: ""
-                    val userLearningStyle = userDocument.getString("learningStyle") ?: ""
-                    val userStudyField = userDocument.getString("studyField") ?: ""
-                    val photo = userDocument.getBlob("photo") ?: null
+                    val photo = userDocument.getBlob("photo")
 
+                    lifecycleScope.launch {
+                        val userHobby = userHobbyViewModel.get(userDocument.id)
+                        if (userHobby != null) {
+                            val preferredCategories = userHobby.preferredCategories
+                            val savedHobbies =
+                                userHobbyViewModel.getAllFavoriteHobbies(userDocument.id)
+
+                            userHobbyViewModel.favoriteHobbies.observe(
+                                viewLifecycleOwner,
+                                Observer { hobbies ->
+                                    val hobbyNames = StringBuilder("Saved Hobbies: ")
+                                    hobbies.forEach { hobby ->
+                                        hobbyNames.append(hobby.name).append(", ")
+                                    }
+                                    if (hobbyNames.isNotEmpty()) {
+                                        hobbyNames.setLength(hobbyNames.length - 2)
+                                    }
+                                    dialogView.findViewById<TextView>(R.id.tvLearningStyle).text =
+                                        hobbyNames
+                                })
+
+                            val categories = StringBuilder("Preferred Categories: ")
+                            preferredCategories.forEach { category ->
+                                categories.append(category.toString()).append(", ")
+                            }
+
+                            dialogView.findViewById<TextView>(R.id.tvInterests).text = categories
+
+                        }
+                    }
                     // Set user details in the dialog views
                     dialogView.findViewById<TextView>(R.id.tvName).text = "Name: $userName"
-                    dialogView.findViewById<TextView>(R.id.tvInterests).text = "Interests: $userInterests"
-                    dialogView.findViewById<TextView>(R.id.tvLearningStyle).text = "Learning Style: $userLearningStyle"
-                    dialogView.findViewById<TextView>(R.id.tvStudyField).text = "Study Field: $userStudyField"
 
                     val ivPhoto = dialogView.findViewById<ImageView>(R.id.ivPhoto)
-                    ivPhoto.setImageBitmap(photo?.toBitmap())
+                    if (photo?.toBitmap() != null) {
+                        ivPhoto.setImageBitmap(photo.toBitmap())
+                    } else {
+                        ivPhoto.setImageResource(R.drawable.result_not_found)
+                    }
 
                     // Display the dialog
                     val dialog = dialogBuilder.create()
@@ -223,69 +265,58 @@ class FindBuddyFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClic
             }
             .addOnFailureListener { exception ->
                 // Handle failure to retrieve user document
-                Toast.makeText(requireContext(), "Failed to retrieve user details", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "Failed to retrieve user details",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
     }
 
     private fun addFriend(userId: String) {
-        // Get the current user's ID
-        val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid
+        val currentUserUid = authViewModel.getCurrentUserId()
 
         if (currentUserUid != null) {
-            // Reference to the current user's document
             val currentUserRef = db.collection("user").document(currentUserUid)
-            // Reference to the selected user's document
             val selectedUserRef = db.collection("user").document(userId)
 
-            // Start a Firestore transaction
             db.runTransaction { transaction ->
-                // Get current user's document and selected user's document
                 val currentUserDoc = transaction.get(currentUserRef)
                 val selectedUserDoc = transaction.get(selectedUserRef)
 
-                // Retrieve or initialize the friends arrays
-                val currentUserFriends = currentUserDoc.get("friends") as? MutableList<String> ?: mutableListOf()
-                val selectedUserFriends = selectedUserDoc.get("friends") as? MutableList<String> ?: mutableListOf()
+                val currentUserFriends =
+                    currentUserDoc.get("friends") as? MutableList<String> ?: mutableListOf()
+                val selectedUserFriends =
+                    selectedUserDoc.get("friends") as? MutableList<String> ?: mutableListOf()
 
-                // Check if the selected user is already a friend of the current user
                 if (!currentUserFriends.contains(userId)) {
-                    // Add the selected user to the current user's friends list
                     currentUserFriends.add(userId)
-                    // Update the current user's friends array in Firestore
                     transaction.update(currentUserRef, "friends", currentUserFriends)
                 }
 
-                // Check if the current user is already a friend of the selected user
                 if (!selectedUserFriends.contains(currentUserUid)) {
-                    // Add the current user to the selected user's friends list
                     selectedUserFriends.add(currentUserUid)
-                    // Update the selected user's friends array in Firestore
                     transaction.update(selectedUserRef, "friends", selectedUserFriends)
                 }
             }
                 .addOnSuccessListener {
-                    // Friend added successfully
-                    Toast.makeText(requireContext(), "User added as friend", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "User added as friend", Toast.LENGTH_SHORT)
+                        .show()
                 }
                 .addOnFailureListener { exception ->
-                    // Failed to add friend
-                    Toast.makeText(requireContext(), "Failed to add friend", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Failed to add friend", Toast.LENGTH_SHORT)
+                        .show()
                 }
         } else {
-            // User not authenticated
             Toast.makeText(requireContext(), "User not authenticated", Toast.LENGTH_SHORT).show()
         }
     }
 
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
-        // Add custom marker for user's location
         addCustomMarker()
-        // Request location permission and show user's location
         enableMyLocation()
-        // Add markers for all users
         addMarkersForUsers()
-        // Set marker click listener
         googleMap?.setOnMarkerClickListener(this)
     }
 }

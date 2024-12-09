@@ -64,5 +64,6 @@ dependencies {
     implementation(libs.material)
     implementation("com.github.prolificinteractive:material-calendarview:2.0.1")
     implementation(libs.philjay.mpandroidchart)
+    implementation(libs.core.ktx)
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
 }
