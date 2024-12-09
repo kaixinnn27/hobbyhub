@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.hobbyhub.chatroom.model.Friend
 import com.example.hobbyhub.chatroom.model.Message
-import com.example.hobbyhub.chatroom.view.model.Group
+import com.example.hobbyhub.chatroom.model.Group
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser

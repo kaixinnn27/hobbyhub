@@ -262,8 +262,11 @@ class CreateEventFragment : Fragment() {
         val userId = auth.currentUser?.uid ?: return
         val eventId = binding.etEventId.text.toString().trim()
 
+        Log.d("CreateEventFragment","multiAutocompleteParticipants -> ${binding.multiAutocompleteParticipants.text}")
+
         val participantUsernames = binding.multiAutocompleteParticipants.text.toString()
             .split(",").map { it.trim() }
+        Log.d("CreateEventFragment","participantUsernames -> $participantUsernames")
         val participantIds = participantUsernames.mapNotNull { friendsMap[it] }
         Log.d("CreateEventFragment", "Saving Event for Participants: $participantIds")
 

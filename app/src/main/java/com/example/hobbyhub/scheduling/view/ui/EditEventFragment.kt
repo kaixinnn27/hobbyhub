@@ -42,6 +42,7 @@ class EditEventFragment : Fragment() {
     private var selectedEndTime: String = ""
     private val busyTimes = mutableListOf<String>()
     private val friendsMap = mutableMapOf<String, String>()
+    private val nav by lazy { findNavController() }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -333,7 +334,7 @@ class EditEventFragment : Fragment() {
                 sendInvitations(event, participantIds)
                 setEventReminders(event)
                 Toast.makeText(requireContext(), "Event created successfully!", Toast.LENGTH_SHORT).show()
-                findNavController().navigate(R.id.action_createEventFragment_to_navigation_schedule)
+                nav.navigate(R.id.navigation_schedule)
             }
             .addOnFailureListener { e ->
                 Log.e("CreateEventFragment", "Failed to save event: ${e.message}")

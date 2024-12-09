@@ -1,4 +1,4 @@
-package com.example.hobbyhub.chatroom.view.model
+package com.example.hobbyhub.chatroom.model
 
 import com.google.firebase.firestore.DocumentId
 

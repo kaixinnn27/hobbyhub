@@ -1,6 +1,4 @@
-package com.example.hobbyhub.chatroom.view.model
-
-import com.example.hobbyhub.chatroom.model.Friend
+package com.example.hobbyhub.chatroom.model
 
 sealed class ChatItem {
     data class FriendItem(val friend: Friend) : ChatItem()

@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.example.hobbyhub.chatroom.view.adapter.ChatAdapter
-import com.example.hobbyhub.chatroom.view.model.ChatItem
+import com.example.hobbyhub.chatroom.model.ChatItem
 import com.example.hobbyhub.chatroom.viewmodel.ChatViewModel
 import com.example.hobbyhub.databinding.FragmentChatRoomBinding
 

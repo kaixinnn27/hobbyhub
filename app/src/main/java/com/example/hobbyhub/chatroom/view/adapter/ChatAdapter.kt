@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.hobbyhub.chatroom.view.model.ChatItem
+import com.example.hobbyhub.chatroom.model.ChatItem
 import com.example.hobbyhub.databinding.ItemPersonBinding
 import com.example.hobbyhub.databinding.ItemGroupBinding
 import java.text.SimpleDateFormat
