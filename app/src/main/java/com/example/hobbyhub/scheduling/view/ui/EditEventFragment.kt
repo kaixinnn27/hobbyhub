@@ -88,7 +88,8 @@ class EditEventFragment : Fragment() {
 
     @SuppressLint("DefaultLocale")
     private fun populateFields(event: Event) {
-        binding.etEventId.setText(event.name)
+        binding.etEventId.setText(event.id)
+        binding.etEventName.setText(event.name)
         selectedDate = event.date
         binding.btnDatePicker.text = event.date
         binding.btnStartTimePicker.text = event.startTime
@@ -313,6 +314,7 @@ class EditEventFragment : Fragment() {
     private fun saveUpdatedEvent() {
         val userId = auth.currentUser?.uid ?: return
         val eventId = binding.etEventId.text.toString().trim()
+        val eventName = binding.etEventName.text.toString().trim()
 
         val participantUsernames = binding.multiAutocompleteParticipants.text.toString()
             .split(",").map { it.trim() }
@@ -321,7 +323,7 @@ class EditEventFragment : Fragment() {
 
         val event = Event(
             date = selectedDate,
-            name = eventId,
+            name = eventName,
             startTime = selectedStartTime,
             endTime = selectedEndTime,
             location = binding.spinnerLocation.selectedItem.toString(),

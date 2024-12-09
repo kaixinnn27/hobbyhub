@@ -17,7 +17,7 @@
             android:id="@+id/tvEventName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/event_id"
+            android:text="Event Name"
             android:textStyle="bold"
             android:textSize="18sp"
             android:drawablePadding="8dp"

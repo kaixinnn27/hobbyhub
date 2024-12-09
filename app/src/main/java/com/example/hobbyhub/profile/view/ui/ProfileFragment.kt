@@ -31,7 +31,7 @@ class ProfileFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentProfileBinding.inflate(inflater, container, false)
 
         auth = Firebase.auth
@@ -68,6 +68,7 @@ class ProfileFragment : Fragment() {
                 val user = vm.get(userId)
                 if (user != null) {
                     binding.tvUsername.text = user.name
+                    binding.userEmail.text = user.email
 
                     if (user.photo.toBitmap() != null) {
                         binding.headerProfile.setImageBitmap(user.photo.toBitmap())
