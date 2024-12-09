@@ -56,6 +56,12 @@
             android:name=".profile.view.ui.ProfileDetailsActivity"
             android:exported="false" />
         <activity
+            android:name=".hobby.view.RatingListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".hobby.view.WriteHobbyRatingActivity"
+            android:exported="false" />
+        <activity
             android:name=".LandingActivity"
             android:exported="true">
             <intent-filter>
