@@ -126,55 +126,39 @@ class MessageAdapter(
     }
 
     private fun acceptEventInvitation(message: Message) {
-        val eventDetails = mapOf(
-            "eventId" to message.eventId,
-            "name" to message.name,
-            "date" to message.eventDate,
-            "startTime" to message.eventStartTime,
-            "endTime" to message.eventEndTime,
-            "status" to "accepted"
-        )
+        scope.launch {
+            val sender = authViewModel.get(message.senderId)
+            val currentUser = authViewModel.get(currentUserId)
+            val eventDetails = mapOf(
+                "id" to message.eventId,
+                "name" to message.name,
+                "date" to message.eventDate,
+                "startTime" to message.eventStartTime,
+                "endTime" to message.eventEndTime,
+                "status" to "accepted",
+                "location" to "",
+                "reminderTime" to "",
+                "participants" to listOf(sender?.name, currentUser?.name)
+            )
 
-        val currentUser = FirebaseAuth.getInstance().currentUser?.uid
-        currentUser?.let {
-            FirebaseFirestore.getInstance().collection("schedule")
-                .document(it)
-                .collection("events")
-                .document(message.eventId ?: "")
-                .set(eventDetails)
-                .addOnSuccessListener {
-                    Log.d("MessageAdapter", "Event accepted: ${message.eventId}")
-                }
-                .addOnFailureListener { e ->
-                    Log.e("MessageAdapter", "Failed to accept event: ${e.message}")
-                }
+            val userId = currentUser?.id
+            userId?.let {
+                FirebaseFirestore.getInstance().collection("schedule")
+                    .document(it)
+                    .collection("events")
+                    .document(message.eventId ?: "")
+                    .set(eventDetails)
+                    .addOnSuccessListener {
+                        Log.d("MessageAdapter", "Event accepted: ${message.eventId}")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e("MessageAdapter", "Failed to accept event: ${e.message}")
+                    }
+            }
         }
     }
 
     private fun declineEventInvitation(message: Message) {
-        Log.d("MessageAdapter", "Event declined: ${message.eventId}")
-        val eventDetails = mapOf(
-            "eventId" to message.eventId,
-            "name" to message.name,
-            "date" to message.eventDate,
-            "startTime" to message.eventStartTime,
-            "endTime" to message.eventEndTime,
-            "status" to "declined"
-        )
-
-        val currentUser = FirebaseAuth.getInstance().currentUser?.uid
-        currentUser?.let {
-            FirebaseFirestore.getInstance().collection("schedule")
-                .document(it)
-                .collection("events")
-                .document(message.eventId ?: "")
-                .set(eventDetails)
-                .addOnSuccessListener {
-                    Log.d("MessageAdapter", "Event declined: ${message.eventId}")
-                }
-                .addOnFailureListener { e ->
-                    Log.e("MessageAdapter", "Failed to declined event: ${e.message}")
-                }
-        }
+        // do nothing so wont appear in schedule
     }
 }
