@@ -88,7 +88,7 @@ class EditEventFragment : Fragment() {
 
     @SuppressLint("DefaultLocale")
     private fun populateFields(event: Event) {
-        binding.etEventId.setText(event.id)
+        binding.etEventId.setText(event.name)
         selectedDate = event.date
         binding.btnDatePicker.text = event.date
         binding.btnStartTimePicker.text = event.startTime

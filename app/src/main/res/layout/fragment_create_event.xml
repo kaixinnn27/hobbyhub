@@ -17,13 +17,13 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/event_id" />
+                android:text="Event Name" />
 
             <EditText
                 android:id="@+id/etEventId"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/enter_event_id" />
+                android:hint="Event Name" />
 
             <!-- Date Picker -->
             <TextView
