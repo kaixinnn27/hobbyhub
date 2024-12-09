@@ -165,7 +165,7 @@
         android:id="@+id/userDemographicsReportFragment"
         android:name="com.example.hobbyhub.report.view.ui.UserDemographicsReportFragment"
         android:label="User Activity Report"
-        tools:layout="@layout/fragment_user_demographics" />
+        tools:layout="@layout/fragment_user_demographics_report" />
 
     <action
         android:id="@+id/action_reportMainFragment_to_userFeedbackAnalysisFragment"
@@ -182,5 +182,33 @@
         android:name="com.example.hobbyhub.findbuddy.view.ui.MapFragment"
         android:label="fragment_map"
         tools:layout="@layout/fragment_map" />
+
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.example.hobbyhub.authentication.view.RegisterFragment"
+        android:label="Register"
+        tools:layout="@layout/fragment_register">
+        <action
+            android:id="@+id/action_registerFragment_to_userDemographicsFragment"
+            app:destination="@id/userDemographicsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/userDemographicsFragment"
+        android:name="com.example.hobbyhub.authentication.view.UserDemographicsFragment"
+        android:label="User Demographics"
+        tools:layout="@layout/fragment_user_demographics">
+        <action
+            android:id="@+id/action_userDemographicsFragment_to_selectHobbyFragment"
+            app:destination="@id/selectHobbyFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/selectHobbyFragment"
+        android:name="com.example.hobbyhub.authentication.view.SelectHobbyFragment"
+        android:label="Select Hobby"
+        tools:layout="@layout/fragment_select_hobby">
+    </fragment>
+
 
 </navigation>
