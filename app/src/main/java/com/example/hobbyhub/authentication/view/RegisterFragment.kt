@@ -96,11 +96,18 @@ class RegisterFragment : Fragment() {
                 db.collection("location").document(userId)
                     .set(locationData)
                     .addOnSuccessListener {
+                        // Clear input fields
                         binding.editTextName.text.clear()
                         binding.editTextEmail.text.clear()
                         binding.editTextPassword.text.clear()
+
+                        // Navigate to UserDemographicFragment
                         Toast.makeText(context, "Account created successfully!", Toast.LENGTH_SHORT).show()
-                        nav.navigate(R.id.selectHobbyFragment)
+                        Log.d("NavigationDebug", "Expected: ${R.id.registerFragment}, Current: ${findNavController().currentDestination?.id}")
+                        Log.d("NavigationGraphDebug", findNavController().graph.toString())
+                        findNavController().navigate(
+                            RegisterFragmentDirections.actionRegisterFragmentToUserDemographicsFragment()
+                        )
                     }
                     .addOnFailureListener { e ->
                         Toast.makeText(context, "Failed to save location data: ${e.message}", Toast.LENGTH_SHORT).show()

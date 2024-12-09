@@ -102,6 +102,10 @@
     <string name="current_streak_0">Current Streak: 0</string>
     <string name="_366_days">366 days</string>
     <string name="check_in">Check In</string>
+    <string name="user_demographics">User Demographics</string>
+    <string name="enter_your_age">Enter your age</string>
+    <string name="enter_your_location">Enter your location</string>
+    <string name="submit">Submit</string>
     <string name="best_streak_rewards">Best Streak Rewards</string>
     <string name="best_streak">Best Streak</string>
     <string name="social_rewards">Social Rewards</string>
