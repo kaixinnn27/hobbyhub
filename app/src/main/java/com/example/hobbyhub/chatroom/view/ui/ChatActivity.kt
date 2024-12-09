@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hobbyhub.authentication.viewmodel.AuthViewModel
 import com.example.hobbyhub.chatroom.view.adapter.MessageAdapter
@@ -25,7 +26,7 @@ class ChatActivity : AppCompatActivity() {
         setupToolbar()
         val userId = authViewModel.getCurrentUserId()
 
-        messageAdapter = userId?.let { MessageAdapter(userId) }!!
+        messageAdapter = userId?.let { MessageAdapter(userId, authViewModel, lifecycleScope ) }!!
         binding.rvMessages.apply {
             adapter = messageAdapter
             layoutManager = LinearLayoutManager(this@ChatActivity)

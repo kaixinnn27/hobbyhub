@@ -161,14 +161,15 @@ class ChatViewModel : ViewModel() {
                     val content = document.getString("content") ?: ""
                     val timestamp = document.getLong("timestamp") ?: 0
                     val type = document.getString("type") ?: "text" // Defaulting to "text"
-                    val eventId = document.getString("eventId")
+                    val id = document.id
+                    val name = document.getString("name")
                     val eventDate = document.getString("eventDate")
                     val eventStartTime = document.getString("eventStartTime")
                     val eventEndTime = document.getString("eventEndTime")
 
                     Log.d(
                         "ChatViewModel",
-                        "Loaded message: senderId=$senderId, type=$type, content=$content, eventId=$eventId"
+                        "Loaded message: senderId=$senderId, type=$type, content=$content, eventId=$id"
                     )
 
                     val message = Message(
@@ -176,10 +177,11 @@ class ChatViewModel : ViewModel() {
                         content,
                         timestamp,
                         type,
-                        eventId,
+                        id,
                         eventDate,
                         eventStartTime,
-                        eventEndTime
+                        eventEndTime,
+                        name
                     )
                     messageList.add(message)
                 }
@@ -206,7 +208,7 @@ class ChatViewModel : ViewModel() {
             return
         }
 
-        currentUser?.uid?.let { uid ->
+        currentUser.uid.let { uid ->
             val messageMap = hashMapOf(
                 "senderId" to uid,
                 "content" to content,

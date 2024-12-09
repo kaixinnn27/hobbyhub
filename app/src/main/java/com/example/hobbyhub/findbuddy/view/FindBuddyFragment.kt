@@ -197,7 +197,7 @@ class FindBuddyFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClic
 
         // Initialize dialog components
         val dialogBuilder = AlertDialog.Builder(requireContext())
-            .setTitle("Find your study buddy") // Set dialog title to userId
+            .setTitle("Find your hobby buddy")
             .setView(dialogView)
             .setPositiveButton("Add") { dialog, _ ->
                 addFriend(userId)
@@ -252,7 +252,7 @@ class FindBuddyFragment : Fragment(), OnMapReadyCallback, GoogleMap.OnMarkerClic
                     if (photo?.toBitmap() != null) {
                         ivPhoto.setImageBitmap(photo.toBitmap())
                     } else {
-                        ivPhoto.setImageResource(R.drawable.result_not_found)
+                        ivPhoto.setImageResource(R.drawable.ic_default_profile)
                     }
 
                     // Display the dialog

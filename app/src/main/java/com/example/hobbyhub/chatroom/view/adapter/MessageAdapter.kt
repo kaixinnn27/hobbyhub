@@ -7,16 +7,25 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.hobbyhub.R
+import com.example.hobbyhub.authentication.viewmodel.AuthViewModel
 import com.example.hobbyhub.chatroom.model.Message
 import com.example.hobbyhub.databinding.MessageItemBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
-class MessageAdapter(private val currentUserId: String) : RecyclerView.Adapter<MessageAdapter.MessageViewHolder>() {
+class MessageAdapter(
+    private val currentUserId: String,
+    private val authViewModel: AuthViewModel,
+    private val scope: CoroutineScope
+) :
+    RecyclerView.Adapter<MessageAdapter.MessageViewHolder>() {
 
     private var messagesList = mutableListOf<Message>()
 
-    inner class MessageViewHolder(private val binding: MessageItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class MessageViewHolder(private val binding: MessageItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
         @SuppressLint("SetTextI18n")
         fun bind(message: Message) {
@@ -31,11 +40,19 @@ class MessageAdapter(private val currentUserId: String) : RecyclerView.Adapter<M
                         binding.tvMessageContentSend.visibility = View.VISIBLE
 
                         // Hide others
+                        binding.tvSenderNameReceived.visibility = View.GONE
                         binding.tvMessageContentReceived.visibility = View.GONE
                         binding.invitationSectionSend.visibility = View.GONE
                         binding.invitationSectionReceive.visibility = View.GONE
                     } else {
+                        scope.launch {
+                            val user = authViewModel.get(message.senderId)
+                            Log.d("MeesageAdpater", "Checking sender name -> $user")
+                            binding.tvSenderNameReceived.visibility = View.VISIBLE
+                            binding.tvSenderNameReceived.text = user?.name
+                        }
                         // Show received text message
+
                         binding.tvMessageContentReceived.text = message.content
                         binding.tvMessageContentReceived.visibility = View.VISIBLE
 
@@ -53,12 +70,20 @@ class MessageAdapter(private val currentUserId: String) : RecyclerView.Adapter<M
                         binding.invitationSectionReceive.visibility = View.GONE
                         binding.tvMessageContentSend.visibility = View.GONE
                         binding.tvMessageContentReceived.visibility = View.GONE
+                        binding.tvSenderNameReceived.visibility = View.GONE
 
                         binding.tvInvitationMessageSend.text = "You've sent an event invitation"
-                        binding.tvEventDetailsSend.text = "Event: ${message.eventId ?: "Unknown"}\n" +
-                                "Date: ${message.eventDate ?: "Unknown"}\n" +
-                                "Time: ${message.eventStartTime ?: "Unknown"} - ${message.eventEndTime ?: "Unknown"}"
+                        binding.tvEventDetailsSend.text =
+                            "Event: ${message.name ?: "Unknown"}\n" +
+                                    "Date: ${message.eventDate ?: "Unknown"}\n" +
+                                    "Time: ${message.eventStartTime ?: "Unknown"} - ${message.eventEndTime ?: "Unknown"}"
                     } else {
+                        scope.launch {
+                            val user = authViewModel.get(message.senderId)
+                            Log.d("MeesageAdpater", "Checking sender name -> $user")
+                            binding.tvSenderNameReceived.visibility = View.VISIBLE
+                            binding.tvSenderNameReceived.text = user?.name
+                        }
                         // Show received invitation
                         binding.invitationSectionReceive.visibility = View.VISIBLE
                         binding.invitationSectionSend.visibility = View.GONE
@@ -66,9 +91,10 @@ class MessageAdapter(private val currentUserId: String) : RecyclerView.Adapter<M
                         binding.tvMessageContentReceived.visibility = View.GONE
 
                         binding.tvInvitationMessageReceive.text = "You're invited to an event"
-                        binding.tvEventDetailsReceive.text = "Event: ${message.eventId ?: "Unknown"}\n" +
-                                "Date: ${message.eventDate ?: "Unknown"}\n" +
-                                "Time: ${message.eventStartTime ?: "Unknown"} - ${message.eventEndTime ?: "Unknown"}"
+                        binding.tvEventDetailsReceive.text =
+                            "Event: ${message.name ?: "Unknown"}\n" +
+                                    "Date: ${message.eventDate ?: "Unknown"}\n" +
+                                    "Time: ${message.eventStartTime ?: "Unknown"} - ${message.eventEndTime ?: "Unknown"}"
 
                         // Set click listeners for actions
                         binding.btnAccept.setOnClickListener { acceptEventInvitation(message) }
@@ -102,6 +128,7 @@ class MessageAdapter(private val currentUserId: String) : RecyclerView.Adapter<M
     private fun acceptEventInvitation(message: Message) {
         val eventDetails = mapOf(
             "eventId" to message.eventId,
+            "name" to message.name,
             "date" to message.eventDate,
             "startTime" to message.eventStartTime,
             "endTime" to message.eventEndTime,
@@ -128,6 +155,7 @@ class MessageAdapter(private val currentUserId: String) : RecyclerView.Adapter<M
         Log.d("MessageAdapter", "Event declined: ${message.eventId}")
         val eventDetails = mapOf(
             "eventId" to message.eventId,
+            "name" to message.name,
             "date" to message.eventDate,
             "startTime" to message.eventStartTime,
             "endTime" to message.eventEndTime,

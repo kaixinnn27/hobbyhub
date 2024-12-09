@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.hobbyhub.chatroom.model.ChatItem
 import com.example.hobbyhub.databinding.ItemPersonBinding
 import com.example.hobbyhub.databinding.ItemGroupBinding
+import com.example.hobbyhub.utility.toBitmap
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -66,6 +67,9 @@ class ChatAdapter(
         fun bind(friendItem: ChatItem.FriendItem) {
             val friend = friendItem.friend
             binding.tvUsername.text = friend.name
+            if(friend.photo.toBitmap()!=null){
+                binding.imgProfile.setImageBitmap(friend.photo.toBitmap())
+            }
             if (friend.lastMessageTimestamp.toString() != "") {
                 binding.tvLastMsgTime.text = formatTimestamp(friend.lastMessageTimestamp)
             } else {
