@@ -32,27 +32,20 @@ class UserPreferencesViewModel : ViewModel() {
     }
 
     suspend fun update(userPreferences: UserPreferences): Boolean {
-        return withContext(Dispatchers.IO) {
-            try {
-                val documentRef = col.document(userPreferences.id)
-                val updates = mutableMapOf<String, Any?>()
+        return try {
+            val documentRef = col.document(userPreferences.id)
+            val updates = mapOf(
+                "enableFingerprint" to userPreferences.enableFingerprint,
+                "locale" to userPreferences.locale // Ensure "locale" matches your Firestore field name
+            )
 
-                updates["enableFingerprint"] = userPreferences.enableFingerprint
-                updates["locale"] = userPreferences.locale
-
-                documentRef.update(updates)
-                    .addOnSuccessListener {
-                        Log.i("FireStore", "User fields updated successfully")
-                    }
-                    .addOnFailureListener { e ->
-                        Log.e("FireStore", "Error updating user fields: $e")
-                    }
-                    .await()
-                true
-            } catch (e: Exception) {
-                Log.e("FireStore", "Firestore operation failed: $e")
-                false
-            }
+            // Use await() directly for coroutine-based handling
+            documentRef.update(updates).await()
+            Log.i("FireStore", "UserPreferences updated successfully: $updates")
+            true
+        } catch (e: Exception) {
+            Log.e("FireStore", "Error updating UserPreferences for id ${userPreferences.id}: $e")
+            false
         }
     }
 }

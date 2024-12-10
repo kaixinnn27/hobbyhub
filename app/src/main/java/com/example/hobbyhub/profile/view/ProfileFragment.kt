@@ -1,4 +1,4 @@
-package com.example.hobbyhub.profile.view.ui
+package com.example.hobbyhub.profile.view
 
 import android.app.AlertDialog
 import android.content.Intent
@@ -93,14 +93,14 @@ class ProfileFragment : Fragment() {
         chatViewModel.getFriends().observe(viewLifecycleOwner) {
             val (friend1, friend2) = chatViewModel.getTopTwoFriends()
 
-            if(friend1 == null && friend2 == null){
+            if (friend1 == null && friend2 == null) {
                 binding.tvBuddyLabel.visibility = View.GONE
                 binding.firstDivider.visibility = View.GONE
             }
 
             if (friend1 != null) {
                 binding.friend1.visibility = View.VISIBLE
-                if(friend1.photo.toBitmap()!=null){
+                if (friend1.photo.toBitmap() != null) {
                     binding.avatar1.setImageBitmap(friend1.photo.toBitmap())
                 }
                 binding.tvFriendName1.text = friend1.name
@@ -108,11 +108,16 @@ class ProfileFragment : Fragment() {
 
             if (friend2 != null) {
                 binding.friend2.visibility = View.VISIBLE
-                if(friend2.photo.toBitmap()!=null){
+                if (friend2.photo.toBitmap() != null) {
                     binding.avatar2.setImageBitmap(friend2.photo.toBitmap())
                 }
                 binding.tvFriendName2.text = friend2.name
             }
+        }
+
+        binding.settingBtn.setOnClickListener {
+            val intent = Intent(context, SettingActivity::class.java)
+            startActivity(intent)
         }
 
         return binding.root

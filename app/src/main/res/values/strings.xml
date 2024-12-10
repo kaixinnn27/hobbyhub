@@ -134,4 +134,9 @@
     <string name="enable_fingerprint_for_faster_login">Enable fingerprint for faster login</string>
     <string name="skip">Skip</string>
     <string name="enable">Enable</string>
+    <string name="settings">Settings</string>
+    <string-array name="language_options">
+        <item>English</item>
+        <item>Chinese</item>
+    </string-array>
 </resources>

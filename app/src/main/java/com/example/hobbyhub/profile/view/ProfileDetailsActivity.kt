@@ -1,10 +1,9 @@
-package com.example.hobbyhub.profile.view.ui
+package com.example.hobbyhub.profile.view
 
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
-import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
