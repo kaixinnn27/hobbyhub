@@ -39,7 +39,7 @@ class LoginFragment : Fragment() {
     private val authViewModel: AuthViewModel by activityViewModels()
     private var userId: String? = null
     private var isFingerprintEnabled: Boolean = false
-    private var isFirstTimeLogin: Boolean = true
+    private var isFirstTimeLogin: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
