@@ -10,6 +10,7 @@ import com.example.hobbyhub.R
 import com.example.hobbyhub.authentication.viewmodel.AuthViewModel
 import com.example.hobbyhub.chatroom.model.Message
 import com.example.hobbyhub.databinding.MessageItemBinding
+import com.example.hobbyhub.utility.toBitmap
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineScope
@@ -34,73 +35,114 @@ class MessageAdapter(
 
             when (message.type) {
                 "text" -> {
-                    if (message.senderId == currentUserId) {
-                        // Show sent text message
-                        binding.tvMessageContentSend.text = message.content
-                        binding.tvMessageContentSend.visibility = View.VISIBLE
+                    bindTextMessage(message)
+                }
 
-                        // Hide others
-                        binding.tvSenderNameReceived.visibility = View.GONE
-                        binding.tvMessageContentReceived.visibility = View.GONE
-                        binding.invitationSectionSend.visibility = View.GONE
-                        binding.invitationSectionReceive.visibility = View.GONE
-                    } else {
-                        scope.launch {
-                            val user = authViewModel.get(message.senderId)
-                            Log.d("MeesageAdpater", "Checking sender name -> $user")
-                            binding.tvSenderNameReceived.visibility = View.VISIBLE
-                            binding.tvSenderNameReceived.text = user?.name
-                        }
-                        // Show received text message
-
-                        binding.tvMessageContentReceived.text = message.content
-                        binding.tvMessageContentReceived.visibility = View.VISIBLE
-
-                        // Hide others
-                        binding.tvMessageContentSend.visibility = View.GONE
-                        binding.invitationSectionSend.visibility = View.GONE
-                        binding.invitationSectionReceive.visibility = View.GONE
-                    }
+                "image" -> {
+                    bindImageMessage(message)
                 }
 
                 "event_invitation" -> {
-                    if (message.senderId == currentUserId) {
-                        // Show sent invitation
-                        binding.invitationSectionSend.visibility = View.VISIBLE
-                        binding.invitationSectionReceive.visibility = View.GONE
-                        binding.tvMessageContentSend.visibility = View.GONE
-                        binding.tvMessageContentReceived.visibility = View.GONE
-                        binding.tvSenderNameReceived.visibility = View.GONE
-
-                        binding.tvInvitationMessageSend.text = "You've sent an event invitation"
-                        binding.tvEventDetailsSend.text =
-                            "Event: ${message.name ?: "Unknown"}\n" +
-                                    "Date: ${message.eventDate ?: "Unknown"}\n" +
-                                    "Time: ${message.eventStartTime ?: "Unknown"} - ${message.eventEndTime ?: "Unknown"}"
-                    } else {
-                        scope.launch {
-                            val user = authViewModel.get(message.senderId)
-                            Log.d("MeesageAdpater", "Checking sender name -> $user")
-                            binding.tvSenderNameReceived.visibility = View.VISIBLE
-                            binding.tvSenderNameReceived.text = user?.name
-                        }
-                        // Show received invitation
-                        binding.invitationSectionReceive.visibility = View.VISIBLE
-                        binding.invitationSectionSend.visibility = View.GONE
-                        binding.tvMessageContentSend.visibility = View.GONE
-                        binding.tvMessageContentReceived.visibility = View.GONE
-
-                        binding.tvInvitationMessageReceive.text = "You're invited to an event"
-                        binding.tvEventDetailsReceive.text =
-                            "Event: ${message.name ?: "Unknown"}\n" +
-                                    "Date: ${message.eventDate ?: "Unknown"}\n" +
-                                    "Time: ${message.eventStartTime ?: "Unknown"} - ${message.eventEndTime ?: "Unknown"}"
-
-                        // Set click listeners for actions
-                        binding.btnAccept.setOnClickListener { acceptEventInvitation(message) }
-                        binding.btnDecline.setOnClickListener { declineEventInvitation(message) }
-                    }
+                    bindEventInvitationMessage(message)
                 }
+            }
+        }
+
+        private fun bindTextMessage(message: Message) {
+            if (message.senderId == currentUserId) {
+                // Show sent text message
+                binding.tvMessageContentSend.text = message.content
+                binding.tvMessageContentSend.visibility = View.VISIBLE
+
+                // Hide others
+                binding.tvSenderNameReceived.visibility = View.GONE
+                binding.tvMessageContentReceived.visibility = View.GONE
+                binding.invitationSectionSend.visibility = View.GONE
+                binding.invitationSectionReceive.visibility = View.GONE
+            } else {
+                scope.launch {
+                    val user = authViewModel.get(message.senderId)
+                    Log.d("MeesageAdpater", "Checking sender name -> $user")
+                    binding.tvSenderNameReceived.visibility = View.VISIBLE
+                    binding.tvSenderNameReceived.text = user?.name
+                }
+                // Show received text message
+
+                binding.tvMessageContentReceived.text = message.content
+                binding.tvMessageContentReceived.visibility = View.VISIBLE
+
+                // Hide others
+                binding.tvMessageContentSend.visibility = View.GONE
+                binding.invitationSectionSend.visibility = View.GONE
+                binding.invitationSectionReceive.visibility = View.GONE
+            }
+        }
+
+        private fun bindImageMessage(message: Message) {
+            Log.d("bindImageMessage", "$message")
+            if (message.senderId == currentUserId) {
+                binding.tvMessageContentSend.visibility = View.GONE
+                binding.tvMessageContentReceived.visibility = View.GONE
+                binding.imageViewReceived.visibility = View.GONE
+                binding.imageViewSend.visibility = View.VISIBLE
+                binding.tvSenderNameReceived.visibility = View.GONE
+
+                if (message.photo?.toBitmap() != null) {
+                    binding.imageViewSend.setImageBitmap(message.photo!!.toBitmap())
+                }
+            } else {
+                scope.launch {
+                    val user = authViewModel.get(message.senderId)
+                    binding.tvSenderNameReceived.visibility = View.VISIBLE
+                    binding.tvSenderNameReceived.text = user?.name
+                }
+                binding.tvMessageContentSend.visibility = View.GONE
+                binding.tvMessageContentReceived.visibility = View.GONE
+                binding.imageViewSend.visibility = View.GONE
+                binding.imageViewReceived.visibility = View.VISIBLE
+
+                if (message.photo?.toBitmap() != null) {
+                    binding.imageViewReceived.setImageBitmap(message.photo!!.toBitmap())
+                }
+            }
+        }
+
+        private fun bindEventInvitationMessage(message: Message) {
+            if (message.senderId == currentUserId) {
+                // Show sent invitation
+                binding.invitationSectionSend.visibility = View.VISIBLE
+                binding.invitationSectionReceive.visibility = View.GONE
+                binding.tvMessageContentSend.visibility = View.GONE
+                binding.tvMessageContentReceived.visibility = View.GONE
+                binding.tvSenderNameReceived.visibility = View.GONE
+
+                binding.tvInvitationMessageSend.text = "You've sent an event invitation"
+                binding.tvEventDetailsSend.text =
+                    "Event: ${message.name ?: "Unknown"}\n" +
+                            "Date: ${message.eventDate ?: "Unknown"}\n" +
+                            "Time: ${message.eventStartTime ?: "Unknown"} - ${message.eventEndTime ?: "Unknown"}"
+            } else {
+                scope.launch {
+                    val user = authViewModel.get(message.senderId)
+                    Log.d("MeesageAdpater", "Checking sender name -> $user")
+                    binding.tvSenderNameReceived.visibility = View.VISIBLE
+                    binding.tvSenderNameReceived.text = user?.name
+                }
+                // Show received invitation
+                binding.invitationSectionReceive.visibility = View.VISIBLE
+                binding.invitationSectionSend.visibility = View.GONE
+                binding.tvMessageContentSend.visibility = View.GONE
+                binding.tvMessageContentReceived.visibility = View.GONE
+
+                binding.tvInvitationMessageReceive.text = "You're invited to an event"
+                binding.tvEventDetailsReceive.text =
+                    "Event: ${message.name ?: "Unknown"}\n" +
+                            "Date: ${message.eventDate ?: "Unknown"}\n" +
+                            "Time: ${message.eventStartTime ?: "Unknown"} - ${message.eventEndTime ?: "Unknown"}"
+
+                // Set click listeners for actions
+                binding.btnAccept.setOnClickListener { acceptEventInvitation(message) }
+                binding.btnDecline.setOnClickListener { declineEventInvitation(message) }
             }
         }
     }

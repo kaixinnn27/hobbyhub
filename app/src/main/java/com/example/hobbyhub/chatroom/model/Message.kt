@@ -1,5 +1,7 @@
 package com.example.hobbyhub.chatroom.model
 
+import com.google.firebase.firestore.Blob
+
 data class Message(
     val senderId: String,
     val content: String,
@@ -9,5 +11,6 @@ data class Message(
     val eventDate: String? = null,
     val eventStartTime: String? = null,
     val eventEndTime: String? = null,
-    val name: String? = null
+    val name: String? = null,
+    var photo: Blob? = Blob.fromBytes(ByteArray(0)),
 )

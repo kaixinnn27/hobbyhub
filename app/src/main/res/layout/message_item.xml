@@ -44,6 +44,26 @@
         android:textSize="14sp"
         android:visibility="visible" />
 
+    <!-- Sent Image Message -->
+    <ImageView
+        android:id="@+id/imageViewSend"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:background="@drawable/send_round_box"
+        android:backgroundTint="#0084ff"
+        android:layout_gravity="end"
+        android:visibility="gone" />
+
+    <!-- Received Image Message -->
+    <ImageView
+        android:id="@+id/imageViewReceived"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:background="@drawable/receive_round_box"
+        android:backgroundTint="#e4e6eb"
+        android:layout_gravity="start"
+        android:visibility="gone" />
+
     <!-- Sent Invitation Section -->
     <LinearLayout
         android:id="@+id/invitationSectionSend"

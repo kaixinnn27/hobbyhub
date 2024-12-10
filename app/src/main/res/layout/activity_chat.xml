@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
-    <RelativeLayout
-        xmlns:tools="http://schemas.android.com/tools"
+    <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".chatroom.view.ui.ChatActivity">
@@ -16,8 +14,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:elevation="4dp"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
@@ -32,42 +30,99 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_messages"
-            android:layout_below="@id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@id/ll_layout_bar"
+            android:layout_below="@id/toolbar"
             tools:itemCount="20"
             tools:listitem="@layout/item_chat_message" />
 
         <LinearLayout
-            android:layout_alignParentBottom="true"
             android:id="@+id/ll_layout_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:background="#E4E4E4"
             android:orientation="horizontal">
 
-            <EditText
-                android:id="@+id/et_message"
+            <LinearLayout
+                android:id="@+id/textLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_weight=".5"
-                android:background="@drawable/round_button"
-                android:backgroundTint="@android:color/white"
-                android:hint="Type a message..."
-                android:inputType="textShortMessage"
-                android:padding="10dp"
-                android:singleLine="true" />
+                android:background="#E4E4E4"
+                android:orientation="horizontal"
+                android:visibility="visible">
 
-            <ImageButton
-                android:id="@+id/btn_send"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:backgroundTint="#E4E4E4"
-                android:clickable="true"
-                app:srcCompat="@drawable/ic_send" />
+                <ImageButton
+                    android:id="@+id/uploadImageBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:backgroundTint="#E4E4E4"
+                    android:clickable="true"
+                    app:srcCompat="@drawable/ic_add" />
 
+                <EditText
+                    android:id="@+id/et_message"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_weight=".5"
+                    android:background="@drawable/round_button"
+                    android:backgroundTint="@android:color/white"
+                    android:hint="Type a message..."
+                    android:inputType="textShortMessage"
+                    android:padding="10dp"
+                    android:singleLine="true" />
+
+                <ImageButton
+                    android:id="@+id/btn_send"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:backgroundTint="#E4E4E4"
+                    android:clickable="true"
+                    app:srcCompat="@drawable/ic_send" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/previewImageLayout"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="#E4E4E4"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <!-- Close Button (Top Left) -->
+                    <ImageButton
+                        android:id="@+id/btn_close_image_preview"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="start"
+                        android:layout_margin="8dp"
+                        app:srcCompat="@drawable/ic_close" />
+
+                    <!-- Image Preview -->
+                    <ImageView
+                        android:id="@+id/previewImg"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="16dp"
+                        android:src="@drawable/ic_people"
+                        android:scaleType="centerCrop" />
+
+                    <!-- Send Button (Bottom Right) -->
+                    <ImageButton
+                        android:id="@+id/btn_send_image_preview"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_margin="8dp"
+                        android:layout_gravity="bottom|end"
+                        app:srcCompat="@drawable/ic_send" />
+                </FrameLayout>
+            </LinearLayout>
 
         </LinearLayout>
 

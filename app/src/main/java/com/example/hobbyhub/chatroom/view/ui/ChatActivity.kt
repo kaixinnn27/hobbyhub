@@ -1,6 +1,10 @@
 package com.example.hobbyhub.chatroom.view.ui
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -10,6 +14,7 @@ import com.example.hobbyhub.authentication.viewmodel.AuthViewModel
 import com.example.hobbyhub.chatroom.view.adapter.MessageAdapter
 import com.example.hobbyhub.chatroom.viewmodel.ChatViewModel
 import com.example.hobbyhub.databinding.ActivityChatBinding
+import com.example.hobbyhub.utility.cropToBlob
 import com.google.firebase.auth.FirebaseAuth
 
 class ChatActivity : AppCompatActivity() {
@@ -19,6 +24,18 @@ class ChatActivity : AppCompatActivity() {
     private val chatViewModel: ChatViewModel by viewModels()
     private val authViewModel: AuthViewModel by viewModels()
 
+    private val launcher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                binding.previewImageLayout.visibility = View.VISIBLE
+                binding.textLayout.visibility = View.GONE
+                binding.previewImg.setImageURI(it.data?.data)
+            }else{
+                binding.textLayout.visibility = View.VISIBLE
+                binding.previewImageLayout.visibility = View.GONE
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityChatBinding.inflate(layoutInflater)
@@ -26,10 +43,16 @@ class ChatActivity : AppCompatActivity() {
         setupToolbar()
         val userId = authViewModel.getCurrentUserId()
 
-        messageAdapter = userId?.let { MessageAdapter(userId, authViewModel, lifecycleScope ) }!!
+        messageAdapter = userId?.let { MessageAdapter(userId, authViewModel, lifecycleScope) }!!
         binding.rvMessages.apply {
             adapter = messageAdapter
             layoutManager = LinearLayoutManager(this@ChatActivity)
+        }
+
+        binding.uploadImageBtn.setOnClickListener {
+            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            intent.type = "image/*"
+            launcher.launch(intent)
         }
 
         val chatType = intent.getStringExtra("chatType") ?: ""
@@ -64,6 +87,17 @@ class ChatActivity : AppCompatActivity() {
                 }
                 binding.etMessage.text.clear()
             }
+        }
+
+        binding.btnSendImagePreview.setOnClickListener {
+            val photo = binding.previewImg.cropToBlob(300, 300)
+            if (chatType == "friend") {
+                chatViewModel.sendImageMessage(chatId, photo)
+            } else if (chatType == "group") {
+//                chatViewModel.sendGroupMessage(chatId, photo)
+            }
+            binding.textLayout.visibility = View.VISIBLE
+            binding.previewImageLayout.visibility = View.GONE
         }
     }
 

@@ -166,6 +166,7 @@ class ChatViewModel : ViewModel() {
                     val eventDate = document.getString("eventDate")
                     val eventStartTime = document.getString("eventStartTime")
                     val eventEndTime = document.getString("eventEndTime")
+                    val photo = document.getBlob("photo")
 
                     Log.d(
                         "ChatViewModel",
@@ -181,7 +182,8 @@ class ChatViewModel : ViewModel() {
                         eventDate,
                         eventStartTime,
                         eventEndTime,
-                        name
+                        name,
+                        photo
                     )
                     messageList.add(message)
                 }
@@ -222,6 +224,41 @@ class ChatViewModel : ViewModel() {
                 eventStartTime?.let { messageMap["eventStartTime"] = it }
                 eventEndTime?.let { messageMap["eventEndTime"] = it }
             }
+
+            col.document(chatRoomId)
+                .collection("messages")
+                .add(messageMap)
+                .addOnSuccessListener {
+                    Log.d("ChatViewModel", "Message sent successfully")
+                }
+                .addOnFailureListener { e ->
+                    Log.e("ChatViewModel", "Error sending message: $e")
+                }
+        }
+    }
+
+    fun sendImageMessage(
+        friendId: String,
+        photo: Blob,
+        type: String = "image"
+    ) {
+        val chatRoomId = if (currentUser != null) {
+            if (currentUser.uid < friendId) {
+                "${currentUser.uid}_$friendId"
+            } else {
+                "${friendId}_${currentUser.uid}"
+            }
+        } else {
+            return
+        }
+
+        currentUser.uid.let { uid ->
+            val messageMap = hashMapOf(
+                "senderId" to uid,
+                "photo" to photo,
+                "timestamp" to System.currentTimeMillis(),
+                "type" to type
+            )
 
             col.document(chatRoomId)
                 .collection("messages")
