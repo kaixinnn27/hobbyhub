@@ -34,4 +34,9 @@
         android:name="com.example.hobbyhub.authentication.view.UserDemographicsFragment"
         android:label="User Demographics"
         tools:layout="@layout/fragment_user_demographics" />
+    <fragment
+        android:id="@+id/enableFingerprintFragment"
+        android:name="com.example.hobbyhub.authentication.view.EnableFingerprintFragment"
+        android:label="fragment_enable_fingerprint"
+        tools:layout="@layout/fragment_enable_fingerprint" />
 </navigation>

@@ -130,4 +130,8 @@
     <string name="this_is_a_sample_comment">This is a sample comment</string>
     <string name="create_group_chat">Create Group Chat</string>
     <string name="create_group">Create Group</string>
+    <string name="enable_your_fingerprint">Enable Your Fingerprint</string>
+    <string name="enable_fingerprint_for_faster_login">Enable fingerprint for faster login</string>
+    <string name="skip">Skip</string>
+    <string name="enable">Enable</string>
 </resources>

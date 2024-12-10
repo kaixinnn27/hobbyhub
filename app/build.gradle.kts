@@ -66,4 +66,5 @@ dependencies {
     implementation(libs.philjay.mpandroidchart)
     implementation(libs.core.ktx)
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
+    implementation("androidx.biometric:biometric:1.1.0")
 }

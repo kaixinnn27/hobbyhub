@@ -27,22 +27,23 @@ class LandingActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         Handler().postDelayed({
-            val currentUser = auth.currentUser
-            if (currentUser != null) {
-                getUserByUid(currentUser.uid) { user ->
-                    if (user != null) {
-                        Log.d("LandingActivity", "User found: ${user.email}")
-                        // 'admin' is guaranteed to be Boolean
-                        navigateToMainActivity(user.id, user.admin)
-                    } else {
-                        Log.d("LandingActivity", "User document not found, navigating to AuthenticationActivity")
-                        navigateToAuthenticationActivity()
-                    }
-                }
-            } else {
-                Log.d("LandingActivity", "No current user, navigating to AuthenticationActivity")
-                navigateToAuthenticationActivity()
-            }
+            navigateToAuthenticationActivity()
+//            val currentUser = auth.currentUser
+//            if (currentUser != null) {
+//                getUserByUid(currentUser.uid) { user ->
+//                    if (user != null) {
+//                        Log.d("LandingActivity", "User found: ${user.email}")
+//                        // 'admin' is guaranteed to be Boolean
+//                        navigateToMainActivity(user.id, user.admin)
+//                    } else {
+//                        Log.d("LandingActivity", "User document not found, navigating to AuthenticationActivity")
+//                        navigateToAuthenticationActivity()
+//                    }
+//                }
+//            } else {
+//                Log.d("LandingActivity", "No current user, navigating to AuthenticationActivity")
+//                navigateToAuthenticationActivity()
+//            }
         }, 2000)
     }
 

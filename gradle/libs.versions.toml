@@ -19,6 +19,7 @@ playServicesLocation = "21.2.0"
 recyclerview = "1.3.2"
 repoVersion = "Tag"
 coreKtxVersion = "1.6.1"
+biometricKtx = "1.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -41,6 +42,7 @@ play-services-base = { module = "com.google.android.gms:play-services-base", ver
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 user-repo = { module = "com.github.User:Repo", version.ref = "repoVersion" }
 core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "coreKtxVersion" }
+androidx-biometric-ktx = { group = "androidx.biometric", name = "biometric-ktx", version.ref = "biometricKtx" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
