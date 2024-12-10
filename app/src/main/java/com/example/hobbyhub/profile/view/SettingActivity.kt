@@ -2,24 +2,14 @@ package com.example.hobbyhub.profile.view
 
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.widget.AdapterView
-import android.widget.CompoundButton
-import android.widget.Spinner
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
-import com.example.hobbyhub.R
 import com.example.hobbyhub.authentication.model.UserPreferences
 import com.example.hobbyhub.authentication.viewmodel.AuthViewModel
 import com.example.hobbyhub.authentication.viewmodel.UserPreferencesViewModel
 import com.example.hobbyhub.databinding.ActivitySettingBinding
-import com.example.hobbyhub.utility.LocaleUtil
-import com.example.hobbyhub.utility.setLocale
 import kotlinx.coroutines.launch
 
 class SettingActivity : AppCompatActivity() {
