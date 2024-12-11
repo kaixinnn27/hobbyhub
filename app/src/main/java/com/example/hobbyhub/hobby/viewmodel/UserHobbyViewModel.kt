@@ -5,9 +5,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.hobbyhub.authentication.model.User
 import com.example.hobbyhub.hobby.model.Hobby
+import com.example.hobbyhub.hobby.model.HobbyCategory
 import com.example.hobbyhub.hobby.model.UserHobby
 import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.Dispatchers
@@ -50,6 +53,37 @@ class UserHobbyViewModel : ViewModel() {
         }
     }
 
+    suspend fun update(userHobby: UserHobby): Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                val documentRef = col.document(userHobby.id)
+                val updates = mutableMapOf<String, Any?>()
+
+                // Update specific fields of the user document
+                if (userHobby.savedHobbies.isNotEmpty()) {
+                    updates["savedHobbies"] = userHobby.savedHobbies
+                }
+
+                if (userHobby.preferredCategories.isNotEmpty()) {
+                    updates["preferredCategories"] = userHobby.preferredCategories
+                }
+
+                documentRef.update(updates)
+                    .addOnSuccessListener {
+                        Log.i("FireStore", "User fields updated successfully")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e("FireStore", "Error updating user fields: $e")
+                    }
+                    .await()
+                true
+            } catch (e: Exception) {
+                Log.e("FireStore", "Firestore operation failed: $e")
+                false
+            }
+        }
+    }
+
     suspend fun addFavorite(userId: String, hobbyId: String): Boolean {
         return withContext(Dispatchers.IO) {
             try {
@@ -58,7 +92,8 @@ class UserHobbyViewModel : ViewModel() {
 
                 if (userHobby.exists()) {
                     // Extract the current savedHobbies list
-                    val currentSavedHobbies = userHobby.get("savedHobbies") as? List<String> ?: emptyList()
+                    val currentSavedHobbies =
+                        userHobby.get("savedHobbies") as? List<String> ?: emptyList()
 
                     // Check if the hobbyId is already in the list
                     if (!currentSavedHobbies.contains(hobbyId)) {
@@ -90,7 +125,8 @@ class UserHobbyViewModel : ViewModel() {
 
                 if (userHobbyDocument.exists()) {
                     // Extract the current savedHobbies list
-                    val currentSavedHobbies = userHobbyDocument.get("savedHobbies") as? List<String> ?: emptyList()
+                    val currentSavedHobbies =
+                        userHobbyDocument.get("savedHobbies") as? List<String> ?: emptyList()
 
                     // Check if the hobbyId exists in the list
                     if (currentSavedHobbies.contains(hobbyId)) {
@@ -113,13 +149,15 @@ class UserHobbyViewModel : ViewModel() {
             }
         }
     }
+
     fun isFavorite(userId: String, hobbyId: String) {
         viewModelScope.launch {
             val result = withContext(Dispatchers.IO) {
                 try {
                     val userHobbyDocument = col.document(userId).get().await()
                     if (userHobbyDocument.exists()) {
-                        val currentSavedHobbies = userHobbyDocument.get("savedHobbies") as? List<String> ?: emptyList()
+                        val currentSavedHobbies =
+                            userHobbyDocument.get("savedHobbies") as? List<String> ?: emptyList()
                         currentSavedHobbies.contains(hobbyId)
                     } else {
                         false
@@ -141,7 +179,8 @@ class UserHobbyViewModel : ViewModel() {
 
                 if (userHobbyDoc.exists()) {
                     // Get the list of saved hobbies (hobby IDs)
-                    val savedHobbies = userHobbyDoc.get("savedHobbies") as? List<String> ?: emptyList()
+                    val savedHobbies =
+                        userHobbyDoc.get("savedHobbies") as? List<String> ?: emptyList()
 
                     // Fetch the hobby details for each hobbyId
                     val hobbiesList = mutableListOf<Hobby>()
@@ -168,6 +207,27 @@ class UserHobbyViewModel : ViewModel() {
                 // Return false in case of an error
                 return@withContext false
             }
+        }
+    }
+
+    suspend fun getPreferredCategories(userId: String): List<HobbyCategory> {
+        return try {
+            val userHobbyDoc = col.document(userId).get().await()
+            if (userHobbyDoc.exists()) {
+                // Fetch the list of preferred categories from Firestore
+                val preferredCategories =
+                    userHobbyDoc.get("preferredCategories") as? List<String> ?: emptyList()
+
+                // Convert them to the `HobbyCategory` enum values
+                preferredCategories.mapNotNull { categoryStr ->
+                    HobbyCategory.entries.find { it.name == categoryStr }
+                }
+            } else {
+                emptyList()  // Return an empty list if no document exists
+            }
+        } catch (e: Exception) {
+            Log.e("UserHobbyViewModel", "Error fetching preferred categories: $e")
+            emptyList()
         }
     }
 }

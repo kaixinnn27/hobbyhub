@@ -27,6 +27,15 @@
         android:theme="@style/Theme.HobbyHub"
         tools:targetApi="31">
         <activity
+            android:name=".profile.view.HobbyCategoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".profile.view.LocaleActivity"
+            android:exported="false" />
+        <activity
+            android:name=".BaseActivity"
+            android:exported="false" />
+        <activity
             android:name=".profile.view.SettingActivity"
             android:exported="false" />
         <activity

@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.hobbyhub.BaseActivity
 import com.example.hobbyhub.R
 import com.example.hobbyhub.authentication.viewmodel.AuthViewModel
 import com.example.hobbyhub.databinding.ActivityHobbyDetailsBinding
@@ -16,7 +17,7 @@ import com.example.hobbyhub.hobby.viewmodel.HobbyRatingViewModel
 import com.example.hobbyhub.hobby.viewmodel.UserHobbyViewModel
 import kotlinx.coroutines.launch
 
-class HobbyDetailsActivity : AppCompatActivity() {
+class HobbyDetailsActivity : BaseActivity() {
     private lateinit var binding: ActivityHobbyDetailsBinding
     private var hobby: Hobby? = null
     private var userId: String? = null

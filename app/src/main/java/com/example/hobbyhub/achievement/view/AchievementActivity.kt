@@ -11,6 +11,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.hobbyhub.BaseActivity
 import com.example.hobbyhub.R
 import com.example.hobbyhub.achievement.viewmodel.AchievementViewModel
 import com.example.hobbyhub.authentication.viewmodel.AuthViewModel
@@ -20,7 +21,7 @@ import com.example.hobbyhub.hobby.viewmodel.HobbyViewModel
 import com.example.hobbyhub.hobby.viewmodel.UserHobbyViewModel
 import kotlinx.coroutines.launch
 
-class AchievementActivity : AppCompatActivity() {
+class AchievementActivity : BaseActivity() {
 
     private lateinit var binding: ActivityAchievementBinding
     private val authViewModel: AuthViewModel by viewModels()

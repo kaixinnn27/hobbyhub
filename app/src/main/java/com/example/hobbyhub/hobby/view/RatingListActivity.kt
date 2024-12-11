@@ -10,13 +10,14 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.hobbyhub.BaseActivity
 import com.example.hobbyhub.R
 import com.example.hobbyhub.authentication.viewmodel.AuthViewModel
 import com.example.hobbyhub.databinding.ActivityRatingListBinding
 import com.example.hobbyhub.hobby.model.UserRating
 import com.example.hobbyhub.hobby.viewmodel.HobbyRatingViewModel
 
-class RatingListActivity : AppCompatActivity() {
+class RatingListActivity : BaseActivity() {
 
     private val reviewViewModel: HobbyRatingViewModel by viewModels()
     private lateinit var binding: ActivityRatingListBinding

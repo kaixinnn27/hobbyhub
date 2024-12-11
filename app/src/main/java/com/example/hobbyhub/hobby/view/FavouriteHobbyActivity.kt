@@ -5,13 +5,14 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.hobbyhub.BaseActivity
 import com.example.hobbyhub.R
 import com.example.hobbyhub.authentication.viewmodel.AuthViewModel
 import com.example.hobbyhub.databinding.ActivityFavouriteHobbyBinding
 import com.example.hobbyhub.hobby.viewmodel.UserHobbyViewModel
 import kotlinx.coroutines.launch
 
-class FavouriteHobbyActivity : AppCompatActivity() {
+class FavouriteHobbyActivity : BaseActivity() {
 
     private lateinit var binding: ActivityFavouriteHobbyBinding
     private val userHobbyViewModel: UserHobbyViewModel by viewModels()

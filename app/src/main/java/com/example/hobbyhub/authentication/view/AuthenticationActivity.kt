@@ -3,10 +3,11 @@ package com.example.hobbyhub.authentication.view
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.findNavController
+import com.example.hobbyhub.BaseActivity
 import com.example.hobbyhub.R
 import com.example.hobbyhub.databinding.ActivityAuthenticationBinding
 
-class AuthenticationActivity : AppCompatActivity() {
+class AuthenticationActivity : BaseActivity() {
 
     private lateinit var binding: ActivityAuthenticationBinding
     private val nav by lazy {

@@ -8,12 +8,13 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.hobbyhub.BaseActivity
 import com.example.hobbyhub.authentication.viewmodel.AuthViewModel
 import com.example.hobbyhub.chatroom.view.adapter.SelectFriendAdapter
 import com.example.hobbyhub.chatroom.viewmodel.ChatViewModel
 import com.example.hobbyhub.databinding.ActivityCreateGroupBinding
 
-class CreateGroupActivity : AppCompatActivity() {
+class CreateGroupActivity : BaseActivity() {
 
     private lateinit var binding: ActivityCreateGroupBinding
     private val chatViewModel: ChatViewModel by lazy { ChatViewModel() }

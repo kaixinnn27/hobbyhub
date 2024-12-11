@@ -48,24 +48,37 @@ class SelectHobbyFragment : Fragment() {
 
     private fun initUserHobby() {
         val userId = authVm.getCurrentUserId()
-        if(userId!=null){
-            val userHobbyObj = UserHobby(
-                id = userId,
-                preferredCategories = emptyList(),
-                savedHobbies = emptyList(),
-                completedHobbies = emptyList(),
-                hobbyRecommendations = emptyList(),
-            )
+        if (userId != null) {
             lifecycleScope.launch {
-                val success: Boolean = userHobbyVm.set(userHobbyObj)
-                if (success) {
-                    Toast.makeText(context, "UserHobby initialize successfully!", Toast.LENGTH_SHORT)
-                        .show()
-                } else {
-                    Toast.makeText(context, "Failed to initialize UserHobby!", Toast.LENGTH_SHORT).show()
+                val userHobby = userHobbyVm.get(userId)
+                if (userHobby == null) {
+                    val userHobbyObj = UserHobby(
+                        id = userId,
+                        preferredCategories = emptyList(),
+                        savedHobbies = emptyList(),
+                        completedHobbies = emptyList(),
+                        hobbyRecommendations = emptyList(),
+                    )
+                    lifecycleScope.launch {
+                        val success: Boolean = userHobbyVm.set(userHobbyObj)
+                        if (success) {
+                            Toast.makeText(
+                                context,
+                                "UserHobby initialize successfully!",
+                                Toast.LENGTH_SHORT
+                            )
+                                .show()
+                        } else {
+                            Toast.makeText(
+                                context,
+                                "Failed to initialize UserHobby!",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
                 }
             }
-        }else{
+        } else {
             Toast.makeText(context, "Please register again!", Toast.LENGTH_SHORT).show()
             nav.navigate(R.id.loginFragment)
         }
@@ -75,7 +88,7 @@ class SelectHobbyFragment : Fragment() {
         Log.d("addHobbyCategories", "selectedCategories -> $selectedCategories")
 
         val userId = authVm.getCurrentUserId()
-        if(userId!=null && selectedCategories.isNotEmpty()){
+        if (userId != null && selectedCategories.isNotEmpty()) {
             val userHobbyObj = UserHobby(
                 id = userId,
                 preferredCategories = selectedCategories,
@@ -86,16 +99,24 @@ class SelectHobbyFragment : Fragment() {
             lifecycleScope.launch {
                 val success: Boolean = userHobbyVm.set(userHobbyObj)
                 if (success) {
-                    Toast.makeText(context, "Registered successfully! Please login!", Toast.LENGTH_SHORT)
+                    Toast.makeText(
+                        context,
+                        "Registered successfully! Please login!",
+                        Toast.LENGTH_SHORT
+                    )
                         .show()
                     authVm.signOut()
                     nav.navigate(R.id.loginFragment)
                 } else {
-                    Toast.makeText(context, "Failed to add hobby! Please login again!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        "Failed to add hobby! Please login again!",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     nav.navigate(R.id.loginFragment)
                 }
             }
-        }else{
+        } else {
             Toast.makeText(context, "Please register again!", Toast.LENGTH_SHORT).show()
             nav.navigate(R.id.loginFragment)
         }
@@ -103,7 +124,8 @@ class SelectHobbyFragment : Fragment() {
 
     private fun setupCategoryClicks() {
         val artsCrafts = binding.root.findViewById<LinearLayout>(R.id.categoryArtsCrafts)
-        val outdoorActivities = binding.root.findViewById<LinearLayout>(R.id.categoryOutdoorActivities)
+        val outdoorActivities =
+            binding.root.findViewById<LinearLayout>(R.id.categoryOutdoorActivities)
         val foodCooking = binding.root.findViewById<LinearLayout>(R.id.categoryFoodCooking)
         val fitness = binding.root.findViewById<LinearLayout>(R.id.categoryFitness)
         val technology = binding.root.findViewById<LinearLayout>(R.id.categoryTechnology)

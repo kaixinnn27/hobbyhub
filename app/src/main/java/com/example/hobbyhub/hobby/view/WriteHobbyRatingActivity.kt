@@ -7,6 +7,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.hobbyhub.BaseActivity
 import com.example.hobbyhub.R
 import com.example.hobbyhub.authentication.viewmodel.AuthViewModel
 import com.example.hobbyhub.databinding.ActivityWriteHobbyRatingBinding
@@ -14,7 +15,7 @@ import com.example.hobbyhub.hobby.model.UserRating
 import com.example.hobbyhub.hobby.viewmodel.HobbyRatingViewModel
 import com.google.firebase.auth.FirebaseAuth
 
-class WriteHobbyRatingActivity : AppCompatActivity() {
+class WriteHobbyRatingActivity : BaseActivity() {
     private lateinit var binding: ActivityWriteHobbyRatingBinding
     private val reviewViewModel: HobbyRatingViewModel by viewModels()
     private val authViewModel: AuthViewModel by viewModels()

@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.hobbyhub.BaseActivity
 import com.example.hobbyhub.authentication.viewmodel.AuthViewModel
 import com.example.hobbyhub.chatroom.view.adapter.MessageAdapter
 import com.example.hobbyhub.chatroom.viewmodel.ChatViewModel
@@ -17,7 +18,7 @@ import com.example.hobbyhub.databinding.ActivityChatBinding
 import com.example.hobbyhub.utility.cropToBlob
 import com.google.firebase.auth.FirebaseAuth
 
-class ChatActivity : AppCompatActivity() {
+class ChatActivity : BaseActivity() {
 
     private lateinit var binding: ActivityChatBinding
     private lateinit var messageAdapter: MessageAdapter

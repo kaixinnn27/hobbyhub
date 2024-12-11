@@ -7,9 +7,7 @@ import com.example.hobbyhub.authentication.model.UserPreferences
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 
 class UserPreferencesViewModel : ViewModel() {
     private val col = Firebase.firestore.collection("userPreferences")

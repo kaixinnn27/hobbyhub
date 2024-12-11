@@ -7,8 +7,8 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.example.hobbyhub.BaseActivity
 import com.example.hobbyhub.R
 import com.example.hobbyhub.authentication.model.User
 import com.example.hobbyhub.authentication.viewmodel.AuthViewModel
@@ -18,7 +18,7 @@ import com.example.hobbyhub.utility.cropToBlob
 import com.example.hobbyhub.utility.toBitmap
 import kotlinx.coroutines.launch
 
-class ProfileDetailsActivity : AppCompatActivity() {
+class ProfileDetailsActivity : BaseActivity() {
 
     private lateinit var binding: ActivityProfileDetailsBinding
     private val vm: ProfileViewModel by viewModels()
