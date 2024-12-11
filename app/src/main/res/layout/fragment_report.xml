@@ -3,30 +3,155 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:gravity="center"
     android:padding="16dp">
 
-    <Button
-        android:id="@+id/btnUserActivityReport"
+    <!-- Title -->
+    <TextView
+        android:id="@+id/reportTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp"
+        android:text="Reports"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <!-- Subtitle -->
+    <TextView
+        android:id="@+id/reportSubtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp"
+        android:text="Select a report to view!"
+        android:textSize="16sp"
+        android:textColor="@android:color/darker_gray" />
+
+    <!-- Centered GridLayout -->
+    <GridLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/user_activity_report" />
+        android:columnCount="2"
+        android:alignmentMode="alignMargins"
+        android:layout_gravity="center"
+        android:padding="16dp">
 
-    <Button
-        android:id="@+id/btnHobbyPopularityReport"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/hobby_popularity_report" />
+        <!-- Report 1 -->
+        <LinearLayout
+            android:id="@+id/reportActivity"
+            android:layout_width="0dp"
+            android:layout_height="180dp"
+            android:layout_margin="8dp"
+            android:layout_columnWeight="1"
+            android:background="@drawable/category_card_background"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-    <Button
-        android:id="@+id/btnUserDemographicsReport"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/user_demographics_report" />
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/ic_activity" />
 
-    <Button
-        android:id="@+id/btnUserFeedbackAnalysis"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/user_feedback_analysis" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:text="User Activity Report"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+        </LinearLayout>
 
+        <!-- Report 2 -->
+        <LinearLayout
+            android:id="@+id/reportPopularity"
+            android:layout_width="0dp"
+            android:layout_height="180dp"
+            android:layout_margin="8dp"
+            android:layout_columnWeight="1"
+            android:background="@drawable/category_card_background"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/ic_popularity" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:text="Hobby Popularity Report"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <!-- Report 3 -->
+        <LinearLayout
+            android:id="@+id/reportDemographics"
+            android:layout_width="0dp"
+            android:layout_height="180dp"
+            android:layout_margin="8dp"
+            android:layout_columnWeight="1"
+            android:background="@drawable/category_card_background"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/ic_demographics" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:text="User Demographics Report"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <!-- Report 4 -->
+        <LinearLayout
+            android:id="@+id/reportFeedback"
+            android:layout_width="0dp"
+            android:layout_height="180dp"
+            android:layout_margin="8dp"
+            android:layout_columnWeight="1"
+            android:background="@drawable/category_card_background"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/ic_feedback" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:text="User Feedback Analysis"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+    </GridLayout>
 </LinearLayout>

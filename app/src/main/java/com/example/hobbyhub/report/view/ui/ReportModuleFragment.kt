@@ -17,7 +17,7 @@ class ReportModuleFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentReportBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -25,23 +25,24 @@ class ReportModuleFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupButtonListeners()
+        // Set up click listeners for the report cards
+        setupReportClickListeners()
     }
 
-    private fun setupButtonListeners() {
-        binding.btnUserActivityReport.setOnClickListener {
+    private fun setupReportClickListeners() {
+        binding.reportActivity.setOnClickListener {
             findNavController().navigate(R.id.action_reportMainFragment_to_userActivityReportFragment)
         }
 
-        binding.btnHobbyPopularityReport.setOnClickListener {
+        binding.reportPopularity.setOnClickListener {
             findNavController().navigate(R.id.action_reportMainFragment_to_hobbyPopularityReportFragment)
         }
 
-        binding.btnUserDemographicsReport.setOnClickListener {
+        binding.reportDemographics.setOnClickListener {
             findNavController().navigate(R.id.action_reportMainFragment_to_userDemographicsReportFragment)
         }
 
-        binding.btnUserFeedbackAnalysis.setOnClickListener {
+        binding.reportFeedback.setOnClickListener {
             findNavController().navigate(R.id.action_reportMainFragment_to_userFeedbackAnalysisFragment)
         }
     }

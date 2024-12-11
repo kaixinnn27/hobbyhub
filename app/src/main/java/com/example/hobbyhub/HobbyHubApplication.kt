@@ -5,6 +5,9 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
 
+// Global application setup
+// Notification channel creation for event reminders
+
 class HobbyHubApplication : Application() {
 
     override fun onCreate() {
