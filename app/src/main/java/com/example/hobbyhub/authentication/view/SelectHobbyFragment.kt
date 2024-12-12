@@ -105,7 +105,7 @@ class SelectHobbyFragment : Fragment() {
                         Toast.LENGTH_SHORT
                     )
                         .show()
-                    authVm.signOut()
+//                    authVm.signOut()
                     nav.navigate(R.id.loginFragment)
                 } else {
                     Toast.makeText(

@@ -79,6 +79,7 @@ class LoginFragment : Fragment() {
     }
 
     private fun fetchUserAndNavigate(userId: String) {
+        // because after register user is dont have
         if (isFirstTimeLogin) {
             // If first login then let them choose enable fingerprint
             nav.navigate(R.id.enableFingerprintFragment)
@@ -137,6 +138,9 @@ class LoginFragment : Fragment() {
                 Log.d("checkFingerprintAndAuthenticate", "$preferences")
                 isFingerprintEnabled = preferences?.enableFingerprint ?: false
                 isFirstTimeLogin = preferences?.firstTimeLogin ?: true
+
+                Log.d("LoginFragment", "preferences -> $preferences")
+                Log.d("LoginFragment", "isFirstTimeLogin -> $isFirstTimeLogin")
 
                 if (currentUser != null && isFingerprintEnabled) {
                     val biometricManager = BiometricManager.from(requireContext())

@@ -13,7 +13,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.hobbyhub.R
 import com.example.hobbyhub.authentication.model.User
+import com.example.hobbyhub.authentication.model.UserPreferences
 import com.example.hobbyhub.authentication.viewmodel.AuthViewModel
+import com.example.hobbyhub.authentication.viewmodel.UserPreferencesViewModel
 import com.example.hobbyhub.databinding.FragmentRegisterBinding
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -29,6 +31,7 @@ class RegisterFragment : Fragment() {
     private lateinit var binding: FragmentRegisterBinding
     private val nav by lazy { findNavController() }
     private val vm: AuthViewModel by activityViewModels()
+    private val preferencesViewModel: UserPreferencesViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,16 +52,29 @@ class RegisterFragment : Fragment() {
                 auth.createUserWithEmailAndPassword(email, pwd)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            saveUserToFireStoreDb()
+                            try {
+                                saveUserToFireStoreDb()
+                            } catch (error: IllegalArgumentException) {
+                                Log.d("Error saveUserToFireStoreDb", "$error")
+                            }
                         } else {
                             // Handle specific Firebase errors
                             val exception = task.exception
                             when (exception) {
                                 is FirebaseAuthUserCollisionException -> {
-                                    Toast.makeText(context, "Email is already registered!", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        context,
+                                        "Email is already registered!",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
+
                                 else -> {
-                                    Toast.makeText(context, "Failed to create user: ${exception?.message}", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        context,
+                                        "Failed to create user: ${exception?.message}",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             }
                             Log.e("FirebaseAuth", "Error creating user", exception)
@@ -88,6 +104,7 @@ class RegisterFragment : Fragment() {
         lifecycleScope.launch {
             val success: Boolean = vm.set(user)
             if (success) {
+                initPreferences()
                 val (latitude, longitude) = generateRandomCoordinates()
                 val locationData = hashMapOf(
                     "latitude" to latitude,
@@ -102,18 +119,41 @@ class RegisterFragment : Fragment() {
                         binding.editTextPassword.text.clear()
 
                         // Navigate to UserDemographicFragment
-                        Toast.makeText(context, "Account created successfully!", Toast.LENGTH_SHORT).show()
-                        Log.d("NavigationDebug", "Expected: ${R.id.registerFragment}, Current: ${findNavController().currentDestination?.id}")
+                        Toast.makeText(context, "Account created successfully!", Toast.LENGTH_SHORT)
+                            .show()
+                        Log.d(
+                            "NavigationDebug",
+                            "Expected: ${R.id.registerFragment}, Current: ${findNavController().currentDestination?.id}"
+                        )
                         Log.d("NavigationGraphDebug", findNavController().graph.toString())
                         findNavController().navigate(
                             RegisterFragmentDirections.actionRegisterFragmentToUserDemographicsFragment()
                         )
                     }
                     .addOnFailureListener { e ->
-                        Toast.makeText(context, "Failed to save location data: ${e.message}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            "Failed to save location data: ${e.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
             } else {
                 Toast.makeText(context, "Failed to save user!", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun initPreferences() {
+        val userId = vm.getCurrentUserId()
+        if (userId != null) {
+            val preferences = UserPreferences(
+                id= userId,
+                enableFingerprint = false,
+                firstTimeLogin = true,
+                locale = "en"
+            )
+            lifecycleScope.launch {
+                val success = preferencesViewModel.set(preferences)
             }
         }
     }

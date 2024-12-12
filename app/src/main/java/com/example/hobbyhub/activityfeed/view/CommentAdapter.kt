@@ -16,8 +16,8 @@ class CommentAdapter : ListAdapter<Comment, CommentAdapter.CommentViewHolder>(Co
             binding.usernameTv.text = comment.username
             binding.commentTextTv.text = comment.text
 
-            comment.userProfile.let {
-                binding.profileImage.setImageBitmap(it.toBitmap())
+            if(comment.userProfile.toBitmap()!=null){
+                binding.profileImage.setImageBitmap(comment.userProfile.toBitmap())
             }
         }
     }

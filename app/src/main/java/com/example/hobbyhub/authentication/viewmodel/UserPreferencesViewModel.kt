@@ -34,6 +34,7 @@ class UserPreferencesViewModel : ViewModel() {
             val documentRef = col.document(userPreferences.id)
             val updates = mapOf(
                 "enableFingerprint" to userPreferences.enableFingerprint,
+                "firstTimeLogin" to userPreferences.firstTimeLogin,
                 "locale" to userPreferences.locale // Ensure "locale" matches your Firestore field name
             )
 
