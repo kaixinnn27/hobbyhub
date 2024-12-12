@@ -5,9 +5,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hobbyhub.R
+import com.example.hobbyhub.databinding.FragmentUserDemographicsReportBinding
 import com.example.hobbyhub.report.view.adapter.DemographicDetailsAdapter
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.PieChart
@@ -23,28 +27,33 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class UserDemographicsReportFragment : Fragment() {
 
+    private var _binding: FragmentUserDemographicsReportBinding? = null
+    private val binding get() = _binding!!
     private val db = FirebaseFirestore.getInstance()
     private lateinit var barChart: BarChart
-    private lateinit var pieChart: PieChart
+    private lateinit var pieChartAge: PieChart
+    private lateinit var pieChartGender: PieChart
+    private lateinit var pieChartLocation: PieChart
     private lateinit var detailsAdapter: DemographicDetailsAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val view = inflater.inflate(R.layout.fragment_user_demographics_report, container, false)
+        _binding = FragmentUserDemographicsReportBinding.inflate(inflater, container, false)
+        barChart = binding.barChartDemographics
+        pieChartAge = binding.pieChartAge
+        pieChartGender = binding.pieChartGender
+        pieChartLocation = binding.pieChartLocation
 
-        barChart = view.findViewById(R.id.barChartDemographics)
-        pieChart = view.findViewById(R.id.pieChartHobbies)
-
-        setupRecyclerView(view)
+        setupRecyclerView() // No argument needed
         fetchHobbiesAndDemographics()
 
-        return view
+        return binding.root
     }
 
-    private fun setupRecyclerView(view: View) {
-        val recyclerView = view.findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.rvDemographicsDetails)
+    private fun setupRecyclerView() {
+        val recyclerView = binding.rvDemographicsDetails
         detailsAdapter = DemographicDetailsAdapter()
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = detailsAdapter
@@ -79,8 +88,6 @@ class UserDemographicsReportFragment : Fragment() {
                     val savedHobbies = document.get("savedHobbies") as? List<String> ?: emptyList()
                     userHobbiesMap[userId] = savedHobbies
                 }
-
-                // Pass both user hobbies and hobbyMap to process demographics
                 fetchDemographicsWithHobbies(userHobbiesMap, hobbyMap)
             }
             .addOnFailureListener { e ->
@@ -98,22 +105,18 @@ class UserDemographicsReportFragment : Fragment() {
                 val genderCounts = mutableMapOf<String, Int>()
                 val locationCounts = mutableMapOf<String, Int>()
                 val hobbiesByDemographics = mutableMapOf<String, Int>()
+                val ageGroupHobbies = mutableMapOf<String, MutableMap<String, Int>>()
+                val genderHobbies = mutableMapOf<String, MutableMap<String, Int>>()
+                val locationHobbies = mutableMapOf<String, MutableMap<String, Int>>()
 
                 for (document in userDocuments) {
                     val userId = document.id
                     val age = document.getLong("age") ?: 0
                     val gender = document.getString("gender") ?: "Unknown"
                     val location = document.getString("location") ?: "Unknown"
-                    val savedHobbies = userHobbiesMap[userId] ?: emptyList()
-
-                    // Resolve hobby IDs to their names
-                    val resolvedHobbies = savedHobbies.mapNotNull { hobbyId ->
-                        val hobbyName = hobbyMap[hobbyId]
-                        if (hobbyName == null) {
-                            android.util.Log.w("UserDemographicsFragment", "Unresolved hobby ID: $hobbyId")
-                        }
-                        hobbyName
-                    }
+                    val savedHobbies = userHobbiesMap[userId]?.mapNotNull { hobbyId ->
+                        hobbyMap[hobbyId] // Resolve hobby ID to name
+                    } ?: emptyList()
 
                     // Age Group
                     val ageGroup = when {
@@ -131,20 +134,35 @@ class UserDemographicsReportFragment : Fragment() {
                     // Location
                     locationCounts[location] = locationCounts.getOrDefault(location, 0) + 1
 
-                    // Hobbies
-                    resolvedHobbies.forEach { hobbyName ->
-                        hobbiesByDemographics[hobbyName] = hobbiesByDemographics.getOrDefault(hobbyName, 0) + 1
+                    savedHobbies.forEach { hobbyName ->
+                        ageGroupHobbies.computeIfAbsent(ageGroup) { mutableMapOf() }
+                            .merge(hobbyName, 1, Int::plus)
                     }
+
+                    // Gender
+                    savedHobbies.forEach { hobbyName ->
+                        genderHobbies.computeIfAbsent(gender) { mutableMapOf() }
+                            .merge(hobbyName, 1, Int::plus)
+                    }
+
+                    // Location
+                    savedHobbies.forEach { hobbyName ->
+                        locationHobbies.computeIfAbsent(location) { mutableMapOf() }
+                            .merge(hobbyName, 1, Int::plus)
+                    }
+                }
+                if (hobbiesByDemographics.isEmpty()) {
+                    android.util.Log.w("UserDemographicsFragment", "No hobbies resolved for demographics.")
                 }
 
                 android.util.Log.d("UserDemographicsFragment", "Hobbies by Demographics: $hobbiesByDemographics")
                 android.util.Log.d("UserDemographicsFragment", "User Hobbies Map: $userHobbiesMap")
 
-                android.util.Log.d("UserDemographicsFragment", "Hobbies by Demographics: $hobbiesByDemographics")
-
                 // Display Charts and Details
                 displayBarChart(ageGroups, genderCounts, locationCounts)
-                displayPieChart(hobbiesByDemographics)
+                displayGroupedPieChart(pieChartAge, ageGroupHobbies, "Age Group Distribution")
+                displayGroupedPieChart(pieChartGender, genderHobbies, "Gender Distribution")
+                displayGroupedPieChart(pieChartLocation, locationHobbies, "Location Distribution")
                 detailsAdapter.updateData(ageGroups, genderCounts, locationCounts)
             }
             .addOnFailureListener { e ->
@@ -159,48 +177,90 @@ class UserDemographicsReportFragment : Fragment() {
     ) {
         val entries = mutableListOf<BarEntry>()
         val labels = mutableListOf<String>()
+        val legendItems = mutableListOf<Pair<String, Int>>() // For legend labels and colors
         var index = 0
 
         // Add Age Groups
         ageGroups.forEach { (group, count) ->
             entries.add(BarEntry(index++.toFloat(), count.toFloat()))
             labels.add("Age: $group")
+            legendItems.add(Pair("Age: $group", Color.BLUE)) // Add legend item with color
         }
 
         // Add Gender Counts
         genderCounts.forEach { (gender, count) ->
             entries.add(BarEntry(index++.toFloat(), count.toFloat()))
             labels.add("Gender: $gender")
+            legendItems.add(Pair("Gender: $gender", Color.RED)) // Add legend item with color
         }
 
         // Add Location Counts
         locationCounts.forEach { (location, count) ->
             entries.add(BarEntry(index++.toFloat(), count.toFloat()))
             labels.add("Location: $location")
+            legendItems.add(Pair("Location: $location", Color.GREEN)) // Add legend item with color
         }
 
-        val barDataSet = BarDataSet(entries, "Age, Gender, and Location Distribution")
-        barDataSet.colors = listOf(
-            Color.BLUE, Color.RED, Color.GREEN, Color.MAGENTA, Color.CYAN
-        )
+        val barDataSet = BarDataSet(entries, "Age, Gender, and Location Distribution").apply {
+            colors = listOf(
+                Color.BLUE, Color.RED, Color.GREEN, Color.MAGENTA, Color.CYAN
+            )
+        }
 
-        val data = BarData(barDataSet)
-        data.barWidth = 0.9f
+        val data = BarData(barDataSet).apply {
+            barWidth = 0.9f
+        }
 
         barChart.data = data
-        barChart.xAxis.valueFormatter = IndexAxisValueFormatter(labels)
-        barChart.xAxis.granularity = 1f
-        barChart.xAxis.isGranularityEnabled = true
+        barChart.xAxis.apply {
+            valueFormatter = IndexAxisValueFormatter(labels)
+            granularity = 1f
+            isGranularityEnabled = true
+        }
         barChart.description.isEnabled = false
         barChart.invalidate()
+
+        // Populate Legend
+        populateLegendForBarChart(legendItems)
     }
 
-    private fun displayPieChart(hobbiesByDemographics: Map<String, Int>) {
-        val entries = hobbiesByDemographics.map { (hobby, count) ->
-            PieEntry(count.toFloat(), hobby)
+    private fun populateLegendForBarChart(legendItems: List<Pair<String, Int>>) {
+        binding.legendDemoLayout.removeAllViews() // Assuming `legendLayout` is a LinearLayout in your layout XML.
+
+        legendItems.forEach { (label, color) ->
+            val legendItem = LinearLayout(requireContext()).apply {
+                orientation = LinearLayout.HORIZONTAL
+                setPadding(8, 8, 8, 8)
+            }
+
+            val legendColorBox = View(requireContext()).apply {
+                layoutParams = LinearLayout.LayoutParams(40, 40).apply {
+                    setMargins(0, 0, 16, 0)
+                }
+                setBackgroundColor(color)
+            }
+
+            val legendText = TextView(requireContext()).apply {
+                text = label
+                textSize = 14f
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+            }
+
+            legendItem.addView(legendColorBox)
+            legendItem.addView(legendText)
+            binding.legendDemoLayout.addView(legendItem)
+        }
+    }
+
+    private fun displayGroupedPieChart(pieChart: PieChart, groupedHobbies: Map<String, Map<String, Int>>, chartTitle: String) {
+        val entries = mutableListOf<PieEntry>()
+        groupedHobbies.forEach { (group, hobbies) ->
+            hobbies.forEach { (hobby, count) ->
+                entries.add(PieEntry(count.toFloat(), "$group: $hobby"))
+            }
         }
 
-        val pieDataSet = PieDataSet(entries, "Hobby Distribution")
+        val pieDataSet = PieDataSet(entries, chartTitle)
         pieDataSet.colors = listOf(
             Color.BLUE, Color.RED, Color.GREEN, Color.MAGENTA, Color.CYAN
         )
@@ -210,7 +270,15 @@ class UserDemographicsReportFragment : Fragment() {
         data.setValueTextSize(12f)
 
         pieChart.data = data
+        pieChart.centerText = chartTitle
+        pieChart.setCenterTextSize(16f)
+        pieChart.setEntryLabelColor(Color.BLACK)
         pieChart.description.isEnabled = false
         pieChart.invalidate()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null // Ensure proper cleanup
     }
 }

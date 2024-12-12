@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -30,18 +31,38 @@ class UserDemographicsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupGenderDropdown()
+        setupLocationDropdown()
+
         binding.btnSubmitDemographics.setOnClickListener {
             val age = binding.editTextAge.text.toString().toIntOrNull()
-            val gender = binding.editTextGender.text.toString().trim()
-            val location = binding.editTextLocation.text.toString().trim()
+            val gender = binding.spinnerGender.selectedItem?.toString()
+            val location = binding.spinnerLocation.selectedItem?.toString()
 
-            if (age == null || gender.isEmpty() || location.isEmpty()) {
+            if (age == null || gender.isNullOrEmpty() || location.isNullOrEmpty()) {
                 Toast.makeText(context, "All fields are required!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
             saveDemographics(age, gender, location)
         }
+    }
+
+    private fun setupGenderDropdown() {
+        val genderOptions = listOf("Male", "Female", "Other")
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, genderOptions)
+        binding.spinnerGender.adapter = adapter
+    }
+
+    private fun setupLocationDropdown() {
+        val locationOptions = listOf(
+            "Johor", "Kedah", "Kelantan", "Melaka", "Negeri Sembilan",
+            "Pahang", "Penang", "Perak", "Perlis", "Sabah",
+            "Sarawak", "Selangor", "Terengganu", "Kuala Lumpur",
+            "Putrajaya", "Labuan"
+        )
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, locationOptions)
+        binding.spinnerLocation.adapter = adapter
     }
 
     private fun saveDemographics(age: Int, gender: String, location: String) {

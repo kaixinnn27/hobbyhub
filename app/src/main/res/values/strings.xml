@@ -143,6 +143,9 @@
     <string name="current_streak">Current Streak</string>
     <string name="name">Name</string>
     <string name="email_address">Email Address</string>
+    <string name="please_select_your_location">Please select your location</string>
+    <string name="please_select_your_gender">Please select your gender</string>
+    <string name="average_rating_per_hobby">Average Rating per Hobby</string>
     <string-array name="language_options">
         <item>English</item>
         <item>Chinese</item>

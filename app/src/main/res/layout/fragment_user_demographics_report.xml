@@ -30,6 +30,15 @@
             android:layout_height="300dp"
             android:layout_marginBottom="16dp" />
 
+        <LinearLayout
+            android:id="@+id/legendDemoLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp"
+            android:layout_marginTop="16dp" />
+
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -38,9 +47,21 @@
             android:padding="8dp" />
 
         <com.github.mikephil.charting.charts.PieChart
-            android:id="@+id/pieChartHobbies"
+            android:id="@+id/pieChartAge"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="350dp"
+            android:layout_marginBottom="16dp" />
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/pieChartGender"
+            android:layout_width="match_parent"
+            android:layout_height="350dp"
+            android:layout_marginBottom="16dp" />
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/pieChartLocation"
+            android:layout_width="match_parent"
+            android:layout_height="350dp"
             android:layout_marginBottom="16dp" />
 
         <TextView
