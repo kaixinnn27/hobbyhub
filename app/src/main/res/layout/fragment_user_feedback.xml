@@ -20,6 +20,14 @@
             android:layout_width="match_parent"
             android:layout_height="300dp" />
 
+        <LinearLayout
+            android:id="@+id/legendRatingLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp"
+            android:layout_marginTop="16dp" />
+
         <TextView
             android:id="@+id/tvFeedbackTitle"
             android:layout_width="match_parent"
@@ -31,24 +39,12 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvFeedbackComments"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="250dp" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/common_feedback_themes"
-            android:textStyle="bold"
-            android:paddingTop="16dp" />
-
-        <com.github.mikephil.charting.charts.PieChart
-            android:id="@+id/pieChartFeedbackThemes"
-            android:layout_width="match_parent"
-            android:layout_height="300dp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/sentiment_analysis"
+            android:text="@string/average_rating_per_hobby"
             android:textStyle="bold"
             android:paddingTop="16dp" />
 
@@ -56,6 +52,14 @@
             android:id="@+id/barChartSentiment"
             android:layout_width="match_parent"
             android:layout_height="300dp" />
+
+        <LinearLayout
+            android:id="@+id/legendLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp"
+            android:layout_marginTop="16dp" />
 
     </LinearLayout>
 </ScrollView>

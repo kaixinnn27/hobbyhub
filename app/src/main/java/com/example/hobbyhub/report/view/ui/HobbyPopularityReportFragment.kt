@@ -71,14 +71,20 @@ class HobbyPopularityReportFragment : Fragment() {
                 }
 
                 val hobbyPopularity = hobbyCounts.mapKeys { hobbyMap[it.key] ?: "Unknown" }
-                fetchHobbyRatings(hobbyPopularity, hobbyMap)
+                val mostPopularByPicks = hobbyPopularity.maxByOrNull { it.value }
+                android.util.Log.d("HobbyPopularityFragment", "Most popular by picks: $mostPopularByPicks")
+                fetchHobbyRatings(hobbyPopularity, hobbyMap, mostPopularByPicks)
             }
             .addOnFailureListener { e ->
                 android.util.Log.e("HobbyPopularityFragment", "Error fetching user hobbies", e)
             }
     }
 
-    private fun fetchHobbyRatings(hobbyPopularity: Map<String, Int>, hobbyMap: Map<String, String>) {
+    private fun fetchHobbyRatings(
+        hobbyPopularity: Map<String, Int>,
+        hobbyMap: Map<String, String>,
+        mostPopularByPicks: Map.Entry<String, Int>?
+    ) {
         db.collection("reviews").get()
             .addOnSuccessListener { reviewDocuments ->
                 val hobbyRatings = mutableMapOf<String, MutableList<Float>>()
@@ -87,7 +93,6 @@ class HobbyPopularityReportFragment : Fragment() {
                     val hobbyId = document.getString("hobbyId") ?: continue
                     val rating = document.getDouble("rating")?.toFloat() ?: continue
 
-                    android.util.Log.d("HobbyPopularityFragment", "hobbyId: $hobbyId, rating: $rating")
                     hobbyRatings.getOrPut(hobbyId) { mutableListOf() }.add(rating)
                 }
 
@@ -98,13 +103,7 @@ class HobbyPopularityReportFragment : Fragment() {
                     ratings.average().toFloat() to popularity
                 }
 
-                android.util.Log.d("HobbyPopularityFragment", "hobbyRatingsWithPopularity: $hobbyRatingsWithPopularity")
-
                 val mostPopularByRating = hobbyRatingsWithPopularity.maxByOrNull { it.value.first }
-                val mostPopularByPicks = hobbyRatingsWithPopularity.maxByOrNull { it.value.second }
-
-                android.util.Log.d("HobbyPopularityFragment", "Most popular by rating: $mostPopularByRating")
-                android.util.Log.d("HobbyPopularityFragment", "Most popular by picks: $mostPopularByPicks")
 
                 displayMostPopularHobby(mostPopularByRating, mostPopularByPicks)
                 displayHobbyChart(hobbyPopularity)
@@ -115,16 +114,15 @@ class HobbyPopularityReportFragment : Fragment() {
             }
     }
 
-
     private fun displayMostPopularHobby(
         mostPopularByRating: Map.Entry<String, Pair<Float, Int>>?,
-        mostPopularByPicks: Map.Entry<String, Pair<Float, Int>>?
+        mostPopularByPicks: Map.Entry<String, Int>?
     ) {
         val ratingHobby = mostPopularByRating?.key ?: "N/A"
         val ratingValue = mostPopularByRating?.value?.first ?: 0
 
         val picksHobby = mostPopularByPicks?.key ?: "N/A"
-        val picksCount = mostPopularByPicks?.value?.second ?: 0
+        val picksCount = mostPopularByPicks?.value ?: 0
 
         // Log values for debugging
         android.util.Log.d("HobbyPopularityFragment", "ratingHobby: $ratingHobby")

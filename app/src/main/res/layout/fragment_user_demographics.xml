@@ -11,21 +11,23 @@
         android:hint="Enter your age"
         android:inputType="number" />
 
-    <EditText
-        android:id="@+id/editTextGender"
+    <Spinner
+        android:id="@+id/spinnerGender"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter your gender" />
+        android:layout_marginTop="16dp"
+        android:text="@string/please_select_your_gender"/>
 
-    <EditText
-        android:id="@+id/editTextLocation"
+    <Spinner
+        android:id="@+id/spinnerLocation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter your location" />
+        android:layout_marginTop="16dp"
+        android:text="@string/please_select_your_location"/>
 
     <Button
         android:id="@+id/btnSubmitDemographics"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Submit" />
+        android:text="@string/submit" />
 </LinearLayout>
