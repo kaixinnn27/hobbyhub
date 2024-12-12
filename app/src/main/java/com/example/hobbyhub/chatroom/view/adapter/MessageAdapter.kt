@@ -49,6 +49,8 @@ class MessageAdapter(
         }
 
         private fun bindTextMessage(message: Message) {
+            hideAllImage()
+            hideAllInvitation()
             if (message.senderId == currentUserId) {
                 // Show sent text message
                 binding.tvMessageContentSend.text = message.content
@@ -57,8 +59,6 @@ class MessageAdapter(
                 // Hide others
                 binding.tvSenderNameReceived.visibility = View.GONE
                 binding.tvMessageContentReceived.visibility = View.GONE
-                binding.invitationSectionSend.visibility = View.GONE
-                binding.invitationSectionReceive.visibility = View.GONE
             } else {
                 scope.launch {
                     val user = authViewModel.get(message.senderId)
@@ -79,26 +79,32 @@ class MessageAdapter(
         }
 
         private fun bindImageMessage(message: Message) {
+            hideAllText()
+            hideAllInvitation()
             Log.d("bindImageMessage", "$message")
+            // sender is user himself
             if (message.senderId == currentUserId) {
-                binding.tvMessageContentSend.visibility = View.GONE
-                binding.tvMessageContentReceived.visibility = View.GONE
+                // sender side hide
                 binding.imageViewReceived.visibility = View.GONE
+                // user side visible
                 binding.imageViewSend.visibility = View.VISIBLE
+                // hide sender name
                 binding.tvSenderNameReceived.visibility = View.GONE
 
                 if (message.photo?.toBitmap() != null) {
                     binding.imageViewSend.setImageBitmap(message.photo!!.toBitmap())
                 }
             } else {
+                // show sender name
                 scope.launch {
                     val user = authViewModel.get(message.senderId)
                     binding.tvSenderNameReceived.visibility = View.VISIBLE
                     binding.tvSenderNameReceived.text = user?.name
                 }
-                binding.tvMessageContentSend.visibility = View.GONE
-                binding.tvMessageContentReceived.visibility = View.GONE
+
+                // user side hide
                 binding.imageViewSend.visibility = View.GONE
+                // sender side visible
                 binding.imageViewReceived.visibility = View.VISIBLE
 
                 if (message.photo?.toBitmap() != null) {
@@ -107,13 +113,14 @@ class MessageAdapter(
             }
         }
 
+        @SuppressLint("SetTextI18n")
         private fun bindEventInvitationMessage(message: Message) {
+            hideAllText()
+            hideAllImage()
             if (message.senderId == currentUserId) {
                 // Show sent invitation
                 binding.invitationSectionSend.visibility = View.VISIBLE
                 binding.invitationSectionReceive.visibility = View.GONE
-                binding.tvMessageContentSend.visibility = View.GONE
-                binding.tvMessageContentReceived.visibility = View.GONE
                 binding.tvSenderNameReceived.visibility = View.GONE
 
                 binding.tvInvitationMessageSend.text = "You've sent an event invitation"
@@ -131,8 +138,6 @@ class MessageAdapter(
                 // Show received invitation
                 binding.invitationSectionReceive.visibility = View.VISIBLE
                 binding.invitationSectionSend.visibility = View.GONE
-                binding.tvMessageContentSend.visibility = View.GONE
-                binding.tvMessageContentReceived.visibility = View.GONE
 
                 binding.tvInvitationMessageReceive.text = "You're invited to an event"
                 binding.tvEventDetailsReceive.text =
@@ -144,6 +149,21 @@ class MessageAdapter(
                 binding.btnAccept.setOnClickListener { acceptEventInvitation(message) }
                 binding.btnDecline.setOnClickListener { declineEventInvitation(message) }
             }
+        }
+
+        private fun hideAllText() {
+            binding.tvMessageContentSend.visibility = View.GONE
+            binding.tvMessageContentReceived.visibility = View.GONE
+        }
+
+        private fun hideAllImage() {
+            binding.imageViewSend.visibility = View.GONE
+            binding.imageViewReceived.visibility = View.GONE
+        }
+
+        private fun hideAllInvitation() {
+            binding.invitationSectionReceive.visibility = View.GONE
+            binding.invitationSectionSend.visibility = View.GONE
         }
     }
 
