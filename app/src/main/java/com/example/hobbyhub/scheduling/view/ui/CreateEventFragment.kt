@@ -361,6 +361,14 @@ class CreateEventFragment : Fragment() {
                     "Reminder: ${event.name} starts in 30 minutes!",
                     event.id.hashCode() + 2 // Unique request code
                 )
+
+                // Schedule third reminder 1 minute before event start time
+                scheduleReminder(
+                    alarmManager,
+                    eventDateTime.time - (1 * 60 * 1000), // 1 minute in milliseconds
+                    "Reminder: ${event.name} will start in 1 minute. Please get ready!",
+                    event.id.hashCode() + 3 // Unique request code
+                )
             }
         } catch (e: Exception) {
             Log.e("CreateEventFragment", "Failed to parse reminder time: ${e.message}")
