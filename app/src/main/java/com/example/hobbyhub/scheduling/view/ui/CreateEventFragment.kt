@@ -280,7 +280,7 @@ class CreateEventFragment : Fragment() {
             reminderTime = selectedStartTime
         )
 
-        db.collection("schedule").document(userId).collection("events").document()
+        db.collection("schedule").document(userId).collection("events").document(eventId)
             .set(event)
             .addOnSuccessListener {
                 Log.d("CreateEventFragment", "Event saved successfully.")
