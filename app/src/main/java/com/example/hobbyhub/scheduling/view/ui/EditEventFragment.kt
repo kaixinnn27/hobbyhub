@@ -313,7 +313,6 @@ class EditEventFragment : Fragment() {
 
     private fun saveUpdatedEvent() {
         val userId = auth.currentUser?.uid ?: return
-        val eventId = binding.etEventId.text.toString().trim()
         val eventName = binding.etEventName.text.toString().trim()
 
         val participantUsernames = binding.multiAutocompleteParticipants.text.toString()
@@ -331,7 +330,7 @@ class EditEventFragment : Fragment() {
             reminderTime = selectedStartTime
         )
 
-        db.collection("schedule").document(userId).collection("events").document(eventId)
+        db.collection("schedule").document(userId).collection("events").document(eventName)
             .set(event)
             .addOnSuccessListener {
                 Log.d("CreateEventFragment", "Event saved successfully.")
@@ -435,8 +434,8 @@ class EditEventFragment : Fragment() {
 
     private fun deleteEvent() {
         val userId = auth.currentUser?.uid ?: return
-        val eventId = binding.etEventId.text.toString()
-        db.collection("schedule").document(userId).collection("events").document(eventId)
+        val eventName = binding.etEventName.text.toString().trim()
+        db.collection("schedule").document(userId).collection("events").document(eventName)
             .delete()
             .addOnSuccessListener {
                 Toast.makeText(requireContext(), "Event deleted successfully.", Toast.LENGTH_SHORT).show()
