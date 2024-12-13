@@ -33,6 +33,27 @@
                 android:inputType="text"
                 android:enabled="false" />
 
+
+            <TextView
+                android:id="@+id/tvParticipantsLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/participants"
+                android:textSize="16sp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp" />
+
+            <MultiAutoCompleteTextView
+                android:id="@+id/multiAutocompleteParticipants"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/enter_participants"
+                android:inputType="textEmailAddress|textMultiLine"
+                android:lines="2"
+                android:padding="8dp"
+                android:layout_marginBottom="16dp"
+                android:background="@android:drawable/edit_text" />
+
             <!-- Date Picker Button -->
             <Button
                 android:id="@+id/btnDatePicker"
@@ -98,25 +119,6 @@
                 android:id="@+id/spinnerLocation"
                 android:layout_width="match_parent"
                 android:layout_height="40dp" />
-
-            <TextView
-                android:id="@+id/tvParticipantsLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/participants"
-                android:textSize="16sp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="8dp" />
-
-            <MultiAutoCompleteTextView
-                android:id="@+id/multiAutocompleteParticipants"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/enter_participants"
-                android:inputType="textEmailAddress|textMultiLine"
-                android:lines="2"
-                android:padding="8dp"
-                android:background="@android:drawable/edit_text" />
 
             <Button
                 android:id="@+id/btnSaveChanges"
